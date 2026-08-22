@@ -1,1183 +1,543 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מחולל דו"ח חינוכי-תפקודי חכם</title>
-    <style>
-        :root {
-            --primary: #2c3e50;
-            --secondary: #3498db;
-            --bg: #f4f6f9;
-            --card-bg: #ffffff;
-            --text: #333;
-            --border: #dcdfe6;
-            --green: #27ae60;
-            --red: #e74c3c;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מחולל דו"ח חינוכי-תפקודי חכם</title>
+  <style>
+    :root {
+      --bg-color: #f1f5f9;
+      --card-bg: #ffffff;
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --text-color: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+      
+      --pos-bg: #dcfce7;
+      --pos-border: #22c55e;
+      --pos-text: #15803d;
+      
+      --neg-bg: #fee2e2;
+      --neg-border: #ef4444;
+      --neg-text: #b91c1c;
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 20px;
-            direction: rtl;
-        }
+      --neu-bg: #f8fafc;
+      --neu-border: #cbd5e1;
+      --neu-text: #475569;
+    }
 
-        .container {
-            max-width: 950px;
-            margin: 0 auto;
-        }
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+      direction: rtl;
+    }
 
-        header {
-            text-align: center;
-            background: var(--primary);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
 
-        header h1 { margin: 0 0 10px 0; font-size: 1.8rem; }
-        header p { margin: 0; opacity: 0.9; }
+    header {
+      background: var(--card-bg);
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      margin-bottom: 24px;
+      text-align: center;
+    }
 
-        .legend {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            background: #fff;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
+    h1 { margin: 0 0 8px 0; color: var(--primary-color); font-size: 1.8rem; }
+    header p { margin: 0; color: var(--text-muted); }
 
-        .legend-item { display: flex; align-items: center; gap: 8px; }
-        .color-dot { width: 16px; height: 16px; border-radius: 50%; display: inline-block; }
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 4px -1px rgba(0,0,0,0.05);
+      border: 1px solid var(--border-color);
+    }
 
-        .section-card {
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border-right: 5px solid var(--secondary);
-        }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.3rem;
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--bg-color);
+      padding-bottom: 8px;
+    }
 
-        .section-card h2 {
-            margin-top: 0;
-            color: var(--primary);
-            font-size: 1.3rem;
-            border-bottom: 2px solid var(--bg);
-            padding-bottom: 10px;
-        }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
 
-        .sub-title {
-            font-weight: bold;
-            color: var(--secondary);
-            margin: 15px 0 8px 0;
-            font-size: 1.05rem;
-        }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
 
-        .form-group { margin-bottom: 15px; }
+    label { font-weight: 600; font-size: 0.9rem; }
+    
+    input[type="text"], input[type="date"], select, textarea {
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
 
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 6px;
-            color: #444;
-        }
+    textarea { min-height: 80px; resize: vertical; }
 
-        input[type="text"], input[type="date"], select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-family: inherit;
-            font-size: 0.95rem;
-        }
+    .toggle-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
 
-        textarea { resize: vertical; min-height: 70px; }
+    .toggle-btn {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px;
+      border: 2px solid var(--neu-border);
+      background: var(--neu-bg);
+      color: var(--neu-text);
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+      text-align: right;
+    }
 
-        .toggle-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-            gap: 12px;
-            margin-top: 8px;
-        }
+    .toggle-btn .title { font-weight: bold; margin-bottom: 4px; }
+    .toggle-btn .preview { font-size: 0.8rem; opacity: 0.85; }
 
-        .toggle-item {
-            display: flex;
-            align-items: center;
-            background: #f8f9fa;
-            padding: 10px 14px;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.2s ease-in-out;
-            position: relative;
-        }
+    .toggle-btn[data-state="pos"] {
+      background: var(--pos-bg);
+      border-color: var(--pos-border);
+      color: var(--pos-text);
+    }
 
-        .toggle-status-indicator {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: #dcdfe6;
-            margin-left: 12px;
-            flex-shrink: 0;
-            transition: all 0.2s ease-in-out;
-        }
+    .toggle-btn[data-state="neg"] {
+      background: var(--neg-bg);
+      border-color: var(--neg-border);
+      color: var(--neg-text);
+    }
 
-        .toggle-content {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-        }
+    .btn-submit {
+      width: 100%;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 16px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background 0.2s;
+    }
 
-        .toggle-text {
-            font-size: 0.95rem;
-            font-weight: 600;
-            line-height: 1.2;
-            color: #333;
-        }
+    .btn-submit:hover { background: var(--primary-hover); }
 
-        .toggle-preview {
-            font-size: 0.78rem;
-            color: #666;
-            margin-top: 4px;
-            display: none;
-            line-height: 1.25;
-            font-weight: normal;
-        }
+    .output-card {
+      display: none;
+      margin-top: 24px;
+    }
 
-        /* מצב חיובי (ירוק) */
-        .toggle-item[data-state="v"] {
-            background: #e8f8f5;
-            border-color: #a3e4d7;
-        }
-        .toggle-item[data-state="v"] .toggle-status-indicator {
-            background: var(--green);
-            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
-        }
-        .toggle-item[data-state="v"] .toggle-preview {
-            display: block;
-            color: #1e8449;
-        }
+    .output-card.active { display: block; }
 
-        /* מצב שלילי (אדום) */
-        .toggle-item[data-state="x"] {
-            background: #fdf2e9;
-            border-color: #fad7a0;
-        }
-        .toggle-item[data-state="x"] .toggle-status-indicator {
-            background: var(--red);
-            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
-        }
-        .toggle-item[data-state="x"] .toggle-preview {
-            display: block;
-            color: #a93226;
-        }
+    #reportOutput {
+      white-space: pre-wrap;
+      background: #f8fafc;
+      padding: 16px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      font-family: inherit;
+      line-height: 1.6;
+    }
 
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+    }
 
-        .grid-3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 15px;
-        }
+    .btn-action {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      text-align: center;
+      text-decoration: none;
+      color: var(--text-color);
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-        .actions { text-align: center; margin: 30px 0; }
-
-        .btn {
-            background: var(--secondary);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 1.1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin: 5px;
-            font-weight: bold;
-        }
-
-        .btn:hover { background: #2980b9; }
-        .btn-success { background: #27ae60; }
-
-        #reportOutputContainer {
-            display: none;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-top: 30px;
-        }
-
-        #reportPreview {
-            line-height: 1.7;
-            white-space: pre-wrap;
-            background: #fafafa;
-            padding: 20px;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        @media (max-width: 600px) {
-            .grid-2, .grid-3 { grid-template-columns: 1fr; }
-            .toggle-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+    .btn-action:hover { background: #f1f5f9; }
+  </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
-        <h1>מחולל דו"ח חינוכי-תפקודי חכם</h1>
-        <p>ניסוח אישי ומותאם מגדרית באופן אוטומטי (אנונימי)</p>
-    </header>
+  <header>
+    <h1>מחולל דו"ח חינוכי-תפקודי חכם</h1>
+    <p>מלא את הפרטים ולחץ על הלחצנים (ירוק = חיובי/קיים, אדום = קושי, אפור = לא רלוונטי)</p>
+  </header>
 
-    <div class="legend">
-        <div class="legend-item"><span class="color-dot" style="background:#dcdfe6;"></span> ללא סימון</div>
-        <div class="legend-item"><span class="color-dot" style="background:var(--green);"></span> ירוק (חוזקה / קיים)</div>
-        <div class="legend-item"><span class="color-dot" style="background:var(--red);"></span> אדום (קושי)</div>
+  <form id="reportForm">
+    <!-- חלק 1: פרטים אישיים -->
+    <div class="card">
+      <h2>1. פרטים אישיים ורקע היכרות</h2>
+      <div class="grid">
+        <div class="form-group">
+          <label for="studentName">שם התלמיד/ה:</label>
+          <input type="text" id="studentName" placeholder="הכנס שם מלא" required>
+        </div>
+        <div class="form-group">
+          <label for="gender">מין:</label>
+          <select id="gender">
+            <option value="m">זכר (בן)</option>
+            <option value="f">נקבה (בת)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="studentId">תעודת זהות:</label>
+          <input type="text" id="studentId" placeholder="מספר ת"ז">
+        </div>
+        <div class="form-group">
+          <label for="dob">תאריך לידה:</label>
+          <input type="date" id="dob">
+        </div>
+        <div class="form-group">
+          <label for="grade">כיתה:</label>
+          <input type="text" id="grade" placeholder="לדוגמה: ד'2">
+        </div>
+        <div class="form-group">
+          <label for="reportDate">תאריך הדו"ח:</label>
+          <input type="date" id="reportDate">
+        </div>
+        <div class="form-group">
+          <label for="knowTime">זמן היכרות עם הצוות:</label>
+          <input type="text" id="knowTime" placeholder="לדוגמה: מתחילת השנה">
+        </div>
+      </div>
     </div>
 
-    <form id="reportForm">
-        <!-- 1. פרטים אישיים -->
-        <div class="section-card">
-            <h2>1. פרטים אישיים ורקע היכרות</h2>
-            <div class="grid-3">
-                <div class="form-group">
-                    <label>שם התלמיד/ה:</label>
-                    <input type="text" id="studentName" required placeholder="שם פרטי ומשפחה">
-                </div>
-                <div class="form-group">
-                    <label>מין:</label>
-                    <select id="studentGender" onchange="updateGenderPreviews()">
-                        <option value="male">זכר (בן)</option>
-                        <option value="female">נקבה (בת)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>תעודת זהות:</label>
-                    <input type="text" id="studentId">
-                </div>
-            </div>
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>תאריך לידה:</label>
-                    <input type="date" id="birthDate">
-                </div>
-                <div class="form-group">
-                    <label>כיתה:</label>
-                    <input type="text" id="studentClass" placeholder="לדוגמה: ד'2">
-                </div>
-            </div>
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>תאריך כתיבת הדו"ח:</label>
-                    <input type="date" id="reportDate">
-                </div>
-                <div class="form-group">
-                    <label>זמן היכרות הצוות עם התלמיד/ה:</label>
-                    <input type="text" id="knowTime" placeholder="לדוגמה: מתחילת השנה / שנתיים">
-                </div>
-            </div>
+    <!-- חלק 2: רקע חינוכי ואבחנתי -->
+    <div class="card">
+      <h2>2. רקע חינוכי, אבחנתי וסל תמיכות</h2>
+      <div class="grid">
+        <div class="form-group">
+          <label for="framework">מסגרת לימוד:</label>
+          <select id="framework">
+            <option value="חינוך רגיל">חינוך רגיל</option>
+            <option value="סל אישי">תלמיד/ה סל אישי</option>
+            <option value="שילוב">תלמיד/ה שילוב</option>
+            <option value="חינוך מיוחד">חינוך מיוחד</option>
+          </select>
         </div>
-
-        <!-- 2. רקע חינוכי, אבחנתי וסל תמיכות -->
-        <div class="section-card">
-            <h2>2. רקע חינוכי, אבחנתי וסל תמיכות</h2>
-            
-            <div class="sub-title">מסגרת חינוכית וועדות:</div>
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>מסגרת לימוד:</label>
-                    <select id="educationFrame">
-                        <option value="חינוך רגיל">חינוך רגיל</option>
-                        <option value="סל אישי">תלמיד/ה סל אישי</option>
-                        <option value="שילוב">תלמיד/ה שילוב</option>
-                        <option value="חינוך מיוחד">חינוך מיוחד</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>עבר/ה ועדת שילוב?</label>
-                    <select id="integrationCommittee">
-                        <option value="לא">לא</option>
-                        <option value="כן">כן</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>עבר/ה ועדת אפיון וזכאות?</label>
-                    <select id="committeeStatus">
-                        <option value="לא">לא</option>
-                        <option value="כן">כן</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>תאריך אבחון:</label>
-                    <input type="text" id="diagDate" placeholder="לדוגמה: 05/2022 או לפני כשנתיים">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>הגורם המאבחן:</label>
-                <input type="text" id="diagAssessor" placeholder="לדוגמה: נוירולוג, פסיכולוג התפתחותי, רופא פסיכיאטר...">
-            </div>
-
-            <div class="form-group">
-                <label>אבחנה / אפיון הלקות (לחץ לסימון):</label>
-                <div class="toggle-grid">
-                    <div class="toggle-item" data-pos-m="ASD (רצף התקשורתי)" data-neg-m="ללא אבחנת ASD" data-pos-f="ASD (רצף התקשורתי)" data-neg-f="ללא אבחנת ASD">
-                        <div class="toggle-status-indicator"></div>
-                        <div class="toggle-content">
-                            <span class="toggle-text">ASD</span>
-                            <span class="toggle-preview"></span>
-                        </div>
-                    </div>
-                    <div class="toggle-item" data-pos-m="הפרעת קשב וריכוז (ADHD)" data-neg-m="ללא הפרעת קשב" data-pos-f="הפרעת קשב וריכוז (ADHD)" data-neg-f="ללא הפרעת קשב">
-                        <div class="toggle-status-indicator"></div>
-                        <div class="toggle-content">
-                            <span class="toggle-text">ADHD</span>
-                            <span class="toggle-preview"></span>
-                        </div>
-                    </div>
-                    <div class="toggle-item" data-pos-m="לקות למידה רב-תחומית" data-neg-m="ללא לקות למידה" data-pos-f="לקות למידה רב-תחומית" data-neg-f="ללא לקות למידה">
-                        <div class="toggle-status-indicator"></div>
-                        <div class="toggle-content">
-                            <span class="toggle-text">לקות למידה</span>
-                            <span class="toggle-preview"></span>
-                        </div>
-                    </div>
-                    <div class="toggle-item" data-pos-m="הפרעה התנהגותית/רגשית (ODD)" data-neg-m="ללא הפרעה התנהגותית" data-pos-f="הפרעה התנהגותית/רגשית (ODD)" data-neg-f="ללא הפרעה התנהגותית">
-                        <div class="toggle-status-indicator"></div>
-                        <div class="toggle-content">
-                            <span class="toggle-text">ODD / התנהגותי</span>
-                            <span class="toggle-preview"></span>
-                        </div>
-                    </div>
-                    <div class="toggle-item" data-pos-m="חרדה / חרדת נטישה" data-neg-m="ללא חרדות" data-pos-f="חרדה / חרדת נטישה" data-neg-f="ללא חרדות">
-                        <div class="toggle-status-indicator"></div>
-                        <div class="toggle-content">
-                            <span class="toggle-text">חרדה</span>
-                            <span class="toggle-preview"></span>
-                        </div>
-                    </div>
-                    <div class="toggle-item" data-pos-m="עיכוב התפתחותי שפתי" data-neg-m="ללא עיכוב שפתי" data-pos-f="עיכוב התפתחותי שפתי" data-neg-f="ללא עיכוב שפתי">
-                        <div class="toggle-status-indicator"></div>
-                        <div class="toggle-content">
-                            <span class="toggle-text">עיכוב שפתי</span>
-                            <span class="toggle-preview"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>סל תמיכות ומענים בפועל (לחץ לסימון):</label>
-                <div class="toggle-grid">
-                    <div class="toggle-item" data-pos-m="סייעת אישית / משלבת" data-neg-m="אינו מקבל סייעת" data-pos-f="סייעת אישית / משלבת" data-neg-f="אינה מקבלת סייעת">
-                        <div class="toggle-status-indicator"></div>
-                        <div class="toggle-content">
-                            <span class="toggle-text">סייעת אישית</span>
-                            <span class="toggle-preview"></span>
-                        </div>
-                    </div>
-                    <div class="toggle-item" data-pos-m="טיפול באמנות / הבעה ורגש" data-neg-m="אינו מקבל טיפול באמנות" data-pos-f="טיפול באמנות / הבעה ורגש" data-neg-f="אינה מקבלת טיפול באמנות">
-                        <div class="toggle-status-indicator"></div>
-                        <div class="toggle-content">
-                            <span class="toggle-text">טיפול באמנות</span>
-                            <span class="toggle-preview"></span>
-                        </div>
-                    </div>
-                    <div class="toggle-item" data-pos-m="הוראה מותאמת / מתקנת" data-neg-m="אינו מקבל הוראה מותאמת" data-pos-f="הוראה מותאמת / מתקנת" data-neg-f="אינה מקבלת הוראה מותאמת">
-                        <div class="toggle-status-indicator"></div>
-                        <div class="toggle-content">
-                            <span class="toggle-text">הוראה מותאמת</span>
-                            <span class="toggle-preview"></span>
-                        </div>
-                    </div>
-                    <div class="toggle-item" data-pos-m="קלינאית תקשורת" data-neg-m="אינו מקבל קלינאית תקשורת" data-pos-f="קלינאית תקשורת" data-neg-f="אינה מקבלת קלינאית תקשורת">
-                        <div class="toggle-status-indicator"></div>
-                        <div class="toggle-content">
-                            <span class="toggle-text">קלינאית תקשורת</span>
-                            <span class="toggle-preview"></span>
-                        </div>
-                    </div>
-                    <div class="toggle-item" data-pos-m="ריפוי בעיסוק" data-neg-m="אינו מקבל ריפוי בעיסוק" data-pos-f="ריפוי בעיסוק" data-neg-f="אינה מקבלת ריפוי בעיסוק">
-                        <div class="toggle-status-indicator"></div>
-                        <div class="toggle-content">
-                            <span class="toggle-text">ריפוי בעיסוק</span>
-                            <span class="toggle-preview"></span>
-                        </div>
-                    </div>
-                    <div class="toggle-item" data-pos-m="עבודה בקבוצה קטנה בכיתה" data-neg-m="אינו משולב בקבוצה קטנה" data-pos-f="עבודה בקבוצה קטנה בכיתה" data-neg-f="אינה משולבת בקבוצה קטנה">
-                        <div class="toggle-status-indicator"></div>
-                        <div class="toggle-content">
-                            <span class="toggle-text">עבודה בקבוצה קטנה</span>
-                            <span class="toggle-preview"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>הערות על רקע/ביקור סדיר (אופציונלי):</label>
-                <textarea id="backgroundNotes" placeholder="פרט רק אם יש היעדרויות ממושכות, מעברי בית ספר..."></textarea>
-            </div>
+        <div class="form-group">
+          <label for="diagDate">תאריך אבחון:</label>
+          <input type="text" id="diagDate" placeholder="למשל: 05/2022">
         </div>
-
-        <!-- 3. תחום לימודי ותפקודי לומד -->
-        <div class="section-card">
-            <h2>3. תחום לימודי ותפקודי לומד</h2>
-            
-            <div class="sub-title">תפקודי לומד, מוסחות וארגון:</div>
-            <div class="toggle-grid" id="learningGrid">
-                <div class="toggle-item" 
-                     data-pos-m="מראה מוטיבציה לימודית גבוהה" data-neg-m="מראה חוסר מוטיבציה לימודית"
-                     data-pos-f="מראה מוטיבציה לימודית גבוהה" data-neg-f="מראה חוסר מוטיבציה לימודית">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">מוטיבציה לימודית</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="עובד באופן עצמאי בלמידה" data-neg-m="זקוק לתיווך בעבודה"
-                     data-pos-f="עובדת באופן עצמאי בלמידה" data-neg-f="זקוקה לתיווך בעבודה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">זקוק לתיווך בעבודה</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="לומד היטב במסגרת הוראה פרונטלית" data-neg-m="מתקשה ללמוד במסגרת הוראה פרונטלית"
-                     data-pos-f="לומדת היטב במסגרת הוראה פרונטלית" data-neg-f="מתקשה ללמוד במסגרת הוראה פרונטלית">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">למידה בהוראה פרונטלית</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מראה הבנה טובה של הוראות למידה" data-neg-m="מתקשה בהבנת הוראות"
-                     data-pos-f="מראה הבנה טובה של הוראות למידה" data-neg-f="מתקשה בהבנת הוראות">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">הבנת הוראות</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מסוגל לבצע משימות הדורשות ריכוז לאורך זמן" data-neg-m="מתקשה לבצע משימות הדורשות ריכוז לאורך זמן"
-                     data-pos-f="מסוגלת לבצע משימות הדורשות ריכוז לאורך זמן" data-neg-f="מתקשה לבצע משימות הדורשות ריכוז לאורך זמן">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">ריכוז לאורך זמן</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="שומר על מיקוד ואינו מוסח בקלות" data-neg-m="דעתו מוסחת בקלות בידי גורמים חיצוניים (רעשים, חפצים, תנועה בכיתה)"
-                     data-pos-f="שומרת על מיקוד ואינה מוסחת בקלות" data-neg-f="דעתה מוסחת בקלות בידי גורמים חיצוניים (רעשים, חפצים, תנועה בכיתה)">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">מוסחות מגורמים חיצוניים</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מגלה התמדה ולא מתייאש במטלות" data-neg-m="מתייאש במהלך ביצוע של מטלות לימודיות"
-                     data-pos-f="מגלה התמדה ולא מתייאשת במטלות" data-neg-f="מתייאשת במהלך ביצוע של מטלות לימודיות">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">התמדה במטלות לימודיות</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="משתף פעולה בתהליך הלמידה" data-neg-m="מתקשה לשתף פעולה בתהליך הלמידה"
-                     data-pos-f="משתפת פעולה בתהליך הלמידה" data-neg-f="מתקשה לשתף פעולה בתהליך הלמידה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">שיתוף פעולה בתהליך הלמידה</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מתארגן היטב לקראת ביצוע מטלות בשיעור" data-neg-m="מתקשה להתארגן לקראת ביצוע מטלות בזמן השיעור"
-                     data-pos-f="מתארגנת היטב לקראת ביצוע מטלות בשיעור" data-neg-f="מתקשה להתארגן לקראת ביצוע מטלות בזמן השיעור">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">התארגנות למטלות בשיעור</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="משתף פעולה מלאה עם סדר היום" data-neg-m="מתקשה לשתף פעולה עם סדר היום"
-                     data-pos-f="משתפת פעולה מלאה עם סדר היום" data-neg-f="מתקשה לשתף פעולה עם סדר היום">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">שיתוף פעולה עם סדר היום</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מקפיד להגיע לכיתה עם הציוד הנדרש" data-neg-m="מתקשה להגיע לכיתה כשברשותו הציוד הנדרש ללמידה"
-                     data-pos-f="מקפידה להגיע לכיתה עם הציוד הנדרש" data-neg-f="מתקשה להגיע לכיתה כשברשותה הציוד הנדרש ללמידה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">הגעה עם ציוד נדרש</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="תפקוד אקדמי תואם גיל ללא פערים בולטים" data-neg-m="קיימים פערים לימודיים לעומת בני גילו"
-                     data-pos-f="תפקוד אקדמי תואם גיל ללא פערים בולטים" data-neg-f="קיימים פערים לימודיים לעומת בנות גילה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">פערים לימודיים לעומת בני גילו</span><span class="toggle-preview"></span></div>
-                </div>
-            </div>
-
-            <div class="sub-title">תחום השפה, הקריאה והכתיבה:</div>
-            <div class="toggle-grid" id="langGrid">
-                <div class="toggle-item" 
-                     data-pos-m="קורא בשטף כנדרש" data-neg-m="מתקשה בקריאה בשטף"
-                     data-pos-f="קוראת בשטף כנדרש" data-neg-f="מתקשה בקריאה בשטף">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">קריאה בשטף</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="קורא בדיוק ומזהה מילים היטב" data-neg-m="מתקשה בקריאה בדיוק ומפגין שגיאות"
-                     data-pos-f="קוראת בדיוק ומזהה מילים היטב" data-neg-f="מתקשה בקריאה בדיוק ומפגינה שגיאות">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">קריאה בדיוק</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מראה הבנה של הנקרא ברמה הגלויה" data-neg-m="מתקשה בהבנת הנקרא ברמה הגלויה"
-                     data-pos-f="מראה הבנה של הנקרא ברמה הגלויה" data-neg-f="מתקשה בהבנת הנקרא ברמה הגלויה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">הבנה ברמה הגלויה</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מראה הבנה של הנקרא ברמה המפרשת" data-neg-m="מתקשה בהבנת הנקרא ברמה המפרשת"
-                     data-pos-f="מראה הבנה של הנקרא ברמה המפרשת" data-neg-f="מתקשה בהבנת הנקרא ברמה המפרשת">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">הבנה ברמה המפרשת</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="קורא טקסטים באורך המצופה מבני גילו" data-neg-m="מתקשה לקרוא טקסטים באורך המצופה מבני גילו"
-                     data-pos-f="קוראת טקסטים באורך המצופה מבנות גילה" data-neg-f="מתקשה לקרוא טקסטים באורך המצופה מבנות גילה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">קריאת טקסטים באורך מצופה</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מראה הבנה של הוראות כתובות" data-neg-m="מתקשה בהבנת הוראות כתובות"
-                     data-pos-f="מראה הבנה של הוראות כתובות" data-neg-f="מתקשה בהבנת הוראות כתובות">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">הבנת הוראות כתובות</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מראה הבנה של טקסטים כתובים המוקראים לו בכיתה" data-neg-m="מתקשה בהבנת טקסטים המוקראים לו"
-                     data-pos-f="מראה הבנה של טקסטים כתובים המוקראים לה בכיתה" data-neg-f="מתקשה בהבנת טקסטים המוקראים לה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">הבנת טקסטים מוקראים</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מבחין היטב בין עיקר לטפל" data-neg-m="מתקשה להבחין בין עיקר לטפל"
-                     data-pos-f="מבחינה היטב בין עיקר לטפל" data-neg-f="מתקשה להבחין בין עיקר לטפל">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">הבחנה בין עיקר לטפל</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מנסח בעל פה רעיונות בבהירות" data-neg-m="מתקשה לנסח בעל פה רעיונות בבהירות"
-                     data-pos-f="מנסחת בעל פה רעיונות בבהירות" data-neg-f="מתקשה לנסח בעל פה רעיונות בבהירות">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">ניסוח רעיונות בעל פה</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מביע את עצמו באמצעות אוצר מילים רחב" data-neg-m="משתמש באוצר מילים מצומצם/דל"
-                     data-pos-f="מביעה את עצמה באמצעות אוצר מילים רחב" data-neg-f="משתמשת באוצר מילים מצומצם/דל">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">אוצר מילים</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="כותב בכתב-יד קריא ומעוצב" data-neg-m="מתקשה בכתיבה קריאה (כתב לא קריא/עיצוב לקוי)"
-                     data-pos-f="כותבת בכתב-יד קריא ומעוצב" data-neg-f="מתקשה בכתיבה קריאה (כתב לא קריא/עיצוב לקוי)">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">כתב-יד קריא</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מארגן את הכתיבה בהתאם למרחב הדף" data-neg-m="מתקשה בארגון הכתיבה במרחב הדף"
-                     data-pos-f="מארגנת את הכתיבה בהתאם למרחב הדף" data-neg-f="מתקשה בארגון הכתיבה במרחב הדף">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">ארגון מרחב הדף</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מספיק לכתוב את הנדרש במהלך השיעור" data-neg-m="אינו מספיק לכתוב את הנדרש במהלך השיעור"
-                     data-pos-f="מספיקה לכתוב את הנדרש במהלך השיעור" data-neg-f="אינה מספיקה לכתוב את הנדרש במהלך השיעור">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">קצב כתיבה בשיעור</span><span class="toggle-preview"></span></div>
-                </div>
-            </div>
-
-            <div class="sub-title">תחום החשבון:</div>
-            <div class="toggle-grid" id="mathGrid">
-                <div class="toggle-item" 
-                     data-pos-m="מבצע נכון פעולות חשבון שונות" data-neg-m="מתקשה בביצוע פעולות חשבון בסיסיות"
-                     data-pos-f="מבצעת נכון פעולות חשבון שונות" data-neg-f="מתקשה בביצוע פעולות חשבון בסיסיות">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">ביצוע פעולות חשבון</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מצליח לפתור בעיות מילוליות בחשבון הניתנות בכיתה" data-neg-m="מתקשה לפתור בעיות מילוליות בחשבון"
-                     data-pos-f="מצליחה לפתור בעיות מילוליות בחשבון הניתנות בכיתה" data-neg-f="מתקשה לפתור בעיות מילוליות בחשבון">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">פתרון בעיות מילוליות</span><span class="toggle-preview"></span></div>
-                </div>
-            </div>
-            <div class="form-group" style="margin-top: 10px;">
-                <textarea id="mathDetails" placeholder="פירוט נוסף בחשבון (נושאים שנרכשו מול נושאים שטרם נרכשו/פערים)..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>חוזקות ותחומי עניין לימודיים:</label>
-                <input type="text" id="strengths" placeholder="למשל: בולט לטובה בשיעורי אמנות, מוזיקה, ספורט, אנגלית...">
-            </div>
+        <div class="form-group">
+          <label for="diagBy">גורם מאבחן:</label>
+          <input type="text" id="diagBy" placeholder="למשל: נוירולוג">
         </div>
+      </div>
 
-        <!-- 4. תחום התנהגותי-רגשי -->
-        <div class="section-card">
-            <h2>4. תחום התנהגותי-רגשי</h2>
-            
-            <div class="sub-title">ציות לכללים, גבולות ומשמעת:</div>
-            <div class="toggle-grid">
-                <div class="toggle-item" 
-                     data-pos-m="מקבל סמכות מבוגר באופן מותאם" data-neg-m="מתקשה בקבלת סמכות מבוגר"
-                     data-pos-f="מקבלת סמכות מבוגר באופן מותאם" data-neg-f="מתקשה בקבלת סמכות מבוגר">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">קבלת סמכות מבוגר</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="פועל על פי כללי בית הספר" data-neg-m="מתקשה לפעול על פי כללי בית הספר"
-                     data-pos-f="פועלת על פי כללי בית הספר" data-neg-f="מתקשה לפעול על פי כללי בית הספר">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">פועל על פי כללי בית הספר</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="נשאר במרחבי הכיתה והשיעור באופן מותאם" data-neg-m="משוטט בשטח בית הספר בשעת השיעורים"
-                     data-pos-f="נשארת במרחבי הכיתה והשיעור באופן מותאם" data-neg-f="משוטטת בשטח בית הספר בשעת השיעורים">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">נוכחות בשיעור (שוטטות)</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="נכנס בזמן לכיתה בתחילת השיעור" data-neg-m="מאחר להיכנס לכיתה בתחילת השיעור"
-                     data-pos-f="נכנסת בזמן לכיתה בתחילת השיעור" data-neg-f="מאחרת להיכנס לכיתה בתחילת השיעור">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">עמידה בזמנים בכניסה לשיעור</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="שומר על בטיחות אישית בכיתה" data-neg-m="מתנהג בכיתה באופן שבו הוא מסכן את עצמו (עומד על חלון, קופץ על שולחנות)"
-                     data-pos-f="שומרת על בטיחות אישית בכיתה" data-neg-f="מתנהגת בכיתה באופן שבו היא מסכנת את עצמה (עומדת על חלון, קופצת על שולחנות)">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">התנהגות המסכנת את עצמו</span><span class="toggle-preview"></span></div>
-                </div>
-            </div>
-
-            <div class="sub-title">תגובה לתסכול, וויסות ואלימות:</div>
-            <div class="toggle-grid">
-                <div class="toggle-item" 
-                     data-pos-m="משתף פעולה באופן מלא בתהליך הבירור" data-neg-m="מתקשה לשתף פעולה בתהליך הבירור"
-                     data-pos-f="משתפת פעולה באופן מלא בתהליך הבירור" data-neg-f="מתקשה לשתף פעולה בתהליך הבירור">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">שיתוף פעולה בתהליך הבירור</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="לוקח אחריות על מעשיו" data-neg-m="מתקשה לקחת אחריות על מעשיו"
-                     data-pos-f="לוקחת אחריות על מעשיה" data-neg-f="מתקשה לקחת אחריות על מעשיה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">לוקח/ת אחריות על מעשיו/ה</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מגלה יכולת לדחות סיפוקים" data-neg-m="מתקשה לדחות סיפוקים"
-                     data-pos-f="מגלה יכולת לדחות סיפוקים" data-neg-f="מתקשה לדחות סיפוקים">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">דחיית סיפוקים</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מגיב בבגרות ובוויסות בעת הפסד במשחק" data-neg-m="מתקשה להתמודד עם הפסד במשחק ומגיב בתסכול רב"
-                     data-pos-f="מגיבה בבגרות ובוויסות בעת הפסד במשחק" data-neg-f="מתקשה להתמודד עם הפסד במשחק ומגיבה בתסכול רב">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">תגובה להפסד במשחק</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מגיב ברוגע ובאיפוק במצבי יום-יום" data-neg-m="מגיב בכעס קיצוני ופתאומי במצבים יום-יומיים כמה פעמים ביום ('פתיל קצר')"
-                     data-pos-f="מגיבה ברוגע ובאיפוק במצבי יום-יום" data-neg-f="מגיבה בכעס קיצוני ופתאומי במצבים יום-יומיים כמה פעמים ביום ('פתיל קצר')">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">תגובות כעס פתאומיות ('פתיל קצר')</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="שומר על תגובות מותאמות בעת מריבה" data-neg-m="מגיב באופן לא פרופורציונלי במהלך מריבה"
-                     data-pos-f="שומרת על תגובות מותאמות בעת מריבה" data-neg-f="מגיבה באופן לא פרופורציונלי במהלך מריבה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">פרופורציה בעת מריבה</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מקבל ביקורת והערות באופן מקדם" data-neg-m="מגיב באופן לא פרופורציונאלי לביקורת או להערות המופנות אליו"
-                     data-pos-f="מקבלת ביקורת והערות באופן מקדם" data-neg-f="מגיבה באופן לא פרופורציונאלי לביקורת או להערות המופנות אליה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">תגובה לביקורת/הערות</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="חוזר לתפקוד במהירות לאחר שנתקל בקושי" data-neg-m="מתקשה לחזור לתפקוד לאחר שנתקל בקושי"
-                     data-pos-f="חוזרת לתפקוד במהירות לאחר שנתקלה בקושי" data-neg-f="מתקשה לחזור לתפקוד לאחר שנתקלה בקושי">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">חזרה לתפקוד לאחר קושי</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="משתמש בשיח מכבד ונמנע מאלימות מילולית" data-neg-m="מתבטא באלימות מילולית כלפי ילדים אחרים (מקניט, מעליב, מקלל)"
-                     data-pos-f="משתמשת בשיח מכבד ונמנעת מאלימות מילולית" data-neg-f="מתבטאת באלימות מילולית כלפי ילדים אחרים (מקניטה, מעליבה, מקללת)">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">אלימות מילולית</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="נמנע לחלוטין מאיומים על ילדים" data-neg-m="מאיים על ילדים אחרים"
-                     data-pos-f="נמנעת לחלוטין מאיומים על ילדים" data-neg-f="מאייםת על ילדים אחרים">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">איומים על ילדים</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="שומר על איפוק גופני ושלום חבריו" data-neg-m="פוגע פיזית בילדים אחרים (מכה, נושך, בועט, מושך בשיער, שורט)"
-                     data-pos-f="שומרת על איפוק גופני ושלום חברותיה" data-neg-f="פוגעת פיזית בילדים אחרים (מכה, נושכת, בועטת, מושכת בשיער, שורטת)">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">אלימות פיזית</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מגיב בוויסות תחושתי מותאם לגירויים" data-neg-m="מגיב יתר על המידה לגירויים סביבתיים שונים (רעש, מגע, תאורה)"
-                     data-pos-f="מגיבה בוויסות תחושתי מותאם לגירויים" data-neg-f="מגיבה יתר על המידה לגירויים סביבתיים שונים (רעש, מגע, תאורה)">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">תגובתיות יתר לגירויים תחושתיים</span><span class="toggle-preview"></span></div>
-                </div>
-            </div>
-
-            <!-- שדה תדירות -->
-            <div class="form-group" style="margin-top: 15px;">
-                <label>תדירות אירועי התסכול, הוויסות או ההתנהגות המאתגרת:</label>
-                <input type="text" id="eventFrequency" placeholder="כמה פעמים ביום / בשבוע, או באילו נסיבות/זמנים מיוחדים הם מתרחשים...">
-            </div>
-
-            <div class="sub-title">תפיסה עצמית, רגש וייחוס:</div>
-            <div class="toggle-grid">
-                <div class="toggle-item" 
-                     data-pos-m="מביע רגשות באופן חופשי ומותאם" data-neg-m="מתקשה להביע רגשות (בהבעות פנים או באופן מילולי)"
-                     data-pos-f="מביעה רגשות באופן חופשי ומותאם" data-neg-f="מתקשה להביע רגשות (בהבעות פנים או באופן מילולי)">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">הבעת רגשות</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מפגין אמונה ביכולותיו" data-neg-m="אומר בתסכול: 'לא יצליח לי', 'לא יצא לי', 'לא יכול'"
-                     data-pos-f="מפגינה אמונה ביכולותיה" data-neg-f="אומרת בתסכול: 'לא יצליח לי', 'לא יצא לי', 'לא יכולה'">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">אמונה ביכולת אישית</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="פועל באופן עצמאי ללא צורך באישורים מתמידים" data-neg-m="מחפש אישורים וחיזוקים לכל פעולה שהוא עושה"
-                     data-pos-f="פועלת באופן עצמאי ללא צורך באישורים מתמידים" data-neg-f="מחפשת אישורים וחיזוקים לכל פעולה שהיא עושה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">צורך באישורים וחיזוקים</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מבחין בריאליות בין אחריותו לבין נסיבות חיצוניות" data-neg-m="מאשים את עצמו גם במצבים שאינם תלויים בו"
-                     data-pos-f="מבחינה בריאליות בין אחריותה לבין נסיבות חיצוניות" data-neg-f="מאשימה את עצמה גם במצבים שאינם תלויים בה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">אשמה עצמית מופרזת</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="תופס סיטואציות חברתיות באופן ניטרלי ומקדם" data-neg-m="נוטה לייחס לאחרים כוונות שליליות ופוגעניות כלפיו ללא סיבה ברורה"
-                     data-pos-f="תופסת סיטואציות חברתיות באופן ניטרלי ומקדם" data-neg-f="נוטה לייחס לאחרים כוונות שליליות ופוגעניות כלפיה ללא סיבה ברורה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">ייחוס כוונות שליליות לאחרים</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מפגין חוסן רגשי בשגרה" data-neg-m="מביע חרדות ופחדים המשפיעים על תפקודו"
-                     data-pos-f="מפגינה חוסן רגשי בשגרה" data-neg-f="מביעה חרדות ופחדים המשפיעים על תפקודה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">הבעת חרדות ופחדים</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מעורב ומתעניין במתרחש סביבו" data-neg-m="מגלה אדישות למתרחש בכיתה או בהפסקה ללא קשר לתוכן הפעילות"
-                     data-pos-f="מעורבת ומתעניינת במתרחש סביבה" data-neg-f="מגלה אדישות למתרחש בכיתה או בהפסקה ללא קשר לתוכן הפעילות">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">אדישות למתרחש</span><span class="toggle-preview"></span></div>
-                </div>
-            </div>
-
-            <div class="form-group" style="margin-top: 15px;">
-                <textarea id="behaviorDetails" placeholder="פירוט חופשי נוסף לתחום ההתנהגותי-רגשי..."></textarea>
-            </div>
+      <h3>אבחנה / אפיון הלקות</h3>
+      <div class="toggle-grid">
+        <div class="toggle-btn" data-state="neu" data-pos-m="ASD (רצף התקשורתי)" data-neg-m="ללא אבחנת ASD">
+          <span class="title">ASD</span><span class="preview">לא נבחר</span>
         </div>
-
-        <!-- 5. תחום חברתי ותקשורתי -->
-        <div class="section-card">
-            <h2>5. תחום חברתי ותקשורתי</h2>
-            <div class="toggle-grid">
-                <div class="toggle-item" 
-                     data-pos-m="מביע הנאה רבה מפעילויות, ממשחקים ומטיולים" data-neg-m="מתקשה להביע הנאה מפעילויות, משחקים או טיולים"
-                     data-pos-f="מביעה הנאה רבה מפעילויות, ממשחקים ומטיולים" data-neg-f="מתקשה להביע הנאה מפעילויות, משחקים או טיולים">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">הנאה מפעילויות ומשחקים</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מפגין כריזמה וכושר מנהיגות בקרב חבריו" data-neg-m="מתקשה להפגין מנהיגות או להוביל פעילות חברתית"
-                     data-pos-f="מפגינה כריזמה וכושר מנהיגות בקרב חברותיה" data-neg-f="מתקשה להפגין מנהיגות או להוביל פעילות חברתית">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">כריזמה וכושר מנהיגות</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="בעל מעגל חברתי רחב ומגוון" data-neg-m="אינו מצליח ליצור מעגל חברתי רחב"
-                     data-pos-f="בעלת מעגל חברתי רחב ומגוון" data-neg-f="אינה מצליחה ליצור מעגל חברתי רחב">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">מעגל חברתי רחב</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מפתח מעגל חברתי מצומצם ועמוק עם חברים בודדים" data-neg-m="מתקשה ליצור אף מעגל חברתי מצומצם או קשר קרוב"
-                     data-pos-f="מפתחת מעגל חברתי מצומצם ועמוק עם חברות בודדות" data-neg-f="מתקשה ליצור אף מעגל חברתי מצומצם או קשר קרוב">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">מעגל חברתי מצומצם</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="יוזם אינטראקציה חברתית (מזמין למשחק, פותח בשיחה)" data-neg-m="מתקשה ליזום אינטראקציות חברתיות"
-                     data-pos-f="יוזמת אינטראקציה חברתית (מזמינה למשחק, פותחת בשיחה)" data-neg-f="מתקשה ליזום אינטראקציות חברתיות">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">יוזמה חברתית</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מראה עניין רב באינטראקציה חברתית" data-neg-m="אינו מראה עניין באינטראקציה חברתית"
-                     data-pos-f="מראה עניין רב באינטראקציה חברתית" data-neg-f="אינה מראה עניין באינטראקציה חברתית">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">עניין באינטראקציה חברתית</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מביע את רצונותיו ודעותיו לפני קבוצת חברים" data-neg-m="מתקשה להביע רצונות ודעות לפני קבוצה"
-                     data-pos-f="מביעה את רצונותיה ודעותיה לפני קבוצת חברות" data-neg-f="מתקשה להביע רצונות ודעות לפני קבוצה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">הבעת עמדה בקבוצה</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מתאים את דבריו לזהות הנמען (מורה, חבר, הורה)" data-neg-m="מתקשה להתאים את הדברים לזהות הנמען"
-                     data-pos-f="מתאימה את דבריה לזהות הנמען (מורה, חברה, הורה)" data-neg-f="מתקשה להתאים את הדברים לזהות הנמען">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">התאמת דיבור לנמען</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="פותח בשיחה באופן עצמאי (שואל, מבקש, מציע)" data-neg-m="מתקשה לפתוח בשיחה באופן עצמאי"
-                     data-pos-f="פותחת בשיחה באופן עצמאי (שואלת, מבקשת, מציעה)" data-neg-f="מתקשה לפתוח בשיחה באופן עצמאי">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">פתיחה בשיחה</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="לוקח תור בעיתוי המתאים במהלך שיחה" data-neg-m="מתקשה בלקיחת תור בעיתוי מתאים בשיחה"
-                     data-pos-f="לוקחת תור בעיתוי המתאים במהלך שיחה" data-neg-f="מתקשה בלקיחת תור בעיתוי מתאים בשיחה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">לקיחת תור בשיחה</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="ממתין בסבלנות לתורו (בשיחה או במשחק)" data-neg-m="מתקשה להמתין בסבלנות לתורו"
-                     data-pos-f="ממתינה בסבלנות לתורה (בשיחה או במשחק)" data-neg-f="מתקשה להמתין בסבלנות לתורה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">המתנה בסבלנות לתור</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מצליח ליצור קשר חברתי בדרכים מקובלות" data-neg-m="מתקשה ביצירת קשר חברתי בדרכים מקובלות"
-                     data-pos-f="מצליחה ליצור קשר חברתי בדרכים מקובלות" data-neg-f="מתקשה ביצירת קשר חברתי בדרכים מקובלות">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">יצירת קשר חברתי בדרכים מקובלות</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מצליח לשמור ולקדם את השיח עם החבר" data-neg-m="מתקשה בשמירה וקידום השיח עם החבר"
-                     data-pos-f="מצליחה לשמור ולקדם את השיח עם החברה" data-neg-f="מתקשה בשמירה וקידום השיח עם החברה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">שמירה וקידום השיח עם החבר</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="מצליח לפתור בעצמו בעיות חברתיות פשוטות" data-neg-m="מתקשה לפתור בעצמו בעיות אישיות או חברתיות פשוטות"
-                     data-pos-f="מצליחה לפתור בעצמה בעיות חברתיות פשוטות" data-neg-f="מתקשה לפתור בעצמה בעיות אישיות או חברתיות פשוטות">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">פתרון בעיות חברתיות פשוטות</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="משולב היטב בחברת הילדים בהפסקה" data-neg-m="נצפה לבד בהפסקה"
-                     data-pos-f="משולבת היטב בחברת הילדים בהפסקה" data-neg-f="נצפית לבד בהפסקה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">תפקוד בהפסקה (נצפה לבד)</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="שומר על גבולות הגוף והמרחב האישי" data-neg-m="מתקשה לשמור על גבולות הגוף או המרחב האישי (נצמד, מחבק, נוגע)"
-                     data-pos-f="שומרת על גבולות הגוף והמרחב האישי" data-neg-f="מתקשה לשמור על גבולות הגוף או המרחב האישי (נצמדת, מחבקת, נוגעת)">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">שמירה על גבולות גוף ומרחב אישי</span><span class="toggle-preview"></span></div>
-                </div>
-                <div class="toggle-item" 
-                     data-pos-m="משתף בנושאים רלוונטיים להקשר השיחה" data-neg-m="מעלה נושאים שאינם רלוונטיים להקשר השיחה"
-                     data-pos-f="משתפת בנושאים רלוונטיים להקשר השיחה" data-neg-f="מעלה נושאים שאינם רלוונטיים להקשר השיחה">
-                    <div class="toggle-status-indicator"></div>
-                    <div class="toggle-content"><span class="toggle-text">רלוונטיות נושאי השיחה</span><span class="toggle-preview"></span></div>
-                </div>
-            </div>
+        <div class="toggle-btn" data-state="neu" data-pos-m="הפרעת קשב וריכוז (ADHD)" data-neg-m="ללא הפרעת קשב">
+          <span class="title">ADHD</span><span class="preview">לא נבחר</span>
         </div>
-
-        <!-- 6. סיכום והמלצות -->
-        <div class="section-card">
-            <h2>6. סיכום והמלצות הצוות</h2>
-            <div class="form-group">
-                <label>המלצות אופרטיביות להמשך:</label>
-                <textarea id="recommendations" placeholder="לדוגמה: המשך תוכנית אישית, התאמת תמיכות, דיון בחשיבה על מענה מסגרתי מותאם יותר..."></textarea>
-            </div>
+        <div class="toggle-btn" data-state="neu" data-pos-m="לקות למידה רב-תחומית" data-neg-m="ללא לקות למידה">
+          <span class="title">לקות למידה</span><span class="preview">לא נבחר</span>
         </div>
-
-        <div class="actions">
-            <button type="button" class="btn" onclick="generateReport()">צור דו"ח חינוכי</button>
+        <div class="toggle-btn" data-state="neu" data-pos-m="הפרעה התנהגותית/רגשית (ODD)" data-neg-m="ללא הפרעה התנהגותית">
+          <span class="title">ODD / התנהגותי</span><span class="preview">לא נבחר</span>
         </div>
-    </form>
+      </div>
 
-    <!-- אזור תצוגת הדו"ח הסופי -->
-    <div id="reportOutputContainer">
-        <h2>הדו"ח המוכן (מוסתר פרטים מזהים)</h2>
-        <p>תוכל להעתיק את הטקסט ישירות ל-Word או להוריד אותו:</p>
-        <div id="reportPreview"></div>
-        <div class="actions">
-            <button class="btn btn-success" onclick="copyToClipboard()">העתק ל-Word</button>
-            <button class="btn" onclick="downloadDoc()">הורד כקובץ טקסט</button>
+      <h3>סל תמיכות בפועל</h3>
+      <div class="toggle-grid">
+        <div class="toggle-btn" data-state="neu" 
+             data-pos-m="סייעת אישית / משלבת" data-neg-m="אינו מקבל סייעת"
+             data-pos-f="סייעת אישית / משלבת" data-neg-f="אינה מקבלת סייעת">
+          <span class="title">סייעת אישית</span><span class="preview">לא נבחר</span>
         </div>
+        <div class="toggle-btn" data-state="neu" 
+             data-pos-m="טיפול באמנות / הבעה ורגש" data-neg-m="אינו מקבל טיפול באמנות"
+             data-pos-f="טיפול באמנות / הבעה ורגש" data-neg-f="אינה מקבלת טיפול באמנות">
+          <span class="title">טיפול באמנות</span><span class="preview">לא נבחר</span>
+        </div>
+        <div class="toggle-btn" data-state="neu" 
+             data-pos-m="הוראה מותאמת / מתקנת" data-neg-m="אינו מקבל הוראה מותאמת"
+             data-pos-f="הוראה מותאמת / מתקנת" data-neg-f="אינה מקבלת הוראה מותאמת">
+          <span class="title">הוראה מותאמת</span><span class="preview">לא נבחר</span>
+        </div>
+      </div>
     </div>
+
+    <!-- חלק 3: תחום לימודי ותפקודי לומד -->
+    <div class="card">
+      <h2>3. תחום לימודי ותפקודי לומד</h2>
+      <h3>תפקודי לומד וארגון</h3>
+      <div class="toggle-grid">
+        <div class="toggle-btn" data-state="neu" 
+             data-pos-m="מראה מוטיבציה לימודית גבוהה" data-neg-m="מראה חוסר מוטיבציה לימודית"
+             data-pos-f="מראה מוטיבציה לימודית גבוהה" data-neg-f="מראה חוסר מוטיבציה לימודית">
+          <span class="title">מוטיבציה לימודית</span><span class="preview">לא נבחר</span>
+        </div>
+        <div class="toggle-btn" data-state="neu" 
+             data-pos-m="עובד באופן עצמאי בלמידה" data-neg-m="זקוק לתיווך בעבודה"
+             data-pos-f="עובדת באופן עצמאי בלמידה" data-neg-f="זקוקה לתיווך בעבודה">
+          <span class="title">תיווך בעבודה</span><span class="preview">לא נבחר</span>
+        </div>
+        <div class="toggle-btn" data-state="neu" 
+             data-pos-m="שומר על מיקוד ואינו מוסח בקלות" data-neg-m="דעתו מוסחת בקלות בידי גורמים חיצוניים"
+             data-pos-f="שומרת על מיקוד ואינה מוסחת בקלות" data-neg-f="דעתה מוסחת בקלות בידי גורמים חיצוניים">
+          <span class="title">מוסחות</span><span class="preview">לא נבחר</span>
+        </div>
+        <div class="toggle-btn" data-state="neu" 
+             data-pos-m="מתארגן היטב לקראת ביצוע מטלות" data-neg-m="מתקשה להתארגן לקראת ביצוע מטלות"
+             data-pos-f="מתארגנת היטב לקראת ביצוע מטלות" data-neg-f="מתקשה להתארגן לקראת ביצוע מטלות">
+          <span class="title">התארגנות במרחב/ציוד</span><span class="preview">לא נבחר</span>
+        </div>
+      </div>
+
+      <h3>קריאה, כתיבה ושפה</h3>
+      <div class="toggle-grid">
+        <div class="toggle-btn" data-state="neu" 
+             data-pos-m="קורא בשטף כנדרש" data-neg-m="מתקשה בקריאה בשטף"
+             data-pos-f="קוראת בשטף כנדרש" data-neg-f="מתקשה בקריאה בשטף">
+          <span class="title">שטף קריאה</span><span class="preview">לא נבחר</span>
+        </div>
+        <div class="toggle-btn" data-state="neu" 
+             data-pos-m="מראה הבנה של הנקרא ברמה הגלויה" data-neg-m="מתקשה בהבנת הנקרא ברמה הגלויה"
+             data-pos-f="מראה הבנה של הנקרא ברמה הגלויה" data-neg-f="מתקשה בהבנת הנקרא ברמה הגלויה">
+          <span class="title">הבנת הנקרא</span><span class="preview">לא נבחר</span>
+        </div>
+        <div class="toggle-btn" data-state="neu" 
+             data-pos-m="כותב בכתב-יד קריא ומעוצב" data-neg-m="מתקשה בכתיבה קריאה (כתב לא קריא)"
+             data-pos-f="כותבת בכתב-יד קריא ומעוצב" data-neg-f="מתקשה בכתיבה קריאה (כתב לא קריא)">
+          <span class="title">כתב יד וארגון הדף</span><span class="preview">לא נבחר</span>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top: 12px;">
+        <label for="strengths">חוזקות ותחומי עניין לימודיים:</label>
+        <textarea id="strengths" placeholder="למשל: בולט לטובה בשיעורי אמנות, ספורט, אנגלית..."></textarea>
+      </div>
+    </div>
+
+    <!-- חלק 4: תחום התנהגותי-רגשי -->
+    <div class="card">
+      <h2>4. תחום התנהגותי-רגשי</h2>
+      <h3>משמעת וויסות</h3>
+      <div class="toggle-grid">
+        <div class="toggle-btn" data-state="neu" 
+             data-pos-m="מקבל סמכות מבוגר באופן מותאם" data-neg-m="מתקשה בקבלת סמכות מבוגר"
+             data-pos-f="מקבלת סמכות מבוגר באופן מותאם" data-neg-f="מתקשה בקבלת סמכות מבוגר">
+          <span class="title">קבלת סמכות</span><span class="preview">לא נבחר</span>
+        </div>
+        <div class="toggle-btn" data-state="neu" 
+             data-pos-m="מגיב ברוגע ובאיפוק במצבי יום-יום" data-neg-m="מגיב בכעס קיצוני ופתאומי ('פתיל קצר')"
+             data-pos-f="מגיבה ברוגע ובאיפוק במצבי יום-יום" data-neg-f="מגיבה בכעס קיצוני ופתאומי ('פתיל קצר')">
+          <span class="title">תגובה לתסכול/כעס</span><span class="preview">לא נבחר</span>
+        </div>
+        <div class="toggle-btn" data-state="neu" 
+             data-pos-m="לוקח אחריות על מעשיו" data-neg-m="מתקשה לקחת אחריות על מעשיו"
+             data-pos-f="לוקחת אחריות על מעשיה" data-neg-f="מתקשה לקחת אחריות על מעשיה">
+          <span class="title">לקיחת אחריות</span><span class="preview">לא נבחר</span>
+        </div>
+        <div class="toggle-btn" data-state="neu" 
+             data-pos-m="משתמש בשיח מכבד ונמנע מאלימות מילולית" data-neg-m="מתבטא באלימות מילולית כלפי אחרים"
+             data-pos-f="משתמשת בשיח מכבד ונמנעת מאלימות מילולית" data-neg-f="מתבטאת באלימות מילולית כלפי אחרים">
+          <span class="title">אלימות מילולית</span><span class="preview">לא נבחר</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- חלק 5: תחום חברתי ותקשורתי -->
+    <div class="card">
+      <h2>5. תחום חברתי ותקשורתי</h2>
+      <div class="toggle-grid">
+        <div class="toggle-btn" data-state="neu" 
+             data-pos-m="בעל מעגל חברתי רחב ומגוון" data-neg-m="אינו מצליח ליצור מעגל חברתי רחב"
+             data-pos-f="בעלת מעגל חברתי רחב ומגוון" data-neg-f="אינה מצליחה ליצור מעגל חברתי רחב">
+          <span class="title">מעגל חברתי</span><span class="preview">לא נבחר</span>
+        </div>
+        <div class="toggle-btn" data-state="neu" 
+             data-pos-m="יוזם אינטראקציה חברתית" data-neg-m="מתקשה ליזום אינטראקציות חברתיות"
+             data-pos-f="יוזמת אינטראקציה חברתית" data-neg-f="מתקשה ליזום אינטראקציות חברתיות">
+          <span class="title">יוזמה חברתית</span><span class="preview">לא נבחר</span>
+        </div>
+        <div class="toggle-btn" data-state="neu" 
+             data-pos-m="משולב היטב בחברת הילדים בהפסקה" data-neg-m="נצפה לבד בהפסקה"
+             data-pos-f="משולבת היטב בחברת הילדים בהפסקה" data-neg-f="נצפית לבד בהפסקה">
+          <span class="title">תפקוד בהפסקה</span><span class="preview">לא נבחר</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- חלק 6: סיכום והמלצות -->
+    <div class="card">
+      <h2>6. סיכום והמלצות הצוות</h2>
+      <div class="form-group">
+        <label for="recommendations">המלצות אופרטיביות להמשך:</label>
+        <textarea id="recommendations" placeholder="למשל: המשך תוכנית אישית, התאמת תמיכות, דיון בחשיבה על מענה מסגרתי מותאם..."></textarea>
+      </div>
+    </div>
+
+    <button type="button" class="btn-submit" id="generateBtn">צור דו"ח חינוכי</button>
+  </form>
+
+  <!-- הפלט הנסתר -->
+  <div class="card output-card" id="outputCard">
+    <h2>הדו"ח המוכן (מוגן פרטיות)</h2>
+    <div id="reportOutput"></div>
+    <div class="actions">
+      <button class="btn-action" id="copyBtn">העתק</button>
+      <a class="btn-action" href="https://gemini.google.com/gem/1NbVmXKqEXwYdhE_Exg-_56JQ80Hzw_aA?usp=sharing" target="_blank" rel="noopener noreferrer">המשך עיבוד ב-AI</a>
+    </div>
+  </div>
 </div>
 
 <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // הגדרת תאריך ברירת מחדל להיום
     document.getElementById('reportDate').valueAsDate = new Date();
 
-    // לוגיקה ללחצן 3 מצבים ועדכון המלל בקטן
-    document.querySelectorAll('.toggle-item').forEach(item => {
-        item.setAttribute('data-state', 'null');
-        item.addEventListener('click', function() {
-            const currentState = this.getAttribute('data-state');
-            
-            if (currentState === 'null') {
-                this.setAttribute('data-state', 'v');
-            } else if (currentState === 'v') {
-                this.setAttribute('data-state', 'x');
-            } else {
-                this.setAttribute('data-state', 'null');
-            }
-            updateSinglePreview(this);
-        });
+    const genderSelect = document.getElementById('gender');
+    const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+    // עדכון טקסט תצוגה מקדימה לפי מגדר
+    function updatePreviews() {
+      const g = genderSelect.value;
+      toggleBtns.forEach(btn => {
+        const state = btn.dataset.state;
+        const posText = btn.dataset[`pos${g.toUpperCase()}`] || btn.dataset.posM;
+        const negText = btn.dataset[`neg${g.toUpperCase()}`] || btn.dataset.negM;
+        const previewEl = btn.querySelector('.preview');
+
+        if (state === 'pos') previewEl.textContent = posText;
+        else if (state === 'neg') previewEl.textContent = negText;
+        else previewEl.textContent = 'לא נבחר';
+      });
+    }
+
+    genderSelect.addEventListener('change', updatePreviews);
+
+    // מנגנון Toggle 3 מצבים: ניטרלי -> חיובי -> שלילי -> ניטרלי
+    toggleBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const currentState = btn.dataset.state;
+        let newState = 'neu';
+        if (currentState === 'neu') newState = 'pos';
+        else if (currentState === 'pos') newState = 'neg';
+        else if (currentState === 'neg') newState = 'neu';
+
+        btn.dataset.state = newState;
+        updatePreviews();
+      });
     });
 
-    function updateSinglePreview(item) {
-        const state = item.getAttribute('data-state');
-        const previewEl = item.querySelector('.toggle-preview');
-        if (!previewEl) return;
+    // מחולל הטקסט
+    document.getElementById('generateBtn').addEventListener('click', () => {
+      const g = genderSelect.value;
+      const isM = (g === 'm');
 
-        const isFemale = (document.getElementById('studentGender').value === 'female');
-        
-        if (state === 'v') {
-            const posAttr = isFemale ? 'data-pos-f' : 'data-pos-m';
-            previewEl.innerText = item.getAttribute(posAttr) || '';
-        } else if (state === 'x') {
-            const negAttr = isFemale ? 'data-neg-f' : 'data-neg-m';
-            previewEl.innerText = item.getAttribute(negAttr) || '';
-        } else {
-            previewEl.innerText = '';
+      // אנונימיזציה לפרטים מזהים
+      const name = "***";
+      const id = "***";
+
+      const dob = document.getElementById('dob').value;
+      const grade = document.getElementById('grade').value || "___";
+      const reportDate = document.getElementById('reportDate').value;
+      const knowTime = document.getElementById('knowTime').value || "שלא צוין";
+      const framework = document.getElementById('framework').value;
+      const diagDate = document.getElementById('diagDate').value;
+      const diagBy = document.getElementById('diagBy').value;
+      const strengths = document.getElementById('strengths').value;
+      const recommendations = document.getElementById('recommendations').value;
+
+      // איסוף נתוני Toggle
+      const posItems = [];
+      const negItems = [];
+
+      toggleBtns.forEach(btn => {
+        const state = btn.dataset.state;
+        if (state !== 'neu') {
+          const text = btn.dataset[`${state}${g.toUpperCase()}`] || btn.dataset[`${state}M`];
+          if (state === 'pos') posItems.push(text);
+          if (state === 'neg') negItems.push(text);
         }
-    }
+      });
 
-    function updateGenderPreviews() {
-        document.querySelectorAll('.toggle-item').forEach(item => {
-            updateSinglePreview(item);
-        });
-    }
+      // בניית הטקסט
+      let report = `דו"ח חינוכי-תפקודי\n`;
+      report += `=========================\n`;
+      report += `שם התלמיד/ה: ${name} | ת.ז: ${id} | ת. לידה: ${dob}\n`;
+      report += `כיתה: ${grade} | תאריך הדו"ח: ${reportDate}\n`;
+      report += `זמן היכרות עם הצוות: ${knowTime}\n\n`;
 
-    function getToggleStatements(containerSelector, isFemale) {
-        const container = document.querySelector(containerSelector);
-        if (!container) return { pos: [], neg: [] };
-        
-        const pos = [];
-        const neg = [];
-        const posAttr = isFemale ? 'data-pos-f' : 'data-pos-m';
-        const negAttr = isFemale ? 'data-neg-f' : 'data-neg-m';
-        
-        container.querySelectorAll('.toggle-item').forEach(item => {
-            const state = item.getAttribute('data-state');
-            if (state === 'v') {
-                pos.push(item.getAttribute(posAttr));
-            } else if (state === 'x') {
-                neg.push(item.getAttribute(negAttr));
-            }
-        });
-        
-        return { pos, neg };
-    }
+      report += `1. רקע חינוכי, אבחנתי וסל תמיכות:\n`;
+      report += `התלמיד/ה ${isM ? 'לומד' : 'לומדת'} במסגרת ${framework} בכיתה ${grade}.\n`;
+      if (diagBy || diagDate) {
+        report += `קיים אבחון מאת ${diagBy || 'גורם מוסמך'} (תאריך: ${diagDate || 'לא צוין'}).\n`;
+      }
+      
+      report += `\n2. תפקוד שנצפה במסגרת:\n`;
+      if (posItems.length > 0) {
+        report += `חוזקות ומאפיינים בולטים:\n- ` + posItems.join('\n- ') + `\n\n`;
+      }
+      if (negItems.length > 0) {
+        report += `מוקדי קושי שנצפו:\n- ` + negItems.join('\n- ') + `\n\n`;
+      }
 
-    function generateReport() {
-        // הסתרת השם והת"ז לכוכביות בדו"ח הסופי להגנת הפרטיות
-        const nameDisplay = "***";
-        const idDisplay = "***";
+      if (strengths) {
+        report += `חוזקות ותחומי עניין נוספים: ${strengths}\n\n`;
+      }
 
-        const gender = document.getElementById('studentGender').value;
-        const isFemale = (gender === 'female');
-        
-        const birthDate = document.getElementById('birthDate').value || '---';
-        const studentClass = document.getElementById('studentClass').value || '---';
-        const reportDate = document.getElementById('reportDate').value || '---';
-        const knowTime = document.getElementById('knowTime').value || 'כמה חודשים';
+      report += `3. סיכום והמלצות הצוות:\n`;
+      report += recommendations ? recommendations : `מומלץ להמשיך מעקב ומתן תמיכות בהתאם לצרכים שעלו.`;
+      report += `\n\nבברכה,\nצוות בית הספר`;
 
-        // 2. רקע חינוכי, אבחנתי ומסגרת
-        const rawEduFrame = document.getElementById('educationFrame').value;
-        let eduFrameStr = rawEduFrame;
-        if (rawEduFrame === 'סל אישי') eduFrameStr = isFemale ? 'תלמידת סל אישי' : 'תלמיד סל אישי';
-        if (rawEduFrame === 'שילוב') eduFrameStr = isFemale ? 'תלמידת שילוב' : 'תלמיד שילוב';
+      const outputEl = document.getElementById('reportOutput');
+      outputEl.textContent = report;
+      document.getElementById('outputCard').classList.add('active');
 
-        const integrationComm = document.getElementById('integrationCommittee').value;
-        const committee = document.getElementById('committeeStatus').value;
-        const diagDate = document.getElementById('diagDate').value;
-        const diagAssessor = document.getElementById('diagAssessor').value;
-        
-        const diagData = getToggleStatements('.section-card:nth-of-type(2) .toggle-grid:nth-of-type(1)', isFemale);
-        const supportData = getToggleStatements('.section-card:nth-of-type(2) .toggle-grid:nth-of-type(2)', isFemale);
-        const bgNotes = document.getElementById('backgroundNotes').value;
+      // גלילה חלקה לתוצאה
+      document.getElementById('outputCard').scrollIntoView({ behavior: 'smooth' });
+    });
 
-        // 3. לימודי
-        const learningData = getToggleStatements('#learningGrid', isFemale);
-        const langData = getToggleStatements('#langGrid', isFemale);
-        const mathData = getToggleStatements('#mathGrid', isFemale);
-        const mathDetails = document.getElementById('mathDetails').value;
-        const strengths = document.getElementById('strengths').value;
-
-        // 4. התנהגותי
-        const behaviorItems = document.querySelectorAll('.section-card:nth-of-type(4) .toggle-item');
-        const behaviorPos = [];
-        const behaviorNeg = [];
-        const posAttr = isFemale ? 'data-pos-f' : 'data-pos-m';
-        const negAttr = isFemale ? 'data-neg-f' : 'data-neg-m';
-
-        behaviorItems.forEach(item => {
-            const state = item.getAttribute('data-state');
-            if (state === 'v') behaviorPos.push(item.getAttribute(posAttr));
-            if (state === 'x') behaviorNeg.push(item.getAttribute(negAttr));
-        });
-        const eventFrequency = document.getElementById('eventFrequency').value;
-        const behaviorDetails = document.getElementById('behaviorDetails').value;
-
-        // 5. חברתי
-        const socialData = getToggleStatements('.section-card:nth-of-type(5) .toggle-grid', isFemale);
-
-        // 6. סיכום
-        const recommendations = document.getElementById('recommendations').value;
-
-        // מילות קישור מותאמות מגדרית
-        const titleStudent = isFemale ? 'שם התלמידה' : 'שם התלמיד';
-        const verbLearns = isFemale ? 'לומדת' : 'לומד';
-        const verbDiagnosed = isFemale ? 'מאובחנת' : 'מאובחן';
-        const verbGets = isFemale ? 'מקבלת' : 'מקבל';
-        const nounStudent = isFemale ? 'תלמידה' : 'תלמיד';
-        const pronounsIs = isFemale ? 'הינה' : 'הינו';
-        const adjPromote = isFemale ? 'לקידומה' : 'לקידומו';
-
-        // בניית הטקסט המנוסח
-        let text = `דו"ח חינוכי-תפקודי\n`;
-        text += `=========================\n`;
-        text += `${titleStudent}: ${nameDisplay} | ת.ז: ${idDisplay} | ת. לידה: ${birthDate}\n`;
-        text += `כיתה: ${studentClass} | תאריך כתיבת הדו"ח: ${reportDate}\n`;
-        text += `זמן היכרות עם הצוות: ${knowTime}\n\n`;
-
-        // חלק 1 - רקע
-        text += `1. רקע חינוכי, אבחנתי וסל תמיכות:\n`;
-        text += `התלמיד/ה ${verbLearns} במסגרת ${eduFrameStr} בכיתה ${studentClass}. `;
-        
-        if (integrationComm === 'כן') {
-            text += `עבר/ה ועדת שילוב. `;
-        }
-        if (committee === 'כן') {
-            text += `עבר/ה ועדת אפיון וזכאות. `;
-        }
-
-        if (diagData.pos.length > 0) {
-            text += `התלמיד/ה ${verbDiagnosed} עם: ${diagData.pos.join(', ')}`;
-            let diagDetailsArr = [];
-            if (diagDate) diagDetailsArr.push(`בתאריך ${diagDate}`);
-            if (diagAssessor) diagDetailsArr.push(`על ידי ${diagAssessor}`);
-            
-            if (diagDetailsArr.length > 0) {
-                text += ` (${diagDetailsArr.join(' ')})`;
-            }
-            text += `. `;
-        }
-        if (supportData.pos.length > 0) {
-            text += `במסגרת בית הספר ${verbGets} סל תמיכות הכולל: ${supportData.pos.join(', ')}. `;
-        }
-        if (bgNotes) text += `\nרקע נוסף: ${bgNotes}`;
-        text += `\n\n`;
-
-        // חלק 2 - לימודי
-        text += `2. תחום לימודי ותפקודי לומד:\n`;
-        let learningParagraphs = [];
-
-        if (learningData.pos.length > 0 || learningData.neg.length > 0) {
-            let str = "";
-            if (learningData.pos.length > 0) str += `${learningData.pos.join('; ')}. `;
-            if (learningData.neg.length > 0) str += `בצד זה, ניכרים מוקדי קושי: ${learningData.neg.join('; ')}. `;
-            learningParagraphs.push(str.trim());
-        }
-
-        if (langData.pos.length > 0 || langData.neg.length > 0) {
-            let str = "";
-            if (langData.pos.length > 0) str += `בתפקוד השפתי והאורייני נצפה כי ${langData.pos.join('; ')}. `;
-            if (langData.neg.length > 0) str += `בנוסף, ניכרים קשיים: ${langData.neg.join('; ')}. `;
-            learningParagraphs.push(str.trim());
-        }
-
-        if (mathData.pos.length > 0 || mathData.neg.length > 0 || mathDetails) {
-            let str = "";
-            if (mathData.pos.length > 0) str += `בתחום החשבון ${mathData.pos.join('; ')}. `;
-            if (mathData.neg.length > 0) str += `קשיים בולטים בחשבון: ${mathData.neg.join('; ')}. `;
-            if (mathDetails) str += `${mathDetails}`;
-            learningParagraphs.push(str.trim());
-        }
-
-        if (strengths) {
-            learningParagraphs.push(`התלמיד/ה בולט/ת לטובה ב-${strengths}.`);
-        }
-
-        text += learningParagraphs.join('\n') + `\n\n`;
-
-        // חלק 3 - התנהגותי
-        text += `3. תחום התנהגותי-רגשי:\n`;
-        let behaviorParagraphs = [];
-        if (behaviorPos.length > 0) behaviorParagraphs.push(`${behaviorPos.join('; ')}.`);
-        if (behaviorNeg.length > 0) behaviorParagraphs.push(`מוקדי קושי והתנהגויות מאתגרות: ${behaviorNeg.join('; ')}.`);
-        if (eventFrequency) behaviorParagraphs.push(`תדירות אירועים: ${eventFrequency}.`);
-        if (behaviorDetails) behaviorParagraphs.push(behaviorDetails);
-
-        text += behaviorParagraphs.join('\n') + `\n\n`;
-
-        // חלק 4 - חברתי
-        text += `4. תחום חברתי-תקשורתי:\n`;
-        let socialParagraphs = [];
-        if (socialData.pos.length > 0) socialParagraphs.push(`${socialData.pos.join('; ')}.`);
-        if (socialData.neg.length > 0) socialParagraphs.push(`בתחום החברתי-תקשורתי ניכרים קשיים: ${socialData.neg.join('; ')}.`);
-
-        text += socialParagraphs.join('\n') + `\n\n`;
-
-        // חלק 5 - סיכום והמלצות
-        text += `5. סיכום והמלצות:\n`;
-        text += `התלמיד/ה ${pronounsIs} ${nounStudent} המפגין/ה חוזקות לצד קשיים בתפקוד היומיומי במסגרת. `;
-        if (recommendations) {
-            text += `${recommendations}\n\n`;
-        } else {
-            text += `הצוות החינוכי ממשיך ללוות את התלמיד/ה תוך התאמת המענים הנדרשים ${adjPromote}.\n\n`;
-        }
-
-        text += `בברכה,\nצוות חינוכי`;
-
-        document.getElementById('reportPreview').innerText = text;
-        document.getElementById('reportOutputContainer').style.display = 'block';
-        document.getElementById('reportOutputContainer').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function copyToClipboard() {
-        const text = document.getElementById('reportPreview').innerText;
-        navigator.clipboard.writeText(text).then(() => {
-            alert('הדו"ח הועתק בהצלחה! תוכלי להדביק אותו (Ctrl+V) בקובץ Word.');
-        });
-    }
-
-    function downloadDoc() {
-        const text = document.getElementById('reportPreview').innerText;
-        const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `דוח_חינוכי_אנונימי.txt`;
-        link.click();
-    }
+    // כפתור העתקה
+    document.getElementById('copyBtn').addEventListener('click', () => {
+      const text = document.getElementById('reportOutput').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('הדו"ח הועתק בהצלחה ללוח!');
+      });
+    });
+  });
 </script>
 
 </body>
