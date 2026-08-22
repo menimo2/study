@@ -1,0 +1,777 @@
+
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מחולל דו"ח חינוכי-תפקודי (3 מצבים)</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --bg: #f4f6f9;
+            --card-bg: #ffffff;
+            --text: #333;
+            --border: #dcdfe6;
+            --green: #27ae60;
+            --red: #e74c3c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 { margin: 0 0 10px 0; font-size: 1.8rem; }
+        header p { margin: 0; opacity: 0.9; }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+
+        .section-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-right: 5px solid var(--secondary);
+        }
+
+        .section-card h2 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1.3rem;
+            border-bottom: 2px solid var(--bg);
+            padding-bottom: 10px;
+        }
+
+        .sub-title {
+            font-weight: bold;
+            color: var(--secondary);
+            margin: 15px 0 8px 0;
+            font-size: 1.05rem;
+        }
+
+        .form-group { margin-bottom: 15px; }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #444;
+        }
+
+        input[type="text"], input[type="date"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        textarea { resize: vertical; min-height: 70px; }
+
+        .toggle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        /* עיצוב כפתור 3 מצבים */
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-left: 10px;
+            background: #e0e0e0;
+            color: #666;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .toggle-item[data-state="v"] {
+            background: #e8f8f5;
+            border-color: #a3e4d7;
+        }
+
+        .toggle-item[data-state="v"] .toggle-btn {
+            background: var(--green);
+            color: white;
+        }
+
+        .toggle-item[data-state="x"] {
+            background: #fdf2e9;
+            border-color: #fad7a0;
+        }
+
+        .toggle-item[data-state="x"] .toggle-btn {
+            background: var(--red);
+            color: white;
+        }
+
+        .toggle-text {
+            font-size: 0.9rem;
+            line-height: 1.3;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .actions { text-align: center; margin: 30px 0; }
+
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin: 5px;
+            font-weight: bold;
+        }
+
+        .btn:hover { background: #2980b9; }
+        .btn-success { background: #27ae60; }
+
+        #reportOutputContainer {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+
+        #reportPreview {
+            line-height: 1.7;
+            white-space: pre-wrap;
+            background: #fafafa;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .toggle-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>מחולל דו"ח חינוכי-תפקודי חכם</h1>
+        <p>מערכת 3 מצבים לבחירה מהירה לצוות החינוכי</p>
+    </header>
+
+    <div class="legend">
+        <div class="legend-item"><span class="toggle-btn" style="background:#e0e0e0; color:#666;">-</span> ללא (NULL)</div>
+        <div class="legend-item"><span class="toggle-btn" style="background:var(--green); color:white;">✓</span> חיובי (קיים/מתפקד)</div>
+        <div class="legend-item"><span class="toggle-btn" style="background:var(--red); color:white;">✗</span> קושי / שלילי</div>
+    </div>
+
+    <form id="reportForm">
+        <!-- 1. פרטים אישיים -->
+        <div class="section-card">
+            <h2>1. פרטים אישיים ורקע היכרות</h2>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>שם התלמיד/ה:</label>
+                    <input type="text" id="studentName" required>
+                </div>
+                <div class="form-group">
+                    <label>תעודת זהות:</label>
+                    <input type="text" id="studentId">
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>תאריך לידה:</label>
+                    <input type="date" id="birthDate">
+                </div>
+                <div class="form-group">
+                    <label>כיתה:</label>
+                    <input type="text" id="studentClass" placeholder="לדוגמה: ד'2">
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>תאריך כתיבת הדו"ח:</label>
+                    <input type="date" id="reportDate">
+                </div>
+                <div class="form-group">
+                    <label>זמן היכרות הצוות עם התלמיד/ה:</label>
+                    <input type="text" id="knowTime" placeholder="לדוגמה: מתחילת השנה / שנתיים">
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. רקע אבחנתי וסל תמיכות -->
+        <div class="section-card">
+            <h2>2. רקע חינוכי, אבחנתי וסל תמיכות</h2>
+            <div class="form-group">
+                <label>אבחנה / אפיון הלקות (לחץ לסימון ✓ אם קיים):</label>
+                <div class="toggle-grid">
+                    <div class="toggle-item" data-pos="ASD (רצף התקשורתי)" data-neg="ללא אבחנת ASD">
+                        <div class="toggle-btn">-</div><span class="toggle-text">ASD</span>
+                    </div>
+                    <div class="toggle-item" data-pos="הפרעת קשב וריכוז (ADHD)" data-neg="ללא הפרעת קשב">
+                        <div class="toggle-btn">-</div><span class="toggle-text">ADHD</span>
+                    </div>
+                    <div class="toggle-item" data-pos="לקות למידה רב-תחומית" data-neg="ללא לקות למידה">
+                        <div class="toggle-btn">-</div><span class="toggle-text">לקות למידה</span>
+                    </div>
+                    <div class="toggle-item" data-pos="הפרעה התנהגותית/רגשית (ODD)" data-neg="ללא הפרעה התנהגותית">
+                        <div class="toggle-btn">-</div><span class="toggle-text">ODD / התנהגותי</span>
+                    </div>
+                    <div class="toggle-item" data-pos="חרדה / חרדת נטישה" data-neg="ללא חרדות">
+                        <div class="toggle-btn">-</div><span class="toggle-text">חרדה</span>
+                    </div>
+                    <div class="toggle-item" data-pos="עיכוב התפתחותי שפתי" data-neg="ללא עיכוב שפתי">
+                        <div class="toggle-btn">-</div><span class="toggle-text">עיכוב שפתי</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>מתי אובחן/ה?</label>
+                    <input type="text" id="diagDate" placeholder="למשל: לפני כשנתיים">
+                </div>
+                <div class="form-group">
+                    <label>האם עבר/ה ועדת אפיון וזכאות?</label>
+                    <select id="committeeStatus">
+                        <option value="עבר/ה ועדת אפיון וזכאות וזכאי/ת לסל תמיכות">כן - עבר/ה וזכאי/ת</option>
+                        <option value="טרם עבר/ה ועדת אפיון וזכאות (הדו"ח נכתב לקראת הוועדה)">טרם - הדו"ח נכתב לקראת ועדה</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>סל תמיכות ומענים בפועל (לחץ ✓ אם מקבל/ת):</label>
+                <div class="toggle-grid">
+                    <div class="toggle-item" data-pos="סייעת אישית / משלבת" data-neg="אינו/ה מקבל/ת סייעת">
+                        <div class="toggle-btn">-</div><span class="toggle-text">סייעת אישית</span>
+                    </div>
+                    <div class="toggle-item" data-pos="טיפול באמנות / הבעה ורגש" data-neg="אינו/ה מקבל/ת טיפול באמנות">
+                        <div class="toggle-btn">-</div><span class="toggle-text">טיפול באמנות</span>
+                    </div>
+                    <div class="toggle-item" data-pos="הוראה מותאמת / מתקנת" data-neg="אינו/ה מקבל/ת הוראה מותאמת">
+                        <div class="toggle-btn">-</div><span class="toggle-text">הוראה מותאמת</span>
+                    </div>
+                    <div class="toggle-item" data-pos="קלינאית תקשורת" data-neg="אינו/ה מקבל/ת קלינאית תקשורת">
+                        <div class="toggle-btn">-</div><span class="toggle-text">קלינאית תקשורת</span>
+                    </div>
+                    <div class="toggle-item" data-pos="ריפוי בעיסוק" data-neg="אינו/ה מקבל/ת ריפוי בעיסוק">
+                        <div class="toggle-btn">-</div><span class="toggle-text">ריפוי בעיסוק</span>
+                    </div>
+                    <div class="toggle-item" data-pos="עבודה בקבוצה קטנה בכיתה כשהדבר מתאפשר" data-neg="אינו/ה משולב/ת בקבוצה קטנה בכיתה">
+                        <div class="toggle-btn">-</div><span class="toggle-text">עבודה בקבוצה קטנה</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>הערות על רקע/ביקור סדיר (אופציונלי):</label>
+                <textarea id="backgroundNotes" placeholder="פרט רק אם יש היעדרויות ממושכות, מעברי בית ספר..."></textarea>
+            </div>
+        </div>
+
+        <!-- 3. תחום לימודי ותפקודי לומד -->
+        <div class="section-card">
+            <h2>3. תחום לימודי ותפקודי לומד</h2>
+            
+            <div class="sub-title">תפקודי לומד, מוסחות וארגון:</div>
+            <div class="toggle-grid" id="learningGrid">
+                <div class="toggle-item" data-pos="מראה מוטיבציה לימודית גבוהה" data-neg="מראה חוסר מוטיבציה לימודית">
+                    <div class="toggle-btn">-</div><span class="toggle-text">מוטיבציה לימודית</span>
+                </div>
+                <div class="toggle-item" data-pos="מבצע משימות של למידה עצמית בכיתה" data-neg="מתקשה לבצע משימות בלמידה עצמית בכיתה">
+                    <div class="toggle-btn">-</div><span class="toggle-text">ביצוע משימות עצמאיות</span>
+                </div>
+                <div class="toggle-item" data-pos="לומד/ת היטב במסגרת הוראה פרונטלית" data-neg="מתקשה ללמוד במסגרת הוראה פרונטלית">
+                    <div class="toggle-btn">-</div><span class="toggle-text">למידה בהוראה פרונטלית</span>
+                </div>
+                <div class="toggle-item" data-pos="מסוגל/ת לבצע משימות הדורשות ריכוז לאורך זמן" data-neg="מתקשה לבצע משימות הדורשות ריכוז לאורך זמן">
+                    <div class="toggle-btn">-</div><span class="toggle-text">ריכוז לאורך זמן</span>
+                </div>
+                <div class="toggle-item" data-pos="שומר/ת על מיקוד ואינו/ה מוסח/ת בקלות" data-neg="דעתו/ה מוסחת בקלות בידי גורמים חיצוניים (רעשים, חפצים, תנועה בכיתה)">
+                    <div class="toggle-btn">-</div><span class="toggle-text">מוסחות מגורמים חיצוניים</span>
+                </div>
+                <div class="toggle-item" data-pos="עובד/ת ברצף ללא הפסקות מיותרות" data-neg="עושה הפסקות רבות בביצוע מטלות לימוד">
+                    <div class="toggle-btn">-</div><span class="toggle-text">עבודה ברצף (ללא הפסקות)</span>
+                </div>
+                <div class="toggle-item" data-pos="מגלה התמדה ולא מתייאש/ת במטלות" data-neg="מתייאש/ת במהלך ביצוע של מטלות לימודיות">
+                    <div class="toggle-btn">-</div><span class="toggle-text">התמדה במטלות לימודיות</span>
+                </div>
+                <div class="toggle-item" data-pos="מתמודד/ת היטב עם שאלות פתוחות" data-neg="מתקשה להתמודד עם שאלות פתוחות במטלות לימוד">
+                    <div class="toggle-btn">-</div><span class="toggle-text">התמודדות עם שאלות פתוחות</span>
+                </div>
+                <div class="toggle-item" data-pos="משתתף/ת ברצון בפעילויות לימודיות מובנות" data-neg="מתנגד/ת לבצע משימות או פעילויות לימודיות מובנות או נמנע/ת מהן">
+                    <div class="toggle-btn">-</div><span class="toggle-text">היענות לפעילויות מובנות</span>
+                </div>
+                <div class="toggle-item" data-pos="מתארגן/ת היטב לקראת ביצוע מטלות בשיעור" data-neg="מתקשה להתארגן לקראת ביצוע מטלות בזמן השיעור">
+                    <div class="toggle-btn">-</div><span class="toggle-text">התארגנות למטלות בשיעור</span>
+                </div>
+                <div class="toggle-item" data-pos="מכיר/ה ומבין/ה את מערכת השעות הכיתתית" data-neg="מתקשה להכיר ולעקוב אחר מערכת השעות הכיתתית">
+                    <div class="toggle-btn">-</div><span class="toggle-text">היכרות עם מערכת השעות</span>
+                </div>
+                <div class="toggle-item" data-pos="מקפיד/ה להגיע לכיתה עם הציוד הנדרש" data-neg="מתקשה להגיע לכיתה כשברשותו/ה הציוד הנדרש ללמידה">
+                    <div class="toggle-btn">-</div><span class="toggle-text">הגעה עם ציוד נדרש</span>
+                </div>
+            </div>
+
+            <div class="sub-title">תחום השפה, הקריאה והכתיבה:</div>
+            <div class="toggle-grid" id="langGrid">
+                <div class="toggle-item" data-pos="קורא/ת טקסטים באורך המצופה מבני גילו/ה" data-neg="מתקשה לקרוא טקסטים באורך המצופה מבני גילו/ה">
+                    <div class="toggle-btn">-</div><span class="toggle-text">קריאת טקסטים באורך מצופה</span>
+                </div>
+                <div class="toggle-item" data-pos="מראה הבנה טובה של הוראות פשוטות" data-neg="מתקשה בהבנת הוראות פשוטות">
+                    <div class="toggle-btn">-</div><span class="toggle-text">הבנת הוראות פשוטות</span>
+                </div>
+                <div class="toggle-item" data-pos="מראה הבנה של הוראות הניתנות בעל פה בכיתה" data-neg="מתקשה בהבנת הוראות הניתנות בעל פה בכיתה">
+                    <div class="toggle-btn">-</div><span class="toggle-text">הבנת הוראות בעל פה בכיתה</span>
+                </div>
+                <div class="toggle-item" data-pos="מראה הבנה של הוראות כתובות" data-neg="מתקשה בהבנת הוראות כתובות">
+                    <div class="toggle-btn">-</div><span class="toggle-text">הבנת הוראות כתובות</span>
+                </div>
+                <div class="toggle-item" data-pos="מראה הבנה של טקסטים כתובים המוקראים לו/ה בכיתה" data-neg="מתקשה בהבנת טקסטים המוקראים לו/ה">
+                    <div class="toggle-btn">-</div><span class="toggle-text">הבנת טקסטים מוקראים</span>
+                </div>
+                <div class="toggle-item" data-pos="מבחין/ה היטב בין עיקר לטפל" data-neg="מתקשה להבחין בין עיקר לטפל">
+                    <div class="toggle-btn">-</div><span class="toggle-text">הבחנה בין עיקר לטפל</span>
+                </div>
+                <div class="toggle-item" data-pos="מנסח/ת בעל פה רעיונות בבהירות" data-neg="מתקשה לנסח בעל פה רעיונות בבהירות">
+                    <div class="toggle-btn">-</div><span class="toggle-text">ניסוח רעיונות בעל פה</span>
+                </div>
+                <div class="toggle-item" data-pos="מביע/ה את עצמו/ה באמצעות אוצר מילים רחב" data-neg="משתמש/ת באוצר מילים מצומצם/דל">
+                    <div class="toggle-btn">-</div><span class="toggle-text">אוצר מילים</span>
+                </div>
+                <div class="toggle-item" data-pos="כותב/ת בכתב-יד קריא ומעוצב" data-neg="מתקשה בכתיבה קריאה (כתב לא קריא/עיצוב לקוי)">
+                    <div class="toggle-btn">-</div><span class="toggle-text">כתב-יד קריא</span>
+                </div>
+                <div class="toggle-item" data-pos="מארגן/ת את הכתיבה בהתאם למרחב הדף" data-neg="מתקשה בארגון הכתיבה במרחב הדף">
+                    <div class="toggle-btn">-</div><span class="toggle-text">ארגון מרחב הדף</span>
+                </div>
+                <div class="toggle-item" data-pos="מספיק/ה לכתוב את הנדרש במהלך השיעור" data-neg="אינו/ה מספיק/ה לכתוב את הנדרש במהלך השיעור">
+                    <div class="toggle-btn">-</div><span class="toggle-text">קצב כתיבה בשיעור</span>
+                </div>
+            </div>
+
+            <div class="sub-title">תחום החשבון:</div>
+            <div class="toggle-grid" id="mathGrid">
+                <div class="toggle-item" data-pos="מבצע/ת נכון פעולות חשבון שונות" data-neg="מתקשה בביצוע פעולות חשבון בסיסיות">
+                    <div class="toggle-btn">-</div><span class="toggle-text">ביצוע פעולות חשבון</span>
+                </div>
+                <div class="toggle-item" data-pos="מצליח/ה לפתור בעיות מילוליות בחשבון הניתנות בכיתה" data-neg="מתקשה לפתור בעיות מילוליות בחשבון">
+                    <div class="toggle-btn">-</div><span class="toggle-text">פתרון בעיות מילוליות</span>
+                </div>
+            </div>
+            <div class="form-group" style="margin-top: 10px;">
+                <textarea id="mathDetails" placeholder="פירוט נוסף בחשבון (נושאים שנרכשו מול נושאים שטרם נרכשו/פערים)..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>חוזקות ותחומי עניין לימודיים:</label>
+                <input type="text" id="strengths" placeholder="למשל: בולט/ת לטובה בשיעורי אמנות, מוזיקה, ספורט, אנגלית...">
+            </div>
+        </div>
+
+        <!-- 4. תחום התנהגותי-רגשי -->
+        <div class="section-card">
+            <h2>4. תחום התנהגותי-רגשי</h2>
+            
+            <div class="sub-title">ציות לכללים, גבולות ומשמעת:</div>
+            <div class="toggle-grid">
+                <div class="toggle-item" data-pos="נשמע/ת להוראות המורה בכיתה" data-neg="מתקשה להישמע להוראות המורה בכיתה">
+                    <div class="toggle-btn">-</div><span class="toggle-text">משמעת והוראות המורה</span>
+                </div>
+                <div class="toggle-item" data-pos="מתנהל/ת על פי הכללים גם ללא נוכחות צוות" data-neg="מתקשה להתנהל על פי הכללים ללא נוכחות צוות">
+                    <div class="toggle-btn">-</div><span class="toggle-text">ציות לכללים ללא נוכחות מבוגר</span>
+                </div>
+                <div class="toggle-item" data-pos="נשאר/ת במרחבי הכיתה והשיעור באופן מותאם" data-neg="משוטט/ת בשטח בית הספר בשעת השיעורים">
+                    <div class="toggle-btn">-</div><span class="toggle-text">נוכחות בשיעור (שוטטות)</span>
+                </div>
+                <div class="toggle-item" data-pos="נכנס/ת בזמן לכיתה בתחילת השיעור" data-neg="מאחר/ת להיכנס לכיתה בתחילת השיעור">
+                    <div class="toggle-btn">-</div><span class="toggle-text">עמידה בזמנים בכניסה לשיעור</span>
+                </div>
+                <div class="toggle-item" data-pos="שומר/ת על בטיחות אישית בכיתה" data-neg="מתנהג/ת בכיתה באופן שבו הוא/היא מסכן/ת את עצמו/ה (עומד/ת על חלון, קופץ/ת על שולחנות)">
+                    <div class="toggle-btn">-</div><span class="toggle-text">התנהגות המסכנת את עצמו</span>
+                </div>
+            </div>
+
+            <div class="sub-title">תגובה לתסכול, וויסות ואלימות:</div>
+            <div class="toggle-grid">
+                <div class="toggle-item" data-pos="מגלה יכולת לדחות סיפוקים" data-neg="מתקשה לדחות סיפוקים">
+                    <div class="toggle-btn">-</div><span class="toggle-text">דחיית סיפוקים</span>
+                </div>
+                <div class="toggle-item" data-pos="מגיב/ה ברוגע ובאיפוק במצבי יום-יום" data-neg="מגיב/ה בכעס קיצוני ופתאומי במצבים יום-יומיים כמה פעמים ביום ('פתיל קצר')">
+                    <div class="toggle-btn">-</div><span class="toggle-text">תגובות כעס פתאומיות ('פתיל קצר')</span>
+                </div>
+                <div class="toggle-item" data-pos="שומר/ת על תגובות מותאמות בעת מריבה" data-neg="מגיב/ה באופן לא פרופורציונלי במהלך מריבה">
+                    <div class="toggle-btn">-</div><span class="toggle-text">פרופורציה בעת מריבה</span>
+                </div>
+                <div class="toggle-item" data-pos="מקבל/ת ביקורת והערות באופן מקדם" data-neg="מגיב/ה באופן לא פרופורציונאלי לביקורת או להערות המופנות אליו/ה">
+                    <div class="toggle-btn">-</div><span class="toggle-text">תגובה לביקורת/הערות</span>
+                </div>
+                <div class="toggle-item" data-pos="חוזר/ת לתפקוד במהירות לאחר שנתקל/ת בקושי" data-neg="מתקשה לחזור לתפקוד לאחר שנתקל/ת בקושי">
+                    <div class="toggle-btn">-</div><span class="toggle-text">חזרה לתפקוד לאחר קושי</span>
+                </div>
+                <div class="toggle-item" data-pos="משתמש/ת בשיח מכבד ונמנע/ת מאלימות מילולית" data-neg="מתבטא/ת באלימות מילולית כלפי ילדים אחרים (מקניט, מעליב, מקלל)">
+                    <div class="toggle-btn">-</div><span class="toggle-text">אלימות מילולית</span>
+                </div>
+                <div class="toggle-item" data-pos="נמנע/ת לחלוטין שאיומים על ילדים" data-neg="מאיים/ת על ילדים אחרים">
+                    <div class="toggle-btn">-</div><span class="toggle-text">איומים על ילדים</span>
+                </div>
+                <div class="toggle-item" data-pos="שומר/ת על איפוק גופני ושלום חבריו" data-neg="פוגע/ת פיזית בילדים אחרים (מכה, נושך, בועט, מושך בשיער, שורט)">
+                    <div class="toggle-btn">-</div><span class="toggle-text">אלימות פיזית</span>
+                </div>
+                <div class="toggle-item" data-pos="מגיב/ה בוויסות תחושתי מותאם לגירויים" data-neg="מגיב/ה יתר על המידה לגירויים סביבתיים שונים (רעש, מגע, תאורה)">
+                    <div class="toggle-btn">-</div><span class="toggle-text">תגובתיות יתר לגירויים תחושתיים</span>
+                </div>
+            </div>
+
+            <div class="sub-title">תפיסה עצמית, רגש וייחוס:</div>
+            <div class="toggle-grid">
+                <div class="toggle-item" data-pos="מביע/ה הנאה מפעילויות, ממשחקים ומטיולים" data-neg="מתקשה להביע הנאה מפעילויות, משחקים או טיולים">
+                    <div class="toggle-btn">-</div><span class="toggle-text">הנאה מפעילויות ומשחקים</span>
+                </div>
+                <div class="toggle-item" data-pos="מביע/ה רגשות באופן חופשי ומותאם" data-neg="מתקשה להביע רגשות (בהבעות פנים או באופן מילולי)">
+                    <div class="toggle-btn">-</div><span class="toggle-text">הבעת רגשות</span>
+                </div>
+                <div class="toggle-item" data-pos="מפגין/ה אמונה ביכולותיו/ה" data-neg="אומר בתסכול: 'לא יצליח לי', 'לא יצא לי', 'לא יכול'">
+                    <div class="toggle-btn">-</div><span class="toggle-text">אמונה ביכולת אישית</span>
+                </div>
+                <div class="toggle-item" data-pos="פועל/ת באופן עצמאי ללא צורך באישורים מתמידים" data-neg="מחפש/ת אישורים וחיזוקים לכל פעולה שהוא/היא עושה">
+                    <div class="toggle-btn">-</div><span class="toggle-text">צורך באישורים וחיזוקים</span>
+                </div>
+                <div class="toggle-item" data-pos="לוקח/ת אחריות אישית על מעשיו/ה" data-neg="תולה את האשמה על אחרים גם במצבים שבהם האחריות מוטלת עליו/ה">
+                    <div class="toggle-btn">-</div><span class="toggle-text">לקיחת אחריות</span>
+                </div>
+                <div class="toggle-item" data-pos="מבחין/ה בריאליות בין אחריותו לבין נסיבות חיצוניות" data-neg="מאשים/ה את עצמו/ה גם במצבים שאינם תלויים בו/ה">
+                    <div class="toggle-btn">-</div><span class="toggle-text">אשמה עצמית מופרזת</span>
+                </div>
+                <div class="toggle-item" data-pos="תופס/ת סיטואציות חברתיות באופן ניטרלי ומקדם" data-neg="נוטה לייחס לאחרים כוונות שליליות ופוגעניות כלפיו/ה ללא סיבה ברורה">
+                    <div class="toggle-btn">-</div><span class="toggle-text">ייחוס כוונות שליליות לאחרים</span>
+                </div>
+                <div class="toggle-item" data-pos="מפגין/ה חוסן רגשי בשגרה" data-neg="מביע/ה חרדות ופחדים המשפיעים על תפקודו/ה">
+                    <div class="toggle-btn">-</div><span class="toggle-text">הבעת חרדות ופחדים</span>
+                </div>
+                <div class="toggle-item" data-pos="מעורב/ת ומתעניין/ת במתרחש סביבו/ה" data-neg="מגלה אדישות למתרחש בכיתה או בהפסקה ללא קשר לתוכן הפעילות">
+                    <div class="toggle-btn">-</div><span class="toggle-text">אדישות למתרחש</span>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <textarea id="behaviorDetails" placeholder="פירוט חופשי נוסף לתחום ההתנהגותי-רגשי..."></textarea>
+            </div>
+        </div>
+
+        <!-- 5. תחום חברתי ותקשורתי -->
+        <div class="section-card">
+            <h2>5. תחום חברתי ותקשורתי</h2>
+            <div class="toggle-grid">
+                <div class="toggle-item" data-pos="יוזם/ת אינטראקציה חברתית (מזמין למשחק, פותח בשיחה)" data-neg="מתקשה ליזום אינטראקציות חברתיות">
+                    <div class="toggle-btn">-</div><span class="toggle-text">יוזמה חברתית</span>
+                </div>
+                <div class="toggle-item" data-pos="מראה עניין רב באינטראקציה חברתית" data-neg="אינו/ה מראה עניין באינטראקציה חברתית">
+                    <div class="toggle-btn">-</div><span class="toggle-text">עניין באינטראקציה חברתית</span>
+                </div>
+                <div class="toggle-item" data-pos="מביע/ה את רצונותיו/ה ודעותיו/ה לפני קבוצת חברים" data-neg="מתקשה להביע רצונות ודעות לפני קבוצה">
+                    <div class="toggle-btn">-</div><span class="toggle-text">הבעת עמדה בקבוצה</span>
+                </div>
+                <div class="toggle-item" data-pos="מתאים/ה את דבריו/ה לזהות הנמען (מורה, חבר, הורה)" data-neg="מתקשה להתאים את הדברים לזהות הנמען">
+                    <div class="toggle-btn">-</div><span class="toggle-text">התאמת דיבור לנמען</span>
+                </div>
+                <div class="toggle-item" data-pos="פותח/ת בשיחה באופן עצמאי (שואל, מבקש, מציע)" data-neg="מתקשה לפתוח בשיחה באופן עצמאי">
+                    <div class="toggle-btn">-</div><span class="toggle-text">פתיחה בשיחה</span>
+                </div>
+                <div class="toggle-item" data-pos="לוקח/ת תור בעיתוי המתאים במהלך שיחה" data-neg="מתקשה בלקיחת תור בעיתוי מתאים בשיחה">
+                    <div class="toggle-btn">-</div><span class="toggle-text">לקיחת תור בשיחה</span>
+                </div>
+                <div class="toggle-item" data-pos="ממתין/ה בסבלנות לתורו/ה (בשיחה או במשחק)" data-neg="מתקשה להמתין בסבלנות לתורו/ה">
+                    <div class="toggle-btn">-</div><span class="toggle-text">המתנה בסבלנות לתור</span>
+                </div>
+                <div class="toggle-item" data-pos="פועל/ת בדרכים מקובלות כדי להשתלב חברתית" data-neg="מתקשה לפעול בדרכים מקובלות כדי להשתלב בסיטואציות חברתיות">
+                    <div class="toggle-btn">-</div><span class="toggle-text">דרכי השתלבות חברתית</span>
+                </div>
+                <div class="toggle-item" data-pos="מצליח/ה לפתור בעצמו/ה בעיות חברתיות פשוטות" data-neg="מתקשה לפתור בעצמו/ה בעיות אישיות או חברתיות פשוטות وشגרתיות">
+                    <div class="toggle-btn">-</div><span class="toggle-text">פתרון בעיות חברתיות פשוטות</span>
+                </div>
+                <div class="toggle-item" data-pos="משולב/ת היטב בחברת הילדים בהפסקה" data-neg="נצפה/ת לבד בהפסקה">
+                    <div class="toggle-btn">-</div><span class="toggle-text">תפקוד בהפסקה (נצפה לבד)</span>
+                </div>
+                <div class="toggle-item" data-pos="שומר/ת על גבולות הגוף והמרחב האישי" data-neg="מתקשה לשמור על גבולות הגוף או המרחב האישי (נצמד, מחבק, נוגע)">
+                    <div class="toggle-btn">-</div><span class="toggle-text">שמירה על גבולות גוף ומרחב אישי</span>
+                </div>
+                <div class="toggle-item" data-pos="מנהל/ת שיח מפורט ועשיר" data-neg="עונה תשובות קצרות מדי באופן הפוגע ברצף השיחה">
+                    <div class="toggle-btn">-</div><span class="toggle-text">רצף השיחה (תשובות קצרות)</span>
+                </div>
+                <div class="toggle-item" data-pos="משתף/ת בנושאים רלוונטיים להקשר השיחה" data-neg="מעלה נושאים שאינם רלוונטיים להקשר השיחה ('out of the blue')">
+                    <div class="toggle-btn">-</div><span class="toggle-text">רלוונטיות נושאי השיחה</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. סיכום והמלצות -->
+        <div class="section-card">
+            <h2>6. סיכום והמלצות הצוות</h2>
+            <div class="form-group">
+                <label>המלצות אופרטיביות להמשך:</label>
+                <textarea id="recommendations" placeholder="לדוגמה: המשך תוכנית אישית, התאמת תמיכות, דיון בחשיבה על מענה מסגרתי מותאם יותר..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>שם הכותב/ת והתפקיד:</label>
+                <input type="text" id="teacherName" placeholder="לדוגמה: צוות חינוכי / מחנכת הכיתה">
+            </div>
+        </div>
+
+        <div class="actions">
+            <button type="button" class="btn" onclick="generateReport()">צור דו"ח חינוכי</button>
+        </div>
+    </form>
+
+    <!-- אזור תצוגת הדו"ח הסופי -->
+    <div id="reportOutputContainer">
+        <h2>הדו"ח המוכן</h2>
+        <p>תוכלי להעתיק את הטקסט ישירות ל-Word או להוריד אותו:</p>
+        <div id="reportPreview"></div>
+        <div class="actions">
+            <button class="btn btn-success" onclick="copyToClipboard()">העתק ל-Word</button>
+            <button class="btn" onclick="downloadDoc()">הורד כקובץ טקסט</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('reportDate').valueAsDate = new Date();
+
+    // לוגיקה ללחצן 3 מצבים: null -> v -> x -> null
+    document.querySelectorAll('.toggle-item').forEach(item => {
+        item.setAttribute('data-state', 'null');
+        item.addEventListener('click', function() {
+            const currentState = this.getAttribute('data-state');
+            const btn = this.querySelector('.toggle-btn');
+            
+            if (currentState === 'null') {
+                this.setAttribute('data-state', 'v');
+                btn.innerText = '✓';
+            } else if (currentState === 'v') {
+                this.setAttribute('data-state', 'x');
+                btn.innerText = '✗';
+            } else {
+                this.setAttribute('data-state', 'null');
+                btn.innerText = '-';
+            }
+        });
+    });
+
+    function getToggleStatements(containerSelector) {
+        const container = document.querySelector(containerSelector);
+        if (!container) return { pos: [], neg: [] };
+        
+        const pos = [];
+        const neg = [];
+        
+        container.querySelectorAll('.toggle-item').forEach(item => {
+            const state = item.getAttribute('data-state');
+            if (state === 'v') {
+                pos.push(item.getAttribute('data-pos'));
+            } else if (state === 'x') {
+                neg.push(item.getAttribute('data-neg'));
+            }
+        });
+        
+        return { pos, neg };
+    }
+
+    function generateReport() {
+        const name = document.getElementById('studentName').value || '[שם התלמיד/ה]';
+        const id = document.getElementById('studentId').value || '---';
+        const birthDate = document.getElementById('birthDate').value || '---';
+        const studentClass = document.getElementById('studentClass').value || '---';
+        const reportDate = document.getElementById('reportDate').value || '---';
+        const knowTime = document.getElementById('knowTime').value || 'כמה חודשים';
+
+        // 2. רקע
+        const diagData = getToggleStatements('.section-card:nth-of-type(2) .toggle-grid:nth-of-type(1)');
+        const diagDate = document.getElementById('diagDate').value;
+        const committee = document.getElementById('committeeStatus').value;
+        const supportData = getToggleStatements('.section-card:nth-of-type(2) .toggle-grid:nth-of-type(2)');
+        const bgNotes = document.getElementById('backgroundNotes').value;
+
+        // 3. לימודי
+        const learningData = getToggleStatements('#learningGrid');
+        const langData = getToggleStatements('#langGrid');
+        const mathData = getToggleStatements('#mathGrid');
+        const mathDetails = document.getElementById('mathDetails').value;
+        const strengths = document.getElementById('strengths').value;
+
+        // 4. התנהגותי (אסוף מכל הגרידים בסעיף 4)
+        const behaviorItems = document.querySelectorAll('.section-card:nth-of-type(4) .toggle-item');
+        const behaviorPos = [];
+        const behaviorNeg = [];
+        behaviorItems.forEach(item => {
+            const state = item.getAttribute('data-state');
+            if (state === 'v') behaviorPos.push(item.getAttribute('data-pos'));
+            if (state === 'x') behaviorNeg.push(item.getAttribute('data-neg'));
+        });
+        const behaviorDetails = document.getElementById('behaviorDetails').value;
+
+        // 5. חברתי
+        const socialData = getToggleStatements('.section-card:nth-of-type(5) .toggle-grid');
+
+        // 6. סיכום
+        const recommendations = document.getElementById('recommendations').value;
+        const teacherName = document.getElementById('teacherName').value || 'הצוות החינוכי';
+
+        // בניית הטקסט המנוסח
+        let text = `דו"ח חינוכי-תפקודי\n`;
+        text += `=========================\n`;
+        text += `שם התלמיד/ה: ${name} | ת.ז: ${id} | ת. לידה: ${birthDate}\n`;
+        text += `כיתה: ${studentClass} | תאריך כתיבת הדו"ח: ${reportDate}\n`;
+        text += `זמן היכרות עם הצוות: ${knowTime}\n\n`;
+
+        text += `1. רקע חינוכי, אבחנתי וסל תמיכות:\n`;
+        text += `${name} לומד/ת בכיתה ${studentClass}. `;
+        if (diagData.pos.length > 0) {
+            text += `מאובחן/ת עם: ${diagData.pos.join(', ')} (${diagDate ? 'אבחון מ-' + diagDate : 'אבחון תקף'}). `;
+        }
+        text += `התלמיד/ה ${committee}. `;
+        if (supportData.pos.length > 0) {
+            text += `במסגרת בית הספר מקבל/ת סל תמיכות הכולל: ${supportData.pos.join(', ')}. `;
+        }
+        if (bgNotes) text += `\nרקע נוסף: ${bgNotes}`;
+        text += `\n\n`;
+
+        text += `2. תחום לימודי ותפקודי לומד:\n`;
+        if (learningData.pos.length > 0 || learningData.neg.length > 0) {
+            text += `תפקודי לומד וארגון: `;
+            if (learningData.pos.length > 0) text += `חוזקות: ${learningData.pos.join('; ')}. `;
+            if (learningData.neg.length > 0) text += `מוקדי קושי: ${learningData.neg.join('; ')}. `;
+            text += `\n`;
+        }
+        if (langData.pos.length > 0 || langData.neg.length > 0) {
+            text += `שפה וקריאה: `;
+            if (langData.pos.length > 0) text += `בתפקוד השפתי והאורייני נצפה כי ${langData.pos.join('; ')}. `;
+            if (langData.neg.length > 0) text += `עם זאת, ניכרים קשיים: ${langData.neg.join('; ')}. `;
+            text += `\n`;
+        }
+        if (mathData.pos.length > 0 || mathData.neg.length > 0 || mathDetails) {
+            text += `חשבון: `;
+            if (mathData.pos.length > 0) text += `${mathData.pos.join('; ')}. `;
+            if (mathData.neg.length > 0) text += `קשיים בולטים: ${mathData.neg.join('; ')}. `;
+            if (mathDetails) text += `${mathDetails}`;
+            text += `\n`;
+        }
+        if (strengths) {
+            text += `חוזקות ותחומי עניין: בולט/ת לטובה ב-${strengths}.\n`;
+        }
+        text += `\n`;
+
+        text += `3. תחום התנהגותי-רגשי:\n`;
+        if (behaviorPos.length > 0 || behaviorNeg.length > 0) {
+            if (behaviorPos.length > 0) text += `התנהגות ואיזון רגשי: ${behaviorPos.join('; ')}.\n`;
+            if (behaviorNeg.length > 0) text += `מוקדי קושי והתנהגויות מאתגרות: ${behaviorNeg.join('; ')}.\n`;
+        }
+        if (behaviorDetails) {
+            text += `פירוט נוסף: ${behaviorDetails}\n`;
+        }
+        text += `\n`;
+
+        text += `4. תחום חברתי-תקשורתי:\n`;
+        if (socialData.pos.length > 0 || socialData.neg.length > 0) {
+            if (socialData.pos.length > 0) text += `תפקוד חברתי: ${socialData.pos.join('; ')}. `;
+            if (socialData.neg.length > 0) text += `קשיים בתחום החברתי-תקשורתי: ${socialData.neg.join('; ')}. `;
+            text += `\n`;
+        }
+        text += `\n`;
+
+        text += `5. סיכום והמלצות:\n`;
+        text += `${name} הינו/ה תלמיד/ה המפגין/ה חוזקות לצד קשיים בתפקוד היומיומי במסגרת. `;
+        if (recommendations) {
+            text += `${recommendations}\n\n`;
+        } else {
+            text += `הצוות החינוכי ממשיך ללוות את התלמיד/ה תוך התאמת המענים הנדרשים לקידומו/ה.\n\n`;
+        }
+
+        text += `בברכה,\n${teacherName}`;
+
+        document.getElementById('reportPreview').innerText = text;
+        document.getElementById('reportOutputContainer').style.display = 'block';
+        document.getElementById('reportOutputContainer').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function copyToClipboard() {
+        const text = document.getElementById('reportPreview').innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            alert('הדו"ח הועתק בהצלחה! תוכלי להדביק אותו (Ctrl+V) בקובץ Word.');
+        });
+    }
+
+    function downloadDoc() {
+        const text = document.getElementById('reportPreview').innerText;
+        const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `דוח_חינוכי_${document.getElementById('studentName').value || 'תלמיד'}.txt`;
+        link.click();
+    }
+</script>
+
+</body>
+</html>
