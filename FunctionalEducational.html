@@ -740,6 +740,12 @@
                 </div>
             </div>
 
+            <!-- הוספת שדה התדירות (אפשרות 1) -->
+            <div class="form-group" style="margin-top: 15px;">
+                <label>תדירות אירועי התסכול, הוויסות או ההתנהגות המאתגרת:</label>
+                <input type="text" id="eventFrequency" placeholder="כמה פעמים ביום / בשבוע, או באילו נסיבות/זמנים מיוחדים הם מתרחשים...">
+            </div>
+
             <div class="sub-title">תפיסה עצמית, רגש וייחוס:</div>
             <div class="toggle-grid">
                 <div class="toggle-item" 
@@ -1036,6 +1042,7 @@
             if (state === 'v') behaviorPos.push(item.getAttribute(posAttr));
             if (state === 'x') behaviorNeg.push(item.getAttribute(negAttr));
         });
+        const eventFrequency = document.getElementById('eventFrequency').value;
         const behaviorDetails = document.getElementById('behaviorDetails').value;
 
         // 5. חברתי
@@ -1125,6 +1132,7 @@
         let behaviorParagraphs = [];
         if (behaviorPos.length > 0) behaviorParagraphs.push(`${behaviorPos.join('; ')}.`);
         if (behaviorNeg.length > 0) behaviorParagraphs.push(`מוקדי קושי והתנהגויות מאתגרות: ${behaviorNeg.join('; ')}.`);
+        if (eventFrequency) behaviorParagraphs.push(`תדירות אירועים: ${eventFrequency}.`);
         if (behaviorDetails) behaviorParagraphs.push(behaviorDetails);
 
         text += behaviorParagraphs.join('\n') + `\n\n`;
