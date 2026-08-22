@@ -243,7 +243,7 @@
 <div class="container">
     <header>
         <h1>מחולל דו"ח חינוכי-תפקודי חכם</h1>
-        <p>ניסוח אישי ומותאם מגדרית באופן אוטומטי</p>
+        <p>ניסוח אישי ומותאם מגדרית באופן אוטומטי (אנונימי)</p>
     </header>
 
     <div class="legend">
@@ -740,7 +740,7 @@
                 </div>
             </div>
 
-            <!-- הוספת שדה התדירות (אפשרות 1) -->
+            <!-- שדה תדירות -->
             <div class="form-group" style="margin-top: 15px;">
                 <label>תדירות אירועי התסכול, הוויסות או ההתנהגות המאתגרת:</label>
                 <input type="text" id="eventFrequency" placeholder="כמה פעמים ביום / בשבוע, או באילו נסיבות/זמנים מיוחדים הם מתרחשים...">
@@ -922,7 +922,7 @@
 
     <!-- אזור תצוגת הדו"ח הסופי -->
     <div id="reportOutputContainer">
-        <h2>הדו"ח המוכן</h2>
+        <h2>הדו"ח המוכן (מוסתר פרטים מזהים)</h2>
         <p>תוכל להעתיק את הטקסט ישירות ל-Word או להוריד אותו:</p>
         <div id="reportPreview"></div>
         <div class="actions">
@@ -998,11 +998,13 @@
     }
 
     function generateReport() {
-        const name = document.getElementById('studentName').value || 'התלמיד/ה';
+        // הסתרת השם והת"ז לכוכביות בדו"ח הסופי להגנת הפרטיות
+        const nameDisplay = "***";
+        const idDisplay = "***";
+
         const gender = document.getElementById('studentGender').value;
         const isFemale = (gender === 'female');
         
-        const id = document.getElementById('studentId').value || '---';
         const birthDate = document.getElementById('birthDate').value || '---';
         const studentClass = document.getElementById('studentClass').value || '---';
         const reportDate = document.getElementById('reportDate').value || '---';
@@ -1063,13 +1065,13 @@
         // בניית הטקסט המנוסח
         let text = `דו"ח חינוכי-תפקודי\n`;
         text += `=========================\n`;
-        text += `${titleStudent}: ${name} | ת.ז: ${id} | ת. לידה: ${birthDate}\n`;
+        text += `${titleStudent}: ${nameDisplay} | ת.ז: ${idDisplay} | ת. לידה: ${birthDate}\n`;
         text += `כיתה: ${studentClass} | תאריך כתיבת הדו"ח: ${reportDate}\n`;
         text += `זמן היכרות עם הצוות: ${knowTime}\n\n`;
 
         // חלק 1 - רקע
         text += `1. רקע חינוכי, אבחנתי וסל תמיכות:\n`;
-        text += `${name} ${verbLearns} במסגרת ${eduFrameStr} בכיתה ${studentClass}. `;
+        text += `התלמיד/ה ${verbLearns} במסגרת ${eduFrameStr} בכיתה ${studentClass}. `;
         
         if (integrationComm === 'כן') {
             text += `עבר/ה ועדת שילוב. `;
@@ -1079,7 +1081,7 @@
         }
 
         if (diagData.pos.length > 0) {
-            text += `${name} ${verbDiagnosed} עם: ${diagData.pos.join(', ')}`;
+            text += `התלמיד/ה ${verbDiagnosed} עם: ${diagData.pos.join(', ')}`;
             let diagDetailsArr = [];
             if (diagDate) diagDetailsArr.push(`בתאריך ${diagDate}`);
             if (diagAssessor) diagDetailsArr.push(`על ידי ${diagAssessor}`);
@@ -1122,7 +1124,7 @@
         }
 
         if (strengths) {
-            learningParagraphs.push(`${name} בולט/ת לטובה ב-${strengths}.`);
+            learningParagraphs.push(`התלמיד/ה בולט/ת לטובה ב-${strengths}.`);
         }
 
         text += learningParagraphs.join('\n') + `\n\n`;
@@ -1147,11 +1149,11 @@
 
         // חלק 5 - סיכום והמלצות
         text += `5. סיכום והמלצות:\n`;
-        text += `${name} ${pronounsIs} ${nounStudent} המפגין/ה חוזקות לצד קשיים בתפקוד היומיומי במסגרת. `;
+        text += `התלמיד/ה ${pronounsIs} ${nounStudent} המפגין/ה חוזקות לצד קשיים בתפקוד היומיומי במסגרת. `;
         if (recommendations) {
             text += `${recommendations}\n\n`;
         } else {
-            text += `הצוות החינוכי ממשיך ללוות את ${name} תוך התאמת המענים הנדרשים ${adjPromote}.\n\n`;
+            text += `הצוות החינוכי ממשיך ללוות את התלמיד/ה תוך התאמת המענים הנדרשים ${adjPromote}.\n\n`;
         }
 
         text += `בברכה,\nצוות חינוכי`;
@@ -1173,7 +1175,7 @@
         const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = `דוח_חינוכי_${document.getElementById('studentName').value || 'תלמיד'}.txt`;
+        link.download = `דוח_חינוכי_אנונימי.txt`;
         link.click();
     }
 </script>
