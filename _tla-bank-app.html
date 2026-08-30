@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>עורך מאגר תל"א</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --bg: #f4f6f9;
+            --card: #fff;
+            --border: #dcdfe6;
+            --green: #27ae60;
+            --red: #c0392b;
+            --muted: #667;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: #333;
+            margin: 0;
+            direction: rtl;
+        }
+        header {
+            background: var(--primary);
+            color: #fff;
+            padding: 18px 22px;
+        }
+        header h1 { margin: 0 0 6px; font-size: 1.45rem; }
+        header p { margin: 0; opacity: 0.92; line-height: 1.45; }
+        .bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            padding: 10px 16px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+        }
+        .bar input[type="search"] {
+            flex: 1;
+            min-width: 180px;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font: inherit;
+        }
+        .tabs { display: flex; gap: 6px; }
+        .tab {
+            border: 1px solid var(--border);
+            background: #fff;
+            padding: 7px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .tab.is-on { background: var(--secondary); color: #fff; border-color: var(--secondary); }
+        .layout { display: grid; grid-template-columns: 300px 1fr; min-height: calc(100vh - 160px); }
+        .nav {
+            background: #fff;
+            border-left: 1px solid var(--border);
+            overflow: auto;
+            padding: 10px;
+        }
+        .main { padding: 16px 20px 40px; overflow: auto; }
+        .domain-h {
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: var(--secondary);
+            margin: 12px 4px 6px;
+        }
+        .nav-item {
+            display: block;
+            width: 100%;
+            text-align: right;
+            border: 1px solid transparent;
+            background: #f7f9fb;
+            padding: 8px 10px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .nav-item:hover { border-color: #aed6f1; }
+        .nav-item.is-on { background: #eaf6fd; border-color: var(--secondary); font-weight: 800; }
+        .nav-item small { display: block; color: var(--muted); font-weight: 400; }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-right: 5px solid var(--secondary);
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin-bottom: 14px;
+        }
+        .card h2, .card h3 { margin: 0 0 10px; color: var(--primary); }
+        label.f { display: block; font-weight: 700; margin: 8px 0 4px; font-size: 0.88rem; }
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font: inherit;
+        }
+        textarea { min-height: 64px; resize: vertical; }
+        .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .pair { background: #f8fbff; border: 1px dashed #c5d9e8; border-radius: 8px; padding: 8px 10px; margin-top: 6px; }
+        .pair .lab { font-size: 0.75rem; font-weight: 800; color: var(--muted); }
+        .obj {
+            border: 1px solid #d6eaf8;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 10px 0;
+            background: #fff;
+        }
+        .method {
+            background: #f3faf6;
+            border-right: 4px solid var(--green);
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin: 8px 0;
+        }
+        .btn {
+            background: var(--secondary);
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .btn:hover { background: #2980b9; }
+        .btn-ghost { background: #fff; color: var(--primary); border: 1px solid var(--border); }
+        .btn-ok { background: var(--green); }
+        .btn-danger {
+            background: #fff;
+            color: var(--red);
+            border: 1px solid #f5b7b1;
+            font-size: 0.82rem;
+            padding: 5px 10px;
+        }
+        .tools { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+        .status { font-size: 0.85rem; color: var(--muted); }
+        .warn { color: var(--red); font-weight: 700; }
+        .ok { color: var(--green); font-weight: 700; }
+        .checks { display: grid; gap: 4px; max-height: 220px; overflow: auto; padding: 6px; background: #fafafa; border-radius: 8px; }
+        .checks label { display: flex; gap: 8px; font-weight: 400; font-size: 0.88rem; }
+        .hint {
+            background: #fff;
+            border-right: 4px solid var(--secondary);
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            line-height: 1.5;
+        }
+        @media (max-width: 800px) {
+            .layout { grid-template-columns: 1fr; }
+            .row2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>עורך מאגר תל"א</h1>
+    <p>כאן בודקים ניסוחים, מתקנים, ומוסיפים מטרות / יעדים / דרכים / תצפיות. בסוף מייצאים קובץ ושולחים אותו חזרה — בלי לגעת בקוד.</p>
+</header>
+<div class="bar">
+    <div class="tabs">
+        <button type="button" class="tab is-on" data-tab="goals">מטרות ויעדים</button>
+        <button type="button" class="tab" data-tab="see">תצפיות כיתה</button>
+    </div>
+    <input type="search" id="q" placeholder="חיפוש במאגר…">
+    <label class="status">תצוגה
+        <select id="gender" style="width:auto;margin-right:6px;">
+            <option value="male">בן</option>
+            <option value="female">בת</option>
+        </select>
+    </label>
+    <button type="button" class="btn btn-ghost" id="addGoalBtn">הוסף מטרה</button>
+    <button type="button" class="btn btn-ghost" id="addSeeBtn">הוסף תצפית</button>
+    <button type="button" class="btn btn-ok" id="exportBtn">ייצא קובץ</button>
+    <button type="button" class="btn btn-ghost" id="copyBtn">העתק JSON</button>
+    <label class="btn btn-ghost" style="margin:0;">ייבא קובץ
+        <input type="file" id="importFile" accept=".json,application/json" hidden>
+    </label>
+    <button type="button" class="btn btn-ghost" id="resetBtn">חזור למקור</button>
+    <span class="status" id="saveState"></span>
+</div>
+<div class="layout">
+    <aside class="nav" id="nav"></aside>
+    <main class="main">
+        <div class="hint">
+            <strong>תווית</strong> = מה שרואים ברשימה.
+            <strong>בן / בת</strong> = המשפט שנכנס לדוח.
+            <strong>הערכה</strong> נשמרת במאגר (לא תמיד מודפסת בטבלה).
+            אחרי ייצוא שולחים את הקובץ <code>TLA-bank-export.json</code>.
+        </div>
+        <div id="issues"></div>
+        <div id="editor"></div>
+    </main>
+</div>
+<script>
+const SNAPSHOT = __SNAPSHOT__;
+const STORE = "tla-bank-draft-v1";
+let data = null;
+let tab = "goals";
+let selected = null;
+let query = "";
+
+function female() { return document.getElementById("gender").value === "female"; }
+function txt(item) {
+    if (!item) return "";
+    if (item.text_m || item.text_f) return female() ? (item.text_f || "") : (item.text_m || "");
+    if (item.label_m || item.label_f) return female() ? (item.label_f || "") : (item.label_m || "");
+    return item.label || "";
+}
+function clone(x) { return JSON.parse(JSON.stringify(x)); }
+function domainLabel(id) {
+    const d = data.domains.find(function (x) { return x.id === id; });
+    return d ? d.label : id;
+}
+function findGoal(id) { return data.catalog.find(function (g) { return g.id === id; }); }
+function allObjectives() {
+    const out = [];
+    data.catalog.forEach(function (g) {
+        g.objectives.forEach(function (o) {
+            out.push({ goal: g, obj: o });
+        });
+    });
+    return out;
+}
+function slug(s) {
+    return String(s || "").trim().toLowerCase().replace(/[^a-z0-9_]+/g, "_").replace(/^_|_$/g, "") || ("new_" + Date.now());
+}
+
+function load() {
+    try {
+        const raw = localStorage.getItem(STORE);
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && parsed.kind === "tla-bank" && parsed.catalog) {
+                data = { domains: parsed.domains, catalog: parsed.catalog, see: parsed.see };
+                document.getElementById("saveState").textContent = "טיוטה מקומית נטענה";
+                return;
+            }
+        }
+    } catch (e) {}
+    data = clone(SNAPSHOT);
+    document.getElementById("saveState").textContent = "מאגר מקורי";
+}
+function persist() {
+    const pack = packData();
+    localStorage.setItem(STORE, JSON.stringify(pack));
+    document.getElementById("saveState").textContent = "נשמר בדפדפן · " + new Date().toLocaleTimeString("he-IL");
+}
+function packData() {
+    return {
+        kind: "tla-bank",
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        domains: data.domains,
+        catalog: data.catalog,
+        see: data.see
+    };
+}
+function validate() {
+    const issues = [];
+    const ids = {};
+    function take(id, where) {
+        if (!id) { issues.push("חסר id ב" + where); return; }
+        if (ids[id]) issues.push("id כפול: " + id + " (" + where + ")");
+        ids[id] = true;
+    }
+    data.catalog.forEach(function (g) {
+        take(g.id, "מטרה " + (g.label || ""));
+        if (!g.label) issues.push("למטרה " + g.id + " חסרה תווית");
+        (g.objectives || []).forEach(function (o) {
+            take(o.id, "יעד תחת " + g.id);
+            (o.methods || []).forEach(function (m) { take(m.id, "דרך תחת " + o.id); });
+        });
+    });
+    data.see.forEach(function (gr) {
+        take(gr.id, "קבוצת תצפית " + gr.label);
+        (gr.items || []).forEach(function (it) {
+            take(it.id, "תצפית " + (it.label_m || it.id));
+            (it.objectiveIds || []).forEach(function (oid) {
+                if (!ids[oid]) issues.push("תצפית " + it.id + " מצביעה ליעד שלא קיים: " + oid);
+            });
+        });
+    });
+    return issues;
+}
+
+function matchQ(str) {
+    if (!query) return true;
+    return String(str || "").toLowerCase().indexOf(query) !== -1;
+}
+function goalMatches(g) {
+    if (matchQ(g.id) || matchQ(g.label) || matchQ(g.text_m) || matchQ(g.text_f)) return true;
+    return (g.objectives || []).some(function (o) {
+        if (matchQ(o.id) || matchQ(o.label) || matchQ(o.text_m) || matchQ(o.text_f)) return true;
+        return (o.methods || []).some(function (m) { return matchQ(m.text_m) || matchQ(m.text_f) || matchQ(m.id); });
+    });
+}
+function seeMatches(gr) {
+    if (matchQ(gr.label) || matchQ(gr.id)) return true;
+    return (gr.items || []).some(function (it) {
+        return matchQ(it.id) || matchQ(it.label_m) || matchQ(it.label_f);
+    });
+}
+
+function render() {
+    renderIssues();
+    renderNav();
+    renderEditor();
+}
+function renderIssues() {
+    const issues = validate();
+    const el = document.getElementById("issues");
+    if (!issues.length) {
+        el.innerHTML = '<p class="ok">המאגר תקין לייצוא: ' + data.catalog.length + " מטרות, " +
+            allObjectives().length + " יעדים, " +
+            data.see.reduce(function (n, g) { return n + (g.items || []).length; }, 0) + " תצפיות.</p>";
+        return;
+    }
+    el.innerHTML = '<div class="card"><strong class="warn">לבדוק לפני שליחה:</strong><ul>' +
+        issues.map(function (i) { return "<li>" + esc(i) + "</li>"; }).join("") + "</ul></div>";
+}
+function esc(s) {
+    return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function renderNav() {
+    const nav = document.getElementById("nav");
+    nav.innerHTML = "";
+    if (tab === "goals") {
+        data.domains.forEach(function (d) {
+            const goals = data.catalog.filter(function (g) { return g.domain === d.id && goalMatches(g); });
+            if (!goals.length && query) return;
+            const h = document.createElement("div");
+            h.className = "domain-h";
+            h.textContent = d.label + " (" + data.catalog.filter(function (g) { return g.domain === d.id; }).length + ")";
+            nav.appendChild(h);
+            goals.forEach(function (g) {
+                const b = document.createElement("button");
+                b.type = "button";
+                b.className = "nav-item" + (selected && selected.type === "goal" && selected.id === g.id ? " is-on" : "");
+                b.innerHTML = esc(g.label || g.id) + "<small>" + (g.objectives || []).length + " יעדים · " + esc(txt(g)) + "</small>";
+                b.addEventListener("click", function () {
+                    selected = { type: "goal", id: g.id };
+                    render();
+                });
+                nav.appendChild(b);
+            });
+        });
+    } else {
+        data.see.forEach(function (gr) {
+            if (!seeMatches(gr)) return;
+            const b = document.createElement("button");
+            b.type = "button";
+            b.className = "nav-item" + (selected && selected.type === "see" && selected.id === gr.id ? " is-on" : "");
+            b.innerHTML = esc(gr.label) + "<small>" + (gr.items || []).length + " תצפיות</small>";
+            b.addEventListener("click", function () {
+                selected = { type: "see", id: gr.id };
+                render();
+            });
+            nav.appendChild(b);
+        });
+    }
+}
+
+function field(obj, key, label, multiline) {
+    const wrap = document.createElement("div");
+    const lab = document.createElement("label");
+    lab.className = "f";
+    lab.textContent = label;
+    const el = document.createElement(multiline ? "textarea" : "input");
+    if (!multiline) el.type = "text";
+    el.value = obj[key] || "";
+    el.addEventListener("input", function () {
+        obj[key] = el.value;
+        persist();
+    });
+    wrap.appendChild(lab);
+    wrap.appendChild(el);
+    return wrap;
+}
+function pair(obj, a, b, la, lb) {
+    const box = document.createElement("div");
+    box.className = "row2";
+    const pa = document.createElement("div");
+    pa.className = "pair";
+    pa.innerHTML = '<div class="lab">' + esc(la) + "</div>";
+    pa.appendChild(field(obj, a, "", true));
+    const pb = document.createElement("div");
+    pb.className = "pair";
+    pb.innerHTML = '<div class="lab">' + esc(lb) + "</div>";
+    pb.appendChild(field(obj, b, "", true));
+    box.appendChild(pa);
+    box.appendChild(pb);
+    return box;
+}
+
+function renderEditor() {
+    const root = document.getElementById("editor");
+    root.innerHTML = "";
+    if (tab === "goals") {
+        const g = selected && selected.type === "goal" ? findGoal(selected.id) : null;
+        if (!g) {
+            root.innerHTML = "<p class=\"status\">בחרו מטרה מימין, או לחצו «הוסף מטרה».</p>";
+            return;
+        }
+        root.appendChild(renderGoalEditor(g));
+    } else {
+        const gr = selected && selected.type === "see" ? data.see.find(function (x) { return x.id === selected.id; }) : null;
+        if (!gr) {
+            root.innerHTML = "<p class=\"status\">בחרו קבוצת תצפיות, או הוסיפו תצפית.</p>";
+            return;
+        }
+        root.appendChild(renderSeeEditor(gr));
+    }
+}
+
+function renderGoalEditor(g) {
+    const card = document.createElement("div");
+    card.className = "card";
+    const h = document.createElement("h2");
+    h.textContent = "מטרה · " + (g.label || g.id);
+    card.appendChild(h);
+
+    const top = document.createElement("div");
+    top.className = "row2";
+    top.appendChild(field(g, "id", "מזהה (אנגלית, לא לשנות אחרי שיש דוחות)"));
+    const domWrap = document.createElement("div");
+    const dl = document.createElement("label");
+    dl.className = "f";
+    dl.textContent = "תחום";
+    const sel = document.createElement("select");
+    data.domains.forEach(function (d) {
+        const o = document.createElement("option");
+        o.value = d.id;
+        o.textContent = d.label;
+        if (d.id === g.domain) o.selected = true;
+        sel.appendChild(o);
+    });
+    sel.addEventListener("change", function () {
+        g.domain = sel.value;
+        persist();
+        render();
+    });
+    domWrap.appendChild(dl);
+    domWrap.appendChild(sel);
+    top.appendChild(domWrap);
+    card.appendChild(top);
+    card.appendChild(field(g, "label", "תווית קצרה בממשק"));
+    card.appendChild(pair(g, "text_m", "text_f", "נוסח המטרה — בן", "נוסח המטרה — בת"));
+
+    const tools = document.createElement("div");
+    tools.className = "tools";
+    const addO = document.createElement("button");
+    addO.type = "button";
+    addO.className = "btn";
+    addO.textContent = "הוסף יעד למטרה הזו";
+    addO.addEventListener("click", function () {
+        const id = g.id + "_" + slug(prompt("מזהה קצר באנגלית ליעד (למשל recess):", "new") || "new");
+        g.objectives.push({
+            id: id,
+            label: "יעד חדש",
+            text_m: "",
+            text_f: "",
+            evaluation_m: "",
+            evaluation_f: "",
+            methods: []
+        });
+        persist();
+        render();
+    });
+    const del = document.createElement("button");
+    del.type = "button";
+    del.className = "btn-danger";
+    del.textContent = "מחק מטרה";
+    del.addEventListener("click", function () {
+        if (!confirm("למחוק את המטרה וכל היעדים שלה?")) return;
+        data.catalog = data.catalog.filter(function (x) { return x.id !== g.id; });
+        selected = null;
+        persist();
+        render();
+    });
+    tools.appendChild(addO);
+    tools.appendChild(del);
+    card.appendChild(tools);
+
+    (g.objectives || []).forEach(function (obj, oi) {
+        card.appendChild(renderObjEditor(g, obj, oi));
+    });
+    return card;
+}
+
+function renderObjEditor(g, obj, oi) {
+    const box = document.createElement("div");
+    box.className = "obj";
+    const h = document.createElement("h3");
+    h.textContent = "יעד " + (oi + 1) + " · " + (obj.label || obj.id);
+    box.appendChild(h);
+    box.appendChild(field(obj, "id", "מזהה יעד"));
+    box.appendChild(field(obj, "label", "תווית קצרה"));
+    box.appendChild(pair(obj, "text_m", "text_f", "נוסח היעד — בן", "נוסח היעד — בת"));
+    box.appendChild(pair(obj, "evaluation_m", "evaluation_f", "הערכה — בן", "הערכה — בת"));
+
+    const tools = document.createElement("div");
+    tools.className = "tools";
+    const addM = document.createElement("button");
+    addM.type = "button";
+    addM.className = "btn btn-ghost";
+    addM.textContent = "הוסף דרך / אופן ביצוע";
+    addM.addEventListener("click", function () {
+        obj.methods.push({
+            id: obj.id + "_" + slug(prompt("מזהה קצר לדרך (למשל practice):", "way") || "way"),
+            text_m: "",
+            text_f: ""
+        });
+        persist();
+        render();
+    });
+    const up = document.createElement("button");
+    up.type = "button";
+    up.className = "btn btn-ghost";
+    up.textContent = "▲";
+    up.addEventListener("click", function () {
+        if (oi === 0) return;
+        const t = g.objectives[oi - 1];
+        g.objectives[oi - 1] = obj;
+        g.objectives[oi] = t;
+        persist();
+        render();
+    });
+    const down = document.createElement("button");
+    down.type = "button";
+    down.className = "btn btn-ghost";
+    down.textContent = "▼";
+    down.addEventListener("click", function () {
+        if (oi >= g.objectives.length - 1) return;
+        const t = g.objectives[oi + 1];
+        g.objectives[oi + 1] = obj;
+        g.objectives[oi] = t;
+        persist();
+        render();
+    });
+    const del = document.createElement("button");
+    del.type = "button";
+    del.className = "btn-danger";
+    del.textContent = "מחק יעד";
+    del.addEventListener("click", function () {
+        if (!confirm("למחוק את היעד?")) return;
+        g.objectives = g.objectives.filter(function (x) { return x !== obj; });
+        persist();
+        render();
+    });
+    tools.appendChild(addM);
+    tools.appendChild(up);
+    tools.appendChild(down);
+    tools.appendChild(del);
+    box.appendChild(tools);
+
+    (obj.methods || []).forEach(function (m, mi) {
+        const mb = document.createElement("div");
+        mb.className = "method";
+        mb.appendChild(field(m, "id", "מזהה דרך"));
+        mb.appendChild(pair(m, "text_m", "text_f", "אופן ביצוע — בן", "אופן ביצוע — בת"));
+        const md = document.createElement("button");
+        md.type = "button";
+        md.className = "btn-danger";
+        md.textContent = "מחק דרך";
+        md.addEventListener("click", function () {
+            obj.methods = obj.methods.filter(function (x) { return x !== m; });
+            persist();
+            render();
+        });
+        mb.appendChild(md);
+        box.appendChild(mb);
+    });
+    return box;
+}
+
+function renderSeeEditor(gr) {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.appendChild(Object.assign(document.createElement("h2"), { textContent: "קבוצה · " + gr.label }));
+    card.appendChild(field(gr, "id", "מזהה קבוצה"));
+    card.appendChild(field(gr, "label", "כותרת הקבוצה (איפה רואים בכיתה)"));
+
+    const add = document.createElement("button");
+    add.type = "button";
+    add.className = "btn";
+    add.textContent = "הוסף תצפית לקבוצה";
+    add.addEventListener("click", function () {
+        const id = "see_" + slug(prompt("מזהה קצר באנגלית (למשל recess_alone):", "new") || "new");
+        gr.items.push({ id: id, label_m: "", label_f: "", objectiveIds: [] });
+        persist();
+        render();
+    });
+    const delG = document.createElement("button");
+    delG.type = "button";
+    delG.className = "btn-danger";
+    delG.textContent = "מחק קבוצה";
+    delG.addEventListener("click", function () {
+        if (!confirm("למחוק את כל התצפיות בקבוצה?")) return;
+        data.see = data.see.filter(function (x) { return x !== gr; });
+        selected = null;
+        persist();
+        render();
+    });
+    const tools = document.createElement("div");
+    tools.className = "tools";
+    tools.appendChild(add);
+    tools.appendChild(delG);
+    card.appendChild(tools);
+
+    (gr.items || []).forEach(function (it) {
+        const box = document.createElement("div");
+        box.className = "obj";
+        box.appendChild(field(it, "id", "מזהה תצפית"));
+        box.appendChild(pair(it, "label_m", "label_f", "מה רואים — בן", "מה רואים — בת"));
+        const lab = document.createElement("label");
+        lab.className = "f";
+        lab.textContent = "לאילו יעדים זה ממפה";
+        box.appendChild(lab);
+        const checks = document.createElement("div");
+        checks.className = "checks";
+        allObjectives().forEach(function (row) {
+            const l = document.createElement("label");
+            const c = document.createElement("input");
+            c.type = "checkbox";
+            c.checked = (it.objectiveIds || []).indexOf(row.obj.id) !== -1;
+            c.addEventListener("change", function () {
+                it.objectiveIds = it.objectiveIds || [];
+                if (c.checked) {
+                    if (it.objectiveIds.indexOf(row.obj.id) === -1) it.objectiveIds.push(row.obj.id);
+                } else {
+                    it.objectiveIds = it.objectiveIds.filter(function (id) { return id !== row.obj.id; });
+                }
+                persist();
+            });
+            l.appendChild(c);
+            l.appendChild(document.createTextNode(domainLabel(row.goal.domain) + " · " + row.goal.label + " → " + row.obj.label));
+            checks.appendChild(l);
+        });
+        box.appendChild(checks);
+        const del = document.createElement("button");
+        del.type = "button";
+        del.className = "btn-danger";
+        del.textContent = "מחק תצפית";
+        del.addEventListener("click", function () {
+            gr.items = gr.items.filter(function (x) { return x !== it; });
+            persist();
+            render();
+        });
+        box.appendChild(del);
+        card.appendChild(box);
+    });
+    return card;
+}
+
+function downloadPack() {
+    const issues = validate();
+    if (issues.length && !confirm("יש אזהרות במאגר. לייצא בכל זאת?")) return;
+    const pack = packData();
+    const blob = new Blob([JSON.stringify(pack, null, 2)], { type: "application/json;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "TLA-bank-export.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+function applyPack(pack) {
+    if (!pack || pack.kind !== "tla-bank" || !pack.catalog || !pack.see) {
+        alert("זה לא קובץ מאגר תל\"א (חסר kind: tla-bank).");
+        return;
+    }
+    data = { domains: pack.domains || SNAPSHOT.domains, catalog: pack.catalog, see: pack.see };
+    selected = null;
+    persist();
+    render();
+}
+
+document.querySelectorAll(".tab").forEach(function (t) {
+    t.addEventListener("click", function () {
+        tab = t.getAttribute("data-tab");
+        document.querySelectorAll(".tab").forEach(function (x) { x.classList.toggle("is-on", x === t); });
+        selected = null;
+        render();
+    });
+});
+document.getElementById("q").addEventListener("input", function (e) {
+    query = e.target.value.trim().toLowerCase();
+    renderNav();
+});
+document.getElementById("gender").addEventListener("change", renderNav);
+document.getElementById("exportBtn").addEventListener("click", downloadPack);
+document.getElementById("copyBtn").addEventListener("click", function () {
+    navigator.clipboard.writeText(JSON.stringify(packData(), null, 2)).then(function () {
+        alert("ה־JSON הועתק. אפשר להדביק בהודעה או לשמור לקובץ.");
+    });
+});
+document.getElementById("importFile").addEventListener("change", function (e) {
+    const f = e.target.files[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = function () {
+        try { applyPack(JSON.parse(r.result)); }
+        catch (err) { alert("הקובץ לא נקרא כ־JSON תקין."); }
+    };
+    r.readAsText(f, "utf-8");
+    e.target.value = "";
+});
+document.getElementById("resetBtn").addEventListener("click", function () {
+    if (!confirm("למחוק את הטיוטה המקומית ולחזור למאגר המקורי?")) return;
+    localStorage.removeItem(STORE);
+    data = clone(SNAPSHOT);
+    selected = null;
+    persist();
+    render();
+});
+document.getElementById("addGoalBtn").addEventListener("click", function () {
+    const domain = prompt("תחום: social / behavioral / emotional / academic", "social");
+    if (!domain) return;
+    const shortId = slug(prompt("מזהה קצר באנגלית (למשל circles):", "new") || "new");
+    const id = domain + "_" + shortId;
+    data.catalog.push({
+        id: id,
+        domain: domain,
+        label: "מטרה חדשה",
+        text_m: "",
+        text_f: "",
+        objectives: []
+    });
+    tab = "goals";
+    selected = { type: "goal", id: id };
+    persist();
+    render();
+});
+document.getElementById("addSeeBtn").addEventListener("click", function () {
+    const id = slug(prompt("מזהה קבוצה באנגלית (למשל recess):", "new_group") || "new_group");
+    data.see.push({ id: id, label: "קבוצה חדשה", items: [] });
+    tab = "see";
+    selected = { type: "see", id: id };
+    document.querySelectorAll(".tab").forEach(function (x) {
+        x.classList.toggle("is-on", x.getAttribute("data-tab") === "see");
+    });
+    persist();
+    render();
+});
+
+load();
+if (data.catalog[0]) selected = { type: "goal", id: data.catalog[0].id };
+render();
+</script>
+</body>
+</html>
