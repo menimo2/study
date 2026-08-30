@@ -16,6 +16,25 @@
             --red: #e74c3c;
         }
 
+
+        .btn-action {
+      background: var(--secondary);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin: 5px;
+      font-weight: bold;
+      width: 223px;
+      flex: 1;
+    }
+
+    .btn-action:hover {background: #246fb9;}
+
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg);
@@ -231,6 +250,8 @@
             border-radius: 8px;
             font-size: 1rem;
         }
+
+       
 
         @media (max-width: 600px) {
             .grid-2, .grid-3 { grid-template-columns: 1fr; }
@@ -926,8 +947,8 @@
         <p>תוכל להעתיק את הטקסט ישירות ל-Word או להוריד אותו:</p>
         <div id="reportPreview"></div>
         <div class="actions">
-            <button class="btn btn-success" onclick="copyToClipboard()">העתק ל-Word</button>
-            <button class="btn" onclick="downloadDoc()">הורד כקובץ טקסט</button>
+            <button class="btn btn-success" onclick="copyToClipboard()">העתק</button>
+            <a class="btn-action" href="https://gemini.google.com/gem/1NbVmXKqEXwYdhE_Exg-_56JQ80Hzw_aA?usp=sharing" target="_blank" rel="noopener noreferrer">המשך עיבוד ב-AI</a>
         </div>
     </div>
 </div>

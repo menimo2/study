@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מחולל דו"ח חינוכי-תפקודי חכם</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --bg: #f4f6f9;
+            --card-bg: #ffffff;
+            --text: #333;
+            --border: #dcdfe6;
+            --green: #27ae60;
+            --red: #e74c3c;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container { max-width: 950px; margin: 0 auto; }
+
+        header {
+            text-align: center;
+            background: var(--primary);
+            color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        header h1 { margin: 0 0 8px; font-size: 1.8rem; }
+        header p { margin: 0; opacity: 0.9; }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .legend-item { display: flex; align-items: center; gap: 8px; }
+        .color-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-right: 5px solid var(--secondary);
+        }
+
+        .section-card h2 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1.3rem;
+            border-bottom: 2px solid var(--bg);
+            padding-bottom: 10px;
+        }
+
+        .sub-title {
+            font-weight: bold;
+            color: var(--secondary);
+            margin: 15px 0 8px;
+            font-size: 1.05rem;
+        }
+
+        .form-group { margin-bottom: 15px; }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #444;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        textarea { resize: vertical; min-height: 70px; }
+
+        .grid-2, .grid-3 { display: grid; gap: 15px; }
+        .grid-2 { grid-template-columns: 1fr 1fr; }
+        .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+        .toggle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .toggle-status-indicator {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #dcdfe6;
+            margin-left: 12px;
+            flex-shrink: 0;
+        }
+
+        .toggle-content { display: flex; flex-direction: column; width: 100%; }
+
+        .toggle-text {
+            font-size: 0.95rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .toggle-preview {
+            font-size: 0.78rem;
+            margin-top: 4px;
+            display: none;
+            line-height: 1.25;
+            font-weight: normal;
+        }
+
+        .toggle-item[data-state="v"] {
+            background: #e8f8f5;
+            border-color: #a3e4d7;
+        }
+        .toggle-item[data-state="v"] .toggle-status-indicator {
+            background: var(--green);
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
+        }
+        .toggle-item[data-state="v"] .toggle-preview {
+            display: block;
+            color: #1e8449;
+        }
+
+        .toggle-item[data-state="x"] {
+            background: #fdf2e9;
+            border-color: #fad7a0;
+        }
+        .toggle-item[data-state="x"] .toggle-status-indicator {
+            background: var(--red);
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+        }
+        .toggle-item[data-state="x"] .toggle-preview {
+            display: block;
+            color: #a93226;
+        }
+
+        .actions { text-align: center; margin: 30px 0; }
+
+        .btn {
+            background: var(--secondary);
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+            font-family: inherit;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover { background: #2980b9; }
+        .btn-success { background: #27ae60; }
+        .btn-success:hover { background: #1e8449; }
+
+        #reportOutputContainer {
+            display: none;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+
+        #reportPreview {
+            line-height: 1.7;
+            white-space: pre-wrap;
+            background: #fafafa;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .toggle-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>מחולל דו"ח חינוכי-תפקודי חכם</h1>
+        <p>ניסוח אישי ומותאם מגדרית באופן אוטומטי (אנונימי)</p>
+    </header>
+
+    <div class="legend">
+        <div class="legend-item"><span class="color-dot" style="background:#dcdfe6;"></span> ללא סימון</div>
+        <div class="legend-item"><span class="color-dot" style="background:var(--green);"></span> ירוק (חוזקה / קיים)</div>
+        <div class="legend-item"><span class="color-dot" style="background:var(--red);"></span> אדום (קושי)</div>
+    </div>
+
+    <form id="reportForm">
+        <div class="section-card">
+            <h2>1. פרטים אישיים ורקע היכרות</h2>
+            <div class="grid-3">
+                <div class="form-group">
+                    <label for="studentName">שם התלמיד/ה:</label>
+                    <input type="text" id="studentName" required placeholder="שם פרטי ומשפחה">
+                </div>
+                <div class="form-group">
+                    <label for="studentGender">מין:</label>
+                    <select id="studentGender">
+                        <option value="male">זכר (בן)</option>
+                        <option value="female">נקבה (בת)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="studentId">תעודת זהות:</label>
+                    <input type="text" id="studentId">
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="birthDate">תאריך לידה:</label>
+                    <input type="date" id="birthDate">
+                </div>
+                <div class="form-group">
+                    <label for="studentClass">כיתה:</label>
+                    <input type="text" id="studentClass" placeholder="לדוגמה: ד'2">
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="reportDate">תאריך כתיבת הדו"ח:</label>
+                    <input type="date" id="reportDate">
+                </div>
+                <div class="form-group">
+                    <label for="knowTime">זמן היכרות הצוות עם התלמיד/ה:</label>
+                    <input type="text" id="knowTime" placeholder="לדוגמה: מתחילת השנה / שנתיים">
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h2>2. רקע חינוכי, אבחנתי וסל תמיכות</h2>
+            <div class="sub-title">מסגרת חינוכית וועדות:</div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="educationFrame">מסגרת לימוד:</label>
+                    <select id="educationFrame">
+                        <option value="חינוך רגיל">חינוך רגיל</option>
+                        <option value="סל אישי">תלמיד/ה סל אישי</option>
+                        <option value="שילוב">תלמיד/ה שילוב</option>
+                        <option value="חינוך מיוחד">חינוך מיוחד</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="integrationCommittee">עבר/ה ועדת שילוב?</label>
+                    <select id="integrationCommittee">
+                        <option value="לא">לא</option>
+                        <option value="כן">כן</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="committeeStatus">עבר/ה ועדת אפיון וזכאות?</label>
+                    <select id="committeeStatus">
+                        <option value="לא">לא</option>
+                        <option value="כן">כן</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="diagDate">תאריך אבחון:</label>
+                    <input type="text" id="diagDate" placeholder="לדוגמה: 05/2022 או לפני כשנתיים">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="diagAssessor">הגורם המאבחן:</label>
+                <input type="text" id="diagAssessor" placeholder="לדוגמה: נוירולוג, פסיכולוג התפתחותי, רופא פסיכיאטר...">
+            </div>
+            <div class="form-group">
+                <label>אבחנה / אפיון הלקות (לחץ לסימון):</label>
+                <div class="toggle-grid" id="diagGrid"></div>
+            </div>
+            <div class="form-group">
+                <label>סל תמיכות ומענים בפועל (לחץ לסימון):</label>
+                <div class="toggle-grid" id="supportGrid"></div>
+            </div>
+            <div class="form-group">
+                <label for="backgroundNotes">הערות על רקע/ביקור סדיר (אופציונלי):</label>
+                <textarea id="backgroundNotes" placeholder="פרט רק אם יש היעדרויות ממושכות, מעברי בית ספר..."></textarea>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h2>3. תחום לימודי ותפקודי לומד</h2>
+            <div class="sub-title">תפקודי לומד, מוסחות וארגון:</div>
+            <div class="toggle-grid" id="learningGrid"></div>
+            <div class="sub-title">תחום השפה, הקריאה והכתיבה:</div>
+            <div class="toggle-grid" id="langGrid"></div>
+            <div class="sub-title">תחום החשבון:</div>
+            <div class="toggle-grid" id="mathGrid"></div>
+            <div class="form-group" style="margin-top:10px;">
+                <textarea id="mathDetails" placeholder="פירוט נוסף בחשבון (נושאים שנרכשו מול נושאים שטרם נרכשו/פערים)..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="strengths">חוזקות ותחומי עניין לימודיים:</label>
+                <input type="text" id="strengths" placeholder="למשל: בולט לטובה בשיעורי אמנות, מוזיקה, ספורט, אנגלית...">
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h2>4. תחום התנהגותי-רגשי</h2>
+            <div class="sub-title">ציות לכללים, גבולות ומשמעת:</div>
+            <div class="toggle-grid" id="behRulesGrid"></div>
+            <div class="sub-title">תגובה לתסכול, וויסות ואלימות:</div>
+            <div class="toggle-grid" id="behRegGrid"></div>
+            <div class="form-group" style="margin-top:15px;">
+                <label for="eventFrequency">תדירות אירועי התסכול, הוויסות או ההתנהגות המאתגרת:</label>
+                <input type="text" id="eventFrequency" placeholder="כמה פעמים ביום / בשבוע, או באילו נסיבות/זמנים מיוחדים הם מתרחשים...">
+            </div>
+            <div class="sub-title">תפיסה עצמית, רגש וייחוס:</div>
+            <div class="toggle-grid" id="behEmoGrid"></div>
+            <div class="form-group" style="margin-top:15px;">
+                <textarea id="behaviorDetails" placeholder="פירוט חופשי נוסף לתחום ההתנהגותי-רגשי..."></textarea>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h2>5. תחום חברתי ותקשורתי</h2>
+            <div class="toggle-grid" id="socialGrid"></div>
+        </div>
+
+        <div class="section-card">
+            <h2>6. סיכום והמלצות הצוות</h2>
+            <div class="form-group">
+                <label for="recommendations">המלצות אופרטיביות להמשך:</label>
+                <textarea id="recommendations" placeholder="לדוגמה: המשך תוכנית אישית, התאמת תמיכות, דיון בחשיבה על מענה מסגרתי מותאם יותר..."></textarea>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button type="button" class="btn" id="generateBtn">צור דו"ח חינוכי</button>
+        </div>
+    </form>
+
+    <div id="reportOutputContainer">
+        <h2>הדו"ח המוכן (מוסתר פרטים מזהים)</h2>
+        <p>תוכל להעתיק את הטקסט ישירות ל-Word או להוריד אותו:</p>
+        <div id="reportPreview"></div>
+        <div class="actions">
+            <button type="button" class="btn btn-success" id="copyBtn">העתק</button>
+            <button type="button" class="btn" id="downloadBtn">הורד</button>
+            <a class="btn" href="https://gemini.google.com/gem/1NbVmXKqEXwYdhE_Exg-_56JQ80Hzw_aA?usp=sharing" target="_blank" rel="noopener noreferrer">המשך עיבוד ב-AI</a>
+        </div>
+    </div>
+</div>
+
+<script>
+const TOGGLES = {
+    diagnosis: [
+        { id: "diag_asd", label: "ASD", pos_m: "ASD (רצף התקשורתי)", pos_f: "ASD (רצף התקשורתי)", neg_m: "ללא אבחנת ASD", neg_f: "ללא אבחנת ASD" },
+        { id: "diag_adhd", label: "ADHD", pos_m: "הפרעת קשב וריכוז (ADHD)", pos_f: "הפרעת קשב וריכוז (ADHD)", neg_m: "ללא הפרעת קשב", neg_f: "ללא הפרעת קשב" },
+        { id: "diag_ld", label: "לקות למידה", pos_m: "לקות למידה רב-תחומית", pos_f: "לקות למידה רב-תחומית", neg_m: "ללא לקות למידה", neg_f: "ללא לקות למידה" },
+        { id: "diag_odd", label: "ODD / התנהגותי", pos_m: "הפרעה התנהגותית/רגשית (ODD)", pos_f: "הפרעה התנהגותית/רגשית (ODD)", neg_m: "ללא הפרעה התנהגותית", neg_f: "ללא הפרעה התנהגותית" },
+        { id: "diag_anxiety", label: "חרדה", pos_m: "חרדה / חרדת נטישה", pos_f: "חרדה / חרדת נטישה", neg_m: "ללא חרדות", neg_f: "ללא חרדות" },
+        { id: "diag_language_delay", label: "עיכוב שפתי", pos_m: "עיכוב התפתחותי שפתי", pos_f: "עיכוב התפתחותי שפתי", neg_m: "ללא עיכוב שפתי", neg_f: "ללא עיכוב שפתי" }
+    ],
+    support: [
+        { id: "support_aide", label: "סייעת אישית", pos_m: "סייעת אישית / משלבת", pos_f: "סייעת אישית / משלבת", neg_m: "אינו מקבל סייעת", neg_f: "אינה מקבלת סייעת" },
+        { id: "support_art_therapy", label: "טיפול באמנות", pos_m: "טיפול באמנות / הבעה ורגש", pos_f: "טיפול באמנות / הבעה ורגש", neg_m: "אינו מקבל טיפול באמנות", neg_f: "אינה מקבלת טיפול באמנות" },
+        { id: "support_remedial", label: "הוראה מותאמת", pos_m: "הוראה מותאמת / מתקנת", pos_f: "הוראה מותאמת / מתקנת", neg_m: "אינו מקבל הוראה מותאמת", neg_f: "אינה מקבלת הוראה מותאמת" },
+        { id: "support_speech", label: "קלינאית תקשורת", pos_m: "קלינאית תקשורת", pos_f: "קלינאית תקשורת", neg_m: "אינו מקבל קלינאית תקשורת", neg_f: "אינה מקבלת קלינאית תקשורת" },
+        { id: "support_ot", label: "ריפוי בעיסוק", pos_m: "ריפוי בעיסוק", pos_f: "ריפוי בעיסוק", neg_m: "אינו מקבל ריפוי בעיסוק", neg_f: "אינה מקבלת ריפוי בעיסוק" },
+        { id: "support_small_group", label: "עבודה בקבוצה קטנה", pos_m: "עבודה בקבוצה קטנה בכיתה", pos_f: "עבודה בקבוצה קטנה בכיתה", neg_m: "אינו משולב בקבוצה קטנה", neg_f: "אינה משולבת בקבוצה קטנה" }
+    ],
+    learning: [
+        { id: "learn_motivation", label: "מוטיבציה לימודית", pos_m: "מראה מוטיבציה לימודית גבוהה", pos_f: "מראה מוטיבציה לימודית גבוהה", neg_m: "מראה חוסר מוטיבציה לימודית", neg_f: "מראה חוסר מוטיבציה לימודית" },
+        { id: "learn_mediation", label: "זקוק לתיווך בעבודה", pos_m: "עובד באופן עצמאי בלמידה", pos_f: "עובדת באופן עצמאי בלמידה", neg_m: "זקוק לתיווך בעבודה", neg_f: "זקוקה לתיווך בעבודה" },
+        { id: "learn_frontal", label: "למידה בהוראה פרונטלית", pos_m: "לומד היטב במסגרת הוראה פרונטלית", pos_f: "לומדת היטב במסגרת הוראה פרונטלית", neg_m: "מתקשה ללמוד במסגרת הוראה פרונטלית", neg_f: "מתקשה ללמוד במסגרת הוראה פרונטלית" },
+        { id: "learn_instructions", label: "הבנת הוראות", pos_m: "מראה הבנה טובה של הוראות למידה", pos_f: "מראה הבנה טובה של הוראות למידה", neg_m: "מתקשה בהבנת הוראות", neg_f: "מתקשה בהבנת הוראות" },
+        { id: "learn_focus_duration", label: "ריכוז לאורך זמן", pos_m: "מסוגל לבצע משימות הדורשות ריכוז לאורך זמן", pos_f: "מסוגלת לבצע משימות הדורשות ריכוז לאורך זמן", neg_m: "מתקשה לבצע משימות הדורשות ריכוז לאורך זמן", neg_f: "מתקשה לבצע משימות הדורשות ריכוז לאורך זמן" },
+        { id: "learn_distractibility", label: "מוסחות מגורמים חיצוניים", pos_m: "שומר על מיקוד ואינו מוסח בקלות", pos_f: "שומרת על מיקוד ואינה מוסחת בקלות", neg_m: "דעתו מוסחת בקלות בידי גורמים חיצוניים (רעשים, חפצים, תנועה בכיתה)", neg_f: "דעתה מוסחת בקלות בידי גורמים חיצוניים (רעשים, חפצים, תנועה בכיתה)" },
+        { id: "learn_persistence", label: "התמדה במטלות לימודיות", pos_m: "מגלה התמדה ולא מתייאש במטלות", pos_f: "מגלה התמדה ולא מתייאשת במטלות", neg_m: "מתייאש במהלך ביצוע של מטלות לימודיות", neg_f: "מתייאשת במהלך ביצוע של מטלות לימודיות" },
+        { id: "learn_cooperation", label: "שיתוף פעולה בתהליך הלמידה", pos_m: "משתף פעולה בתהליך הלמידה", pos_f: "משתפת פעולה בתהליך הלמידה", neg_m: "מתקשה לשתף פעולה בתהליך הלמידה", neg_f: "מתקשה לשתף פעולה בתהליך הלמידה" },
+        { id: "learn_organization", label: "התארגנות למטלות בשיעור", pos_m: "מתארגן היטב לקראת ביצוע מטלות בשיעור", pos_f: "מתארגנת היטב לקראת ביצוע מטלות בשיעור", neg_m: "מתקשה להתארגן לקראת ביצוע מטלות בזמן השיעור", neg_f: "מתקשה להתארגן לקראת ביצוע מטלות בזמן השיעור" },
+        { id: "learn_daily_schedule", label: "שיתוף פעולה עם סדר היום", pos_m: "משתף פעולה מלאה עם סדר היום", pos_f: "משתפת פעולה מלאה עם סדר היום", neg_m: "מתקשה לשתף פעולה עם סדר היום", neg_f: "מתקשה לשתף פעולה עם סדר היום" },
+        { id: "learn_equipment", label: "הגעה עם ציוד נדרש", pos_m: "מקפיד להגיע לכיתה עם הציוד הנדרש", pos_f: "מקפידה להגיע לכיתה עם הציוד הנדרש", neg_m: "מתקשה להגיע לכיתה כשברשותו הציוד הנדרש ללמידה", neg_f: "מתקשה להגיע לכיתה כשברשותה הציוד הנדרש ללמידה" },
+        { id: "learn_academic_gap", label: "פערים לימודיים לעומת בני גילו", pos_m: "תפקוד אקדמי תואם גיל ללא פערים בולטים", pos_f: "תפקוד אקדמי תואם גיל ללא פערים בולטים", neg_m: "קיימים פערים לימודיים לעומת בני גילו", neg_f: "קיימים פערים לימודיים לעומת בנות גילה" }
+    ],
+    lang: [
+        { id: "lang_fluency", label: "קריאה בשטף", pos_m: "קורא בשטף כנדרש", pos_f: "קוראת בשטף כנדרש", neg_m: "מתקשה בקריאה בשטף", neg_f: "מתקשה בקריאה בשטף" },
+        { id: "lang_accuracy", label: "קריאה בדיוק", pos_m: "קורא בדיוק ומזהה מילים היטב", pos_f: "קוראת בדיוק ומזהה מילים היטב", neg_m: "מתקשה בקריאה בדיוק ומפגין שגיאות", neg_f: "מתקשה בקריאה בדיוק ומפגינה שגיאות" },
+        { id: "lang_literal", label: "הבנה ברמה הגלויה", pos_m: "מראה הבנה של הנקרא ברמה הגלויה", pos_f: "מראה הבנה של הנקרא ברמה הגלויה", neg_m: "מתקשה בהבנת הנקרא ברמה הגלויה", neg_f: "מתקשה בהבנת הנקרא ברמה הגלויה" },
+        { id: "lang_inferential", label: "הבנה ברמה המפרשת", pos_m: "מראה הבנה של הנקרא ברמה המפרשת", pos_f: "מראה הבנה של הנקרא ברמה המפרשת", neg_m: "מתקשה בהבנת הנקרא ברמה המפרשת", neg_f: "מתקשה בהבנת הנקרא ברמה המפרשת" },
+        { id: "lang_text_length", label: "קריאת טקסטים באורך מצופה", pos_m: "קורא טקסטים באורך המצופה מבני גילו", pos_f: "קוראת טקסטים באורך המצופה מבנות גילה", neg_m: "מתקשה לקרוא טקסטים באורך המצופה מבני גילו", neg_f: "מתקשה לקרוא טקסטים באורך המצופה מבנות גילה" },
+        { id: "lang_written_instructions", label: "הבנת הוראות כתובות", pos_m: "מראה הבנה של הוראות כתובות", pos_f: "מראה הבנה של הוראות כתובות", neg_m: "מתקשה בהבנת הוראות כתובות", neg_f: "מתקשה בהבנת הוראות כתובות" },
+        { id: "lang_read_aloud", label: "הבנת טקסטים מוקראים", pos_m: "מראה הבנה של טקסטים כתובים המוקראים לו בכיתה", pos_f: "מראה הבנה של טקסטים כתובים המוקראים לה בכיתה", neg_m: "מתקשה בהבנת טקסטים המוקראים לו", neg_f: "מתקשה בהבנת טקסטים המוקראים לה" },
+        { id: "lang_main_idea", label: "הבחנה בין עיקר לטפל", pos_m: "מבחין היטב בין עיקר לטפל", pos_f: "מבחינה היטב בין עיקר לטפל", neg_m: "מתקשה להבחין בין עיקר לטפל", neg_f: "מתקשה להבחין בין עיקר לטפל" },
+        { id: "lang_oral_expression", label: "ניסוח רעיונות בעל פה", pos_m: "מנסח בעל פה רעיונות בבהירות", pos_f: "מנסחת בעל פה רעיונות בבהירות", neg_m: "מתקשה לנסח בעל פה רעיונות בבהירות", neg_f: "מתקשה לנסח בעל פה רעיונות בבהירות" },
+        { id: "lang_vocabulary", label: "אוצר מילים", pos_m: "מביע את עצמו באמצעות אוצר מילים רחב", pos_f: "מביעה את עצמה באמצעות אוצר מילים רחב", neg_m: "משתמש באוצר מילים מצומצם/דל", neg_f: "משתמשת באוצר מילים מצומצם/דל" },
+        { id: "lang_handwriting", label: "כתב-יד קריא", pos_m: "כותב בכתב-יד קריא ומעוצב", pos_f: "כותבת בכתב-יד קריא ומעוצב", neg_m: "מתקשה בכתיבה קריאה (כתב לא קריא/עיצוב לקוי)", neg_f: "מתקשה בכתיבה קריאה (כתב לא קריא/עיצוב לקוי)" },
+        { id: "lang_page_layout", label: "ארגון מרחב הדף", pos_m: "מארגן את הכתיבה בהתאם למרחב הדף", pos_f: "מארגנת את הכתיבה בהתאם למרחב הדף", neg_m: "מתקשה בארגון הכתיבה במרחב הדף", neg_f: "מתקשה בארגון הכתיבה במרחב הדף" },
+        { id: "lang_writing_pace", label: "קצב כתיבה בשיעור", pos_m: "מספיק לכתוב את הנדרש במהלך השיעור", pos_f: "מספיקה לכתוב את הנדרש במהלך השיעור", neg_m: "אינו מספיק לכתוב את הנדרש במהלך השיעור", neg_f: "אינה מספיקה לכתוב את הנדרש במהלך השיעור" }
+    ],
+    math: [
+        { id: "math_operations", label: "ביצוע פעולות חשבון", pos_m: "מבצע נכון פעולות חשבון שונות", pos_f: "מבצעת נכון פעולות חשבון שונות", neg_m: "מתקשה בביצוע פעולות חשבון בסיסיות", neg_f: "מתקשה בביצוע פעולות חשבון בסיסיות" },
+        { id: "math_word_problems", label: "פתרון בעיות מילוליות", pos_m: "מצליח לפתור בעיות מילוליות בחשבון הניתנות בכיתה", pos_f: "מצליחה לפתור בעיות מילוליות בחשבון הניתנות בכיתה", neg_m: "מתקשה לפתור בעיות מילוליות בחשבון", neg_f: "מתקשה לפתור בעיות מילוליות בחשבון" }
+    ],
+    behRules: [
+        { id: "beh_authority", label: "קבלת סמכות מבוגר", pos_m: "מקבל סמכות מבוגר באופן מותאם", pos_f: "מקבלת סמכות מבוגר באופן מותאם", neg_m: "מתקשה בקבלת סמכות מבוגר", neg_f: "מתקשה בקבלת סמכות מבוגר" },
+        { id: "beh_school_rules", label: "פועל על פי כללי בית הספר", pos_m: "פועל על פי כללי בית הספר", pos_f: "פועלת על פי כללי בית הספר", neg_m: "מתקשה לפעול על פי כללי בית הספר", neg_f: "מתקשה לפעול על פי כללי בית הספר" },
+        { id: "beh_presence", label: "נוכחות בשיעור (שוטטות)", pos_m: "נשאר במרחבי הכיתה והשיעור באופן מותאם", pos_f: "נשארת במרחבי הכיתה והשיעור באופן מותאם", neg_m: "משוטט בשטח בית הספר בשעת השיעורים", neg_f: "משוטטת בשטח בית הספר בשעת השיעורים" },
+        { id: "beh_punctuality", label: "עמידה בזמנים בכניסה לשיעור", pos_m: "נכנס בזמן לכיתה בתחילת השיעור", pos_f: "נכנסת בזמן לכיתה בתחילת השיעור", neg_m: "מאחר להיכנס לכיתה בתחילת השיעור", neg_f: "מאחרת להיכנס לכיתה בתחילת השיעור" },
+        { id: "beh_self_safety", label: "התנהגות המסכנת את עצמו", pos_m: "שומר על בטיחות אישית בכיתה", pos_f: "שומרת על בטיחות אישית בכיתה", neg_m: "מתנהג בכיתה באופן שבו הוא מסכן את עצמו (עומד על חלון, קופץ על שולחנות)", neg_f: "מתנהגת בכיתה באופן שבו היא מסכנת את עצמה (עומדת על חלון, קופצת על שולחנות)" }
+    ],
+    behReg: [
+        { id: "beh_inquiry_coop", label: "שיתוף פעולה בתהליך הבירור", pos_m: "משתף פעולה באופן מלא בתהליך הבירור", pos_f: "משתפת פעולה באופן מלא בתהליך הבירור", neg_m: "מתקשה לשתף פעולה בתהליך הבירור", neg_f: "מתקשה לשתף פעולה בתהליך הבירור" },
+        { id: "beh_responsibility", label: "לוקח/ת אחריות על מעשיו/ה", pos_m: "לוקח אחריות על מעשיו", pos_f: "לוקחת אחריות על מעשיה", neg_m: "מתקשה לקחת אחריות על מעשיו", neg_f: "מתקשה לקחת אחריות על מעשיה" },
+        { id: "beh_delayed_gratification", label: "דחיית סיפוקים", pos_m: "מגלה יכולת לדחות סיפוקים", pos_f: "מגלה יכולת לדחות סיפוקים", neg_m: "מתקשה לדחות סיפוקים", neg_f: "מתקשה לדחות סיפוקים" },
+        { id: "beh_losing", label: "תגובה להפסד במשחק", pos_m: "מגיב בבגרות ובוויסות בעת הפסד במשחק", pos_f: "מגיבה בבגרות ובוויסות בעת הפסד במשחק", neg_m: "מתקשה להתמודד עם הפסד במשחק ומגיב בתסכול רב", neg_f: "מתקשה להתמודד עם הפסד במשחק ומגיבה בתסכול רב" },
+        { id: "beh_short_fuse", label: "תגובות כעס פתאומיות ('פתיל קצר')", pos_m: "מגיב ברוגע ובאיפוק במצבי יום-יום", pos_f: "מגיבה ברוגע ובאיפוק במצבי יום-יום", neg_m: "מגיב בכעס קיצוני ופתאומי במצבים יום-יומיים כמה פעמים ביום ('פתיל קצר')", neg_f: "מגיבה בכעס קיצוני ופתאומי במצבים יום-יומיים כמה פעמים ביום ('פתיל קצר')" },
+        { id: "beh_fight_proportion", label: "פרופורציה בעת מריבה", pos_m: "שומר על תגובות מותאמות בעת מריבה", pos_f: "שומרת על תגובות מותאמות בעת מריבה", neg_m: "מגיב באופן לא פרופורציונלי במהלך מריבה", neg_f: "מגיבה באופן לא פרופורציונלי במהלך מריבה" },
+        { id: "beh_criticism", label: "תגובה לביקורת/הערות", pos_m: "מקבל ביקורת והערות באופן מקדם", pos_f: "מקבלת ביקורת והערות באופן מקדם", neg_m: "מגיב באופן לא פרופורציונאלי לביקורת או להערות המופנות אליו", neg_f: "מגיבה באופן לא פרופורציונאלי לביקורת או להערות המופנות אליה" },
+        { id: "beh_recovery", label: "חזרה לתפקוד לאחר קושי", pos_m: "חוזר לתפקוד במהירות לאחר שנתקל בקושי", pos_f: "חוזרת לתפקוד במהירות לאחר שנתקלה בקושי", neg_m: "מתקשה לחזור לתפקוד לאחר שנתקל בקושי", neg_f: "מתקשה לחזור לתפקוד לאחר שנתקלה בקושי" },
+        { id: "beh_verbal_violence", label: "אלימות מילולית", pos_m: "משתמש בשיח מכבד ונמנע מאלימות מילולית", pos_f: "משתמשת בשיח מכבד ונמנעת מאלימות מילולית", neg_m: "מתבטא באלימות מילולית כלפי ילדים אחרים (מקניט, מעליב, מקלל)", neg_f: "מתבטאת באלימות מילולית כלפי ילדים אחרים (מקניטה, מעליבה, מקללת)" },
+        { id: "beh_threats", label: "איומים על ילדים", pos_m: "נמנע לחלוטין מאיומים על ילדים", pos_f: "נמנעת לחלוטין מאיומים על ילדים", neg_m: "מאיים על ילדים אחרים", neg_f: "מאיימת על ילדים אחרים" },
+        { id: "beh_physical_violence", label: "אלימות פיזית", pos_m: "שומר על איפוק גופני ושלום חבריו", pos_f: "שומרת על איפוק גופני ושלום חברותיה", neg_m: "פוגע פיזית בילדים אחרים (מכה, נושך, בועט, מושך בשיער, שורט)", neg_f: "פוגעת פיזית בילדים אחרים (מכה, נושכת, בועטת, מושכת בשיער, שורטת)" },
+        { id: "beh_sensory", label: "תגובתיות יתר לגירויים תחושתיים", pos_m: "מגיב בוויסות תחושתי מותאם לגירויים", pos_f: "מגיבה בוויסות תחושתי מותאם לגירויים", neg_m: "מגיב יתר על המידה לגירויים סביבתיים שונים (רעש, מגע, תאורה)", neg_f: "מגיבה יתר על המידה לגירויים סביבתיים שונים (רעש, מגע, תאורה)" }
+    ],
+    behEmo: [
+        { id: "emo_expression", label: "הבעת רגשות", pos_m: "מביע רגשות באופן חופשי ומותאם", pos_f: "מביעה רגשות באופן חופשי ומותאם", neg_m: "מתקשה להביע רגשות (בהבעות פנים או באופן מילולי)", neg_f: "מתקשה להביע רגשות (בהבעות פנים או באופן מילולי)" },
+        { id: "emo_self_efficacy", label: "אמונה ביכולת אישית", pos_m: "מפגין אמונה ביכולותיו", pos_f: "מפגינה אמונה ביכולותיה", neg_m: "אומר בתסכול: 'לא יצליח לי', 'לא יצא לי', 'לא יכול'", neg_f: "אומרת בתסכול: 'לא יצליח לי', 'לא יצא לי', 'לא יכולה'" },
+        { id: "emo_reassurance", label: "צורך באישורים וחיזוקים", pos_m: "פועל באופן עצמאי ללא צורך באישורים מתמידים", pos_f: "פועלת באופן עצמאי ללא צורך באישורים מתמידים", neg_m: "מחפש אישורים וחיזוקים לכל פעולה שהוא עושה", neg_f: "מחפשת אישורים וחיזוקים לכל פעולה שהיא עושה" },
+        { id: "emo_self_blame", label: "אשמה עצמית מופרזת", pos_m: "מבחין בריאליות בין אחריותו לבין נסיבות חיצוניות", pos_f: "מבחינה בריאליות בין אחריותה לבין נסיבות חיצוניות", neg_m: "מאשים את עצמו גם במצבים שאינם תלויים בו", neg_f: "מאשימה את עצמה גם במצבים שאינם תלויים בה" },
+        { id: "emo_hostile_attribution", label: "ייחוס כוונות שליליות לאחרים", pos_m: "תופס סיטואציות חברתיות באופן ניטרלי ומקדם", pos_f: "תופסת סיטואציות חברתיות באופן ניטרלי ומקדם", neg_m: "נוטה לייחס לאחרים כוונות שליליות ופוגעניות כלפיו ללא סיבה ברורה", neg_f: "נוטה לייחס לאחרים כוונות שליליות ופוגעניות כלפיה ללא סיבה ברורה" },
+        { id: "emo_anxiety", label: "הבעת חרדות ופחדים", pos_m: "מפגין חוסן רגשי בשגרה", pos_f: "מפגינה חוסן רגשי בשגרה", neg_m: "מביע חרדות ופחדים המשפיעים על תפקודו", neg_f: "מביעה חרדות ופחדים המשפיעים על תפקודה" },
+        { id: "emo_apathy", label: "אדישות למתרחש", pos_m: "מעורב ומתעניין במתרחש סביבו", pos_f: "מעורבת ומתעניינת במתרחש סביבה", neg_m: "מגלה אדישות למתרחש בכיתה או בהפסקה ללא קשר לתוכן הפעילות", neg_f: "מגלה אדישות למתרחש בכיתה או בהפסקה ללא קשר לתוכן הפעילות" }
+    ],
+    social: [
+        { id: "soc_enjoyment", label: "הנאה מפעילויות ומשחקים", pos_m: "מביע הנאה רבה מפעילויות, ממשחקים ומטיולים", pos_f: "מביעה הנאה רבה מפעילויות, ממשחקים ומטיולים", neg_m: "מתקשה להביע הנאה מפעילויות, משחקים או טיולים", neg_f: "מתקשה להביע הנאה מפעילויות, משחקים או טיולים" },
+        { id: "soc_leadership", label: "כריזמה וכושר מנהיגות", pos_m: "מפגין כריזמה וכושר מנהיגות בקרב חבריו", pos_f: "מפגינה כריזמה וכושר מנהיגות בקרב חברותיה", neg_m: "מתקשה להפגין מנהיגות או להוביל פעילות חברתית", neg_f: "מתקשה להפגין מנהיגות או להוביל פעילות חברתית" },
+        { id: "soc_wide_circle", label: "מעגל חברתי רחב", pos_m: "בעל מעגל חברתי רחב ומגוון", pos_f: "בעלת מעגל חברתי רחב ומגוון", neg_m: "אינו מצליח ליצור מעגל חברתי רחב", neg_f: "אינה מצליחה ליצור מעגל חברתי רחב" },
+        { id: "soc_narrow_circle", label: "מעגל חברתי מצומצם", pos_m: "מפתח מעגל חברתי מצומצם ועמוק עם חברים בודדים", pos_f: "מפתחת מעגל חברתי מצומצם ועמוק עם חברות בודדות", neg_m: "מתקשה ליצור אף מעגל חברתי מצומצם או קשר קרוב", neg_f: "מתקשה ליצור אף מעגל חברתי מצומצם או קשר קרוב" },
+        { id: "soc_initiative", label: "יוזמה חברתית", pos_m: "יוזם אינטראקציה חברתית (מזמין למשחק, פותח בשיחה)", pos_f: "יוזמת אינטראקציה חברתית (מזמינה למשחק, פותחת בשיחה)", neg_m: "מתקשה ליזום אינטראקציות חברתיות", neg_f: "מתקשה ליזום אינטראקציות חברתיות" },
+        { id: "soc_interest", label: "עניין באינטראקציה חברתית", pos_m: "מראה עניין רב באינטראקציה חברתית", pos_f: "מראה עניין רב באינטראקציה חברתית", neg_m: "אינו מראה עניין באינטראקציה חברתית", neg_f: "אינה מראה עניין באינטראקציה חברתית" },
+        { id: "soc_group_voice", label: "הבעת עמדה בקבוצה", pos_m: "מביע את רצונותיו ודעותיו לפני קבוצת חברים", pos_f: "מביעה את רצונותיה ודעותיה לפני קבוצת חברות", neg_m: "מתקשה להביע רצונות ודעות לפני קבוצה", neg_f: "מתקשה להביע רצונות ודעות לפני קבוצה" },
+        { id: "soc_addressee", label: "התאמת דיבור לנמען", pos_m: "מתאים את דבריו לזהות הנמען (מורה, חבר, הורה)", pos_f: "מתאימה את דבריה לזהות הנמען (מורה, חברה, הורה)", neg_m: "מתקשה להתאים את הדברים לזהות הנמען", neg_f: "מתקשה להתאים את הדברים לזהות הנמען" },
+        { id: "soc_start_talk", label: "פתיחה בשיחה", pos_m: "פותח בשיחה באופן עצמאי (שואל, מבקש, מציע)", pos_f: "פותחת בשיחה באופן עצמאי (שואלת, מבקשת, מציעה)", neg_m: "מתקשה לפתוח בשיחה באופן עצמאי", neg_f: "מתקשה לפתוח בשיחה באופן עצמאי" },
+        { id: "soc_turn_taking", label: "לקיחת תור בשיחה", pos_m: "לוקח תור בעיתוי המתאים במהלך שיחה", pos_f: "לוקחת תור בעיתוי המתאים במהלך שיחה", neg_m: "מתקשה בלקיחת תור בעיתוי מתאים בשיחה", neg_f: "מתקשה בלקיחת תור בעיתוי מתאים בשיחה" },
+        { id: "soc_waiting", label: "המתנה בסבלנות לתור", pos_m: "ממתין בסבלנות לתורו (בשיחה או במשחק)", pos_f: "ממתינה בסבלנות לתורה (בשיחה או במשחק)", neg_m: "מתקשה להמתין בסבלנות לתורו", neg_f: "מתקשה להמתין בסבלנות לתורה" },
+        { id: "soc_typical_contact", label: "יצירת קשר חברתי בדרכים מקובלות", pos_m: "מצליח ליצור קשר חברתי בדרכים מקובלות", pos_f: "מצליחה ליצור קשר חברתי בדרכים מקובלות", neg_m: "מתקשה ביצירת קשר חברתי בדרכים מקובלות", neg_f: "מתקשה ביצירת קשר חברתי בדרכים מקובלות" },
+        { id: "soc_maintain_talk", label: "שמירה וקידום השיח עם החבר", pos_m: "מצליח לשמור ולקדם את השיח עם החבר", pos_f: "מצליחה לשמור ולקדם את השיח עם החברה", neg_m: "מתקשה בשמירה וקידום השיח עם החבר", neg_f: "מתקשה בשמירה וקידום השיח עם החברה" },
+        { id: "soc_simple_problems", label: "פתרון בעיות חברתיות פשוטות", pos_m: "מצליח לפתור בעצמו בעיות חברתיות פשוטות", pos_f: "מצליחה לפתור בעצמה בעיות חברתיות פשוטות", neg_m: "מתקשה לפתור בעצמו בעיות אישיות או חברתיות פשוטות", neg_f: "מתקשה לפתור בעצמה בעיות אישיות או חברתיות פשוטות" },
+        { id: "soc_recess", label: "תפקוד בהפסקה (נצפה לבד)", pos_m: "משולב היטב בחברת הילדים בהפסקה", pos_f: "משולבת היטב בחברת הילדים בהפסקה", neg_m: "נצפה לבד בהפסקה", neg_f: "נצפית לבד בהפסקה" },
+        { id: "soc_body_boundaries", label: "שמירה על גבולות גוף ומרחב אישי", pos_m: "שומר על גבולות הגוף והמרחב האישי", pos_f: "שומרת על גבולות הגוף והמרחב האישי", neg_m: "מתקשה לשמור על גבולות הגוף או המרחב האישי (נצמד, מחבק, נוגע)", neg_f: "מתקשה לשמור על גבולות הגוף או המרחב האישי (נצמדת, מחבקת, נוגעת)" },
+        { id: "soc_relevance", label: "רלוונטיות נושאי השיחה", pos_m: "משתף בנושאים רלוונטיים להקשר השיחה", pos_f: "משתפת בנושאים רלוונטיים להקשר השיחה", neg_m: "מעלה נושאים שאינם רלוונטיים להקשר השיחה", neg_f: "מעלה נושאים שאינם רלוונטיים להקשר השיחה" }
+    ]
+};
+
+function isFemale() {
+    return document.getElementById("studentGender").value === "female";
+}
+
+function createToggle(item) {
+    const el = document.createElement("div");
+    el.className = "toggle-item";
+    el.setAttribute("data-id", item.id);
+    el.setAttribute("data-state", "null");
+    el.setAttribute("data-pos-m", item.pos_m);
+    el.setAttribute("data-pos-f", item.pos_f);
+    el.setAttribute("data-neg-m", item.neg_m);
+    el.setAttribute("data-neg-f", item.neg_f);
+    el.innerHTML =
+        '<div class="toggle-status-indicator"></div>' +
+        '<div class="toggle-content">' +
+            '<span class="toggle-text"></span>' +
+            '<span class="toggle-preview"></span>' +
+        "</div>";
+    el.querySelector(".toggle-text").textContent = item.label;
+    el.addEventListener("click", function () {
+        const current = this.getAttribute("data-state");
+        if (current === "null") this.setAttribute("data-state", "v");
+        else if (current === "v") this.setAttribute("data-state", "x");
+        else this.setAttribute("data-state", "null");
+        updateSinglePreview(this);
+    });
+    return el;
+}
+
+function renderGrid(containerId, items) {
+    const grid = document.getElementById(containerId);
+    items.forEach(function (item) {
+        grid.appendChild(createToggle(item));
+    });
+}
+
+function updateSinglePreview(item) {
+    const preview = item.querySelector(".toggle-preview");
+    const state = item.getAttribute("data-state");
+    const female = isFemale();
+    if (state === "v") {
+        preview.textContent = item.getAttribute(female ? "data-pos-f" : "data-pos-m") || "";
+    } else if (state === "x") {
+        preview.textContent = item.getAttribute(female ? "data-neg-f" : "data-neg-m") || "";
+    } else {
+        preview.textContent = "";
+    }
+}
+
+function updateGenderPreviews() {
+    document.querySelectorAll(".toggle-item").forEach(updateSinglePreview);
+}
+
+function getToggleStatements(containerId) {
+    const container = document.getElementById(containerId);
+    const pos = [];
+    const neg = [];
+    const female = isFemale();
+    container.querySelectorAll(".toggle-item").forEach(function (item) {
+        const state = item.getAttribute("data-state");
+        if (state === "v") pos.push(item.getAttribute(female ? "data-pos-f" : "data-pos-m"));
+        else if (state === "x") neg.push(item.getAttribute(female ? "data-neg-f" : "data-neg-m"));
+    });
+    return { pos: pos, neg: neg };
+}
+
+function getMergedToggleStatements(containerIds) {
+    const pos = [];
+    const neg = [];
+    containerIds.forEach(function (id) {
+        const data = getToggleStatements(id);
+        data.pos.forEach(function (s) { pos.push(s); });
+        data.neg.forEach(function (s) { neg.push(s); });
+    });
+    return { pos: pos, neg: neg };
+}
+
+function val(id) {
+    return document.getElementById(id).value.trim();
+}
+
+function educationFrameText(raw, female) {
+    if (raw === "סל אישי") return female ? "תלמידת סל אישי" : "תלמיד סל אישי";
+    if (raw === "שילוב") return female ? "תלמידת שילוב" : "תלמיד שילוב";
+    return raw;
+}
+
+function generateReport() {
+    const form = document.getElementById("reportForm");
+    if (!form.reportValidity()) return;
+
+    const female = isFemale();
+    const nameDisplay = "***";
+    const idDisplay = "***";
+    const birthDate = val("birthDate") || "---";
+    const studentClass = val("studentClass") || "---";
+    const reportDate = val("reportDate") || "---";
+    const knowTime = val("knowTime") || "כמה חודשים";
+
+    const titleStudent = female ? "שם התלמידה" : "שם התלמיד";
+    const verbLearns = female ? "לומדת" : "לומד";
+    const verbDiagnosed = female ? "מאובחנת" : "מאובחן";
+    const verbGets = female ? "מקבלת" : "מקבל";
+    const nounStudent = female ? "תלמידה" : "תלמיד";
+    const pronounsIs = female ? "הינה" : "הינו";
+    const adjPromote = female ? "לקידומה" : "לקידומו";
+    const eduFrameStr = educationFrameText(val("educationFrame"), female);
+
+    const diagData = getToggleStatements("diagGrid");
+    const supportData = getToggleStatements("supportGrid");
+    const learningData = getToggleStatements("learningGrid");
+    const langData = getToggleStatements("langGrid");
+    const mathData = getToggleStatements("mathGrid");
+    const behaviorData = getMergedToggleStatements(["behRulesGrid", "behRegGrid", "behEmoGrid"]);
+    const socialData = getToggleStatements("socialGrid");
+
+    let text = "דו\"ח חינוכי-תפקודי\n";
+    text += "=========================\n";
+    text += titleStudent + ": " + nameDisplay + " | ת.ז: " + idDisplay + " | ת. לידה: " + birthDate + "\n";
+    text += "כיתה: " + studentClass + " | תאריך כתיבת הדו\"ח: " + reportDate + "\n";
+    text += "זמן היכרות עם הצוות: " + knowTime + "\n\n";
+
+    text += "1. רקע חינוכי, אבחנתי וסל תמיכות:\n";
+    text += "התלמיד/ה " + verbLearns + " במסגרת " + eduFrameStr + " בכיתה " + studentClass + ". ";
+    if (val("integrationCommittee") === "כן") text += "עבר/ה ועדת שילוב. ";
+    if (val("committeeStatus") === "כן") text += "עבר/ה ועדת אפיון וזכאות. ";
+    if (diagData.pos.length > 0) {
+        text += "התלמיד/ה " + verbDiagnosed + " עם: " + diagData.pos.join(", ");
+        const diagDetails = [];
+        if (val("diagDate")) diagDetails.push("בתאריך " + val("diagDate"));
+        if (val("diagAssessor")) diagDetails.push("על ידי " + val("diagAssessor"));
+        if (diagDetails.length > 0) text += " (" + diagDetails.join(" ") + ")";
+        text += ". ";
+    }
+    if (supportData.pos.length > 0) {
+        text += "במסגרת בית הספר " + verbGets + " סל תמיכות הכולל: " + supportData.pos.join(", ") + ". ";
+    }
+    if (val("backgroundNotes")) text += "\nרקע נוסף: " + val("backgroundNotes");
+    text += "\n\n";
+
+    text += "2. תחום לימודי ותפקודי לומד:\n";
+    const learningParagraphs = [];
+    if (learningData.pos.length > 0 || learningData.neg.length > 0) {
+        let str = "";
+        if (learningData.pos.length > 0) str += learningData.pos.join("; ") + ". ";
+        if (learningData.neg.length > 0) str += "בצד זה, ניכרים מוקדי קושי: " + learningData.neg.join("; ") + ". ";
+        learningParagraphs.push(str.trim());
+    }
+    if (langData.pos.length > 0 || langData.neg.length > 0) {
+        let str = "";
+        if (langData.pos.length > 0) str += "בתפקוד השפתי והאורייני נצפה כי " + langData.pos.join("; ") + ". ";
+        if (langData.neg.length > 0) str += "בנוסף, ניכרים קשיים: " + langData.neg.join("; ") + ". ";
+        learningParagraphs.push(str.trim());
+    }
+    if (mathData.pos.length > 0 || mathData.neg.length > 0 || val("mathDetails")) {
+        let str = "";
+        if (mathData.pos.length > 0) str += "בתחום החשבון " + mathData.pos.join("; ") + ". ";
+        if (mathData.neg.length > 0) str += "קשיים בולטים בחשבון: " + mathData.neg.join("; ") + ". ";
+        if (val("mathDetails")) str += val("mathDetails");
+        learningParagraphs.push(str.trim());
+    }
+    if (val("strengths")) {
+        learningParagraphs.push("התלמיד/ה בולט/ת לטובה ב-" + val("strengths") + ".");
+    }
+    text += learningParagraphs.join("\n") + "\n\n";
+
+    text += "3. תחום התנהגותי-רגשי:\n";
+    const behaviorParagraphs = [];
+    if (behaviorData.pos.length > 0) behaviorParagraphs.push(behaviorData.pos.join("; ") + ".");
+    if (behaviorData.neg.length > 0) behaviorParagraphs.push("מוקדי קושי והתנהגויות מאתגרות: " + behaviorData.neg.join("; ") + ".");
+    if (val("eventFrequency")) behaviorParagraphs.push("תדירות אירועים: " + val("eventFrequency") + ".");
+    if (val("behaviorDetails")) behaviorParagraphs.push(val("behaviorDetails"));
+    text += behaviorParagraphs.join("\n") + "\n\n";
+
+    text += "4. תחום חברתי-תקשורתי:\n";
+    const socialParagraphs = [];
+    if (socialData.pos.length > 0) socialParagraphs.push(socialData.pos.join("; ") + ".");
+    if (socialData.neg.length > 0) socialParagraphs.push("בתחום החברתי-תקשורתי ניכרים קשיים: " + socialData.neg.join("; ") + ".");
+    text += socialParagraphs.join("\n") + "\n\n";
+
+    text += "5. סיכום והמלצות:\n";
+    text += "התלמיד/ה " + pronounsIs + " " + nounStudent + " המפגין/ה חוזקות לצד קשיים בתפקוד היומיומי במסגרת. ";
+    if (val("recommendations")) {
+        text += val("recommendations") + "\n\n";
+    } else {
+        text += "הצוות החינוכי ממשיך ללוות את התלמיד/ה תוך התאמת המענים הנדרשים " + adjPromote + ".\n\n";
+    }
+    text += "בברכה,\nצוות חינוכי";
+
+    document.getElementById("reportPreview").innerText = text;
+    const out = document.getElementById("reportOutputContainer");
+    out.style.display = "block";
+    out.scrollIntoView({ behavior: "smooth" });
+}
+
+function copyToClipboard() {
+    const text = document.getElementById("reportPreview").innerText;
+    navigator.clipboard.writeText(text).then(function () {
+        alert("הדו\"ח הועתק בהצלחה! תוכלי להדביק אותו (Ctrl+V) בקובץ Word.");
+    });
+}
+
+function downloadDoc() {
+    const text = document.getElementById("reportPreview").innerText;
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "דוח_חינוכי_אנונימי.txt";
+    link.click();
+    URL.revokeObjectURL(link.href);
+}
+
+document.getElementById("reportDate").valueAsDate = new Date();
+renderGrid("diagGrid", TOGGLES.diagnosis);
+renderGrid("supportGrid", TOGGLES.support);
+renderGrid("learningGrid", TOGGLES.learning);
+renderGrid("langGrid", TOGGLES.lang);
+renderGrid("mathGrid", TOGGLES.math);
+renderGrid("behRulesGrid", TOGGLES.behRules);
+renderGrid("behRegGrid", TOGGLES.behReg);
+renderGrid("behEmoGrid", TOGGLES.behEmo);
+renderGrid("socialGrid", TOGGLES.social);
+
+document.getElementById("studentGender").addEventListener("change", updateGenderPreviews);
+document.getElementById("generateBtn").addEventListener("click", generateReport);
+document.getElementById("copyBtn").addEventListener("click", copyToClipboard);
+document.getElementById("downloadBtn").addEventListener("click", downloadDoc);
+</script>
+</body>
+</html>
