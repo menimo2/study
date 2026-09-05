@@ -569,26 +569,21 @@ const CATALOG = [
         "id": "social_circles",
         "domain": "social",
         "label": "הרחבת מעגלים חברתיים",
-        "text_m": "הרחבת המעגלים החברתיים בכיתה ובהפסקה, מתוך תחומי עניין משותפים.",
-        "text_f": "הרחבת המעגלים החברתיים בכיתה ובהפסקה, מתוך תחומי עניין משותפים.",
+        "text_m": "הרחבת המעגלים החברתיים ",
+        "text_f": "הרחבת המעגלים החברתיים",
         "objectives": [
             {
                 "id": "social_circles_interest",
                 "label": "משתף תחומי עניין",
                 "text_m": "ישתף ויזהה את תחומי העניין שלו, כדי שיהיה על מה לבנות קשר.",
                 "text_f": "תשתף ותזהה את תחומי העניין שלה, כדי שיהיה על מה לבנות קשר.",
-                "evaluation_m": "מצליח לבטא תחומי עניין באופן עקבי, בשיחה אישית או בקבוצה קטנה.",
-                "evaluation_f": "מצליחה לבטא תחומי עניין באופן עקבי, בשיחה אישית או בקבוצה קטנה.",
+                "evaluation_m": "מצליח לבטא תחומי עניין, בשיחה אישית או בקבוצה קטנה.",
+                "evaluation_f": "מצליחה לבטא תחומי עניין בשיחה אישית או בקבוצה קטנה.",
                 "methods": [
                     {
                         "id": "social_circles_interest_talk",
-                        "text_m": "שיח אישי קצר עם מחנכת / סייעת להיכרות עם תחומי עניין.",
-                        "text_f": "שיח אישי קצר עם מחנכת / סייעת להיכרות עם תחומי עניין."
-                    },
-                    {
-                        "id": "social_circles_interest_small",
-                        "text_m": "שיתוף בקבוצה קטנה (טיפול, הוראה מתקנת או סיוע), לא במליאה.",
-                        "text_f": "שיתוף בקבוצה קטנה (טיפול, הוראה מתקנת או סיוע), לא במליאה."
+                        "text_m": "שיח אישי עם מחנכת / סייעת להיכרות עם תחומי עניין.",
+                        "text_f": "שיח אישי עם מחנכת / סייעת להיכרות עם תחומי עניין."
                     },
                     {
                         "id": "social_circles_interest_home",
@@ -612,8 +607,8 @@ const CATALOG = [
                     },
                     {
                         "id": "social_circles_common_pair",
-                        "text_m": "עבודה בזוג / משחק מובנה עם חבר סביב נושא משותף.",
-                        "text_f": "עבודה בזוג / משחק מובנה עם חברה סביב נושא משותף."
+                        "text_m": "זימון עבודה בזוג / משחק מובנה עם חבר סביב נושא משותף.",
+                        "text_f": "זימון עבודה בזוג / משחק מובנה עם חברה סביב נושא משותף."
                     },
                     {
                         "id": "social_circles_common_list",
@@ -623,33 +618,8 @@ const CATALOG = [
                 ]
             },
             {
-                "id": "social_circles_class",
-                "label": "משתתף באינטראקציה בשיעור",
-                "text_m": "ישתתף באינטראקציות חברתיות במסגרת השיעור (זוג, קבוצה קטנה, שיעור חברתי).",
-                "text_f": "תשתתף באינטראקציות חברתיות במסגרת השיעור (זוג, קבוצה קטנה, שיעור חברתי).",
-                "evaluation_m": "משתתף בעבודה בזוג או בקבוצה קטנה בשיעור, לא רק ליד מבוגר.",
-                "evaluation_f": "משתתפת בעבודה בזוג או בקבוצה קטנה בשיעור, לא רק ליד מבוגר.",
-                "methods": [
-                    {
-                        "id": "social_circles_class_pair",
-                        "text_m": "זימון עבודה בזוגות או בקבוצה קטנה, עם תיווך סייעת / מורה.",
-                        "text_f": "זימון עבודה בזוגות או בקבוצה קטנה, עם תיווך סייעת / מורה."
-                    },
-                    {
-                        "id": "social_circles_class_game",
-                        "text_m": "משחקים חברתיים קצרים בשיעור, עם תפקיד ברור לכל ילד.",
-                        "text_f": "משחקים חברתיים קצרים בשיעור, עם תפקיד ברור לכל ילדה."
-                    },
-                    {
-                        "id": "social_circles_class_lesson",
-                        "text_m": "שיעור חברתי מתוכנן, לא רק «שיחה חופשית».",
-                        "text_f": "שיעור חברתי מתוכנן, לא רק «שיחה חופשית»."
-                    }
-                ]
-            },
-            {
                 "id": "social_circles_recess",
-                "label": "יוזם ועונה בהפסקה",
+                "label": "יוזם ועונה לאינטראקציה בהפסקה ",
                 "text_m": "ייזום ויענה לאינטראקציות חברתיות בהפסקה, עם תיווך הולך ופוחת.",
                 "text_f": "תייזום ותענה לאינטראקציות חברתיות בהפסקה, עם תיווך הולך ופוחת.",
                 "evaluation_m": "יוזם או עונה למשחק / שיחה בהפסקה במסגרת בית הספר, בלי תיווך מלא.",
@@ -677,9 +647,9 @@ const CATALOG = [
     {
         "id": "social_friendship",
         "domain": "social",
-        "label": "חברות ושיח חיובי",
-        "text_m": "פיתוח קשרי חברות חיוביים: הבנת החברות, ציפיות הדדיות ושיח מכבד.",
-        "text_f": "פיתוח קשרי חברות חיוביים: הבנת החברות, ציפיות הדדיות ושיח מכבד.",
+        "label": "חברות דרך שיח חיובי",
+        "text_m": "פיתוח קשרי חברות חיוביים",
+        "text_f": "פיתוח קשרי חברות חיוביים",
         "objectives": [
             {
                 "id": "social_friendship_what",
@@ -696,8 +666,8 @@ const CATALOG = [
                     },
                     {
                         "id": "social_friendship_what_talk",
-                        "text_m": "שיחות מותאמות גיל על עקביות, כבוד הדדי ופתרון קונפליקט.",
-                        "text_f": "שיחות מותאמות גיל על עקביות, כבוד הדדי ופתרון קונפליקט."
+                        "text_m": "שיחות מותאמות גיל על כבוד הדדי ופתרון קונפליקט.",
+                        "text_f": "שיחות מותאמות גיל על כבוד הדדי ופתרון קונפליקט."
                     },
                     {
                         "id": "social_friendship_what_praise",
@@ -708,51 +678,36 @@ const CATALOG = [
             },
             {
                 "id": "social_friendship_talk",
-                "label": "מקיים שיח חיובי",
-                "text_m": "ילמד שיח חיובי כמקדם חברות, ויפחית דיבור פוגע או מקניט.",
-                "text_f": "תלמד שיח חיובי כמקדם חברות, ותפחית דיבור פוגע או מקניט.",
-                "evaluation_m": "מפחית דיבור שלילי ומשתמש בשיח חיובי בזמן פעילות לימודית וחברתית.",
-                "evaluation_f": "מפחיתה דיבור שלילי ומשתמשת בשיח חיובי בזמן פעילות לימודית וחברתית.",
+                "label": "למידת שיח חיובי",
+                "text_m": "ילמד מהם מחמאות, פרגון ועידוד וכיצד הם מקדמים חברות",
+                "text_f": "תלמד מהם מחמאות, פרגון ועידוד וכיצד הם מקדמים חברות",
+                "evaluation_m": "מפחית דיבור שלילי, הקנטות, העלבות ומשתמש בשיח חיובי בזמן פעילות לימודית וחברתית.",
+                "evaluation_f": "מפחיתה דיבור שלילי, הקנטות, העלבות ומשתמשת בשיח חיובי בזמן פעילות לימודית וחברתית.",
                 "methods": [
                     {
                         "id": "social_friendship_talk_map",
-                        "text_m": "שימוש במפת אפשרויות: מה אפשר להגיד במקום הקנטה או קללה.",
-                        "text_f": "שימוש במפת אפשרויות: מה אפשר להגיד במקום הקנטה או קללה."
+                        "text_m": "שימוש במפת אפשרויות במצבים מזדמנים: מה אפשר להגיד במקום הקנטה או קללה.",
+                        "text_f": "שימוש במפת אפשרויות במצבים מזדמנים: מה אפשר להגיד במקום הקנטה או קללה."
                     },
                     {
                         "id": "social_friendship_talk_mirror",
                         "text_m": "שיקוף וחיזוק מיידי כשמשתמש בשיח חיובי.",
                         "text_f": "שיקוף וחיזוק מיידי כשמשתמשת בשיח חיובי."
-                    },
-                    {
-                        "id": "social_friendship_talk_stories",
-                        "text_m": "למידה מתוך שירים, סיפורים ודמויות מרחיקות.",
-                        "text_f": "למידה מתוך שירים, סיפורים ודמויות מרחיקות."
                     }
                 ]
             },
             {
-                "id": "social_friendship_try",
-                "label": "מתנסה עם בני גיל",
-                "text_m": "יתנסה במצבים חברתיים עם בני גילו בכיתה, בהפסקה ובשכבה.",
-                "text_f": "תתנסה במצבים חברתיים עם בנות גילה בכיתה, בהפסקה ובשכבה.",
-                "evaluation_m": "עונה ויוזם אינטראקציות עם בני גיל בהפסקות ובמצבים חברתיים בבית הספר.",
-                "evaluation_f": "עונה ויוזמת אינטראקציות עם בנות גיל בהפסקות ובמצבים חברתיים בבית הספר.",
+                "id": "social_friendship_new_social_friendship_feelings",
+                "label": "צורך אישי בחברות",
+                "text_m": "יכיר את התרומה של חברות טובה עבורו ואת הצורך בה",
+                "text_f": "תכיר את התרומה של חברות טובה עבורה ואת הצורך בה",
+                "evaluation_m": "יבטא רצון אישי לרכוש ולשמר חברות טובה",
+                "evaluation_f": "תבטא רצון אישי לרכוש ולשמר חברות טובה.",
                 "methods": [
                     {
-                        "id": "social_friendship_try_invite",
-                        "text_m": "זימון מצבים חברתיים בכיתה ובשכבה, לא רק בהפסקה החופשית.",
-                        "text_f": "זימון מצבים חברתיים בכיתה ובשכבה, לא רק בהפסקה החופשית."
-                    },
-                    {
-                        "id": "social_friendship_try_group",
-                        "text_m": "פעילות קבוצתית בתיווך מחנך / מטפל רגשי / ריפוי בעיסוק.",
-                        "text_f": "פעילות קבוצתית בתיווך מחנך / מטפלת רגשית / ריפוי בעיסוק."
-                    },
-                    {
-                        "id": "social_friendship_try_again",
-                        "text_m": "משימה חברתית קטנה בשבוע: להזמין חבר לפעילות קצרה ולשחק איתו שוב.",
-                        "text_f": "משימה חברתית קטנה בשבוע: להזמין חברה לפעילות קצרה ולשחק איתה שוב."
+                        "id": "social_friendship_new_social_friendship_feelings_way_i_want_friends",
+                        "text_m": "שיחות אישיות, עיבוד ושיקוף תחושות חיוביות שהתעוררו אצלו אחרי חווית חברות מוצלחת  ",
+                        "text_f": "שיחות אישיות, עיבוד ושיקוף תחושות חיוביות שהתעוררו אצלה אחרי חווית חברות מוצלחת."
                     }
                 ]
             }
@@ -761,22 +716,22 @@ const CATALOG = [
     {
         "id": "social_advocacy",
         "domain": "social",
-        "label": "סנגור עצמי וגבולות",
+        "label": "חיזוק הסנגור עצמי והצבת גבולות בקשר חברתי",
         "text_m": "חיזוק היכולת לבטא רצון והסתייגות, ולזהות קשר חברתי שאינו מכבד.",
         "text_f": "חיזוק היכולת לבטא רצון והסתייגות, ולזהות קשר חברתי שאינו מכבד.",
         "objectives": [
             {
                 "id": "social_advocacy_expect",
                 "label": "מכיר מה מצפים מקשר תקין",
-                "text_m": "יכיר את התוצאות ההדדיות של קשר חברתי תקין, ומה הוא רוצה לקבל ממנו.",
-                "text_f": "תכיר את התוצאות ההדדיות של קשר חברתי תקין, ומה היא רוצה לקבל ממנו.",
-                "evaluation_m": "מביע ציפיות חיוביות מקשר חברי, ולא רק «כדי שירצו אותי».",
-                "evaluation_f": "מביעה ציפיות חיוביות מקשר חברי, ולא רק «כדי שירצו אותי».",
+                "text_m": "יכיר את התוצאות ההדדיות של קשר חברתי תקין, ומה הוא צריך להרגיש בו",
+                "text_f": "תכיר את התוצאות ההדדיות של קשר חברתי תקין, ומה היא צריכה להרגיש בו.",
+                "evaluation_m": "מביע ציפיות חיוביות מקשר חברי, שלא מבוסס על ריצוי",
+                "evaluation_f": "מביעה ציפיות חיוביות מקשר חברי שלא מבוסס על ריצוי",
                 "methods": [
                     {
                         "id": "social_advocacy_expect_stories",
-                        "text_m": "סיפורים, שירים ותמונות על קשר הדדי.",
-                        "text_f": "סיפורים, שירים ותמונות על קשר הדדי."
+                        "text_m": "שימוש בסיפורים, שירים קטעי וידאו על קשר הדדי.",
+                        "text_f": "שימוש בסיפורים, שירים קטעי וידאו על קשר הדדי."
                     },
                     {
                         "id": "social_advocacy_expect_talk",
@@ -832,11 +787,6 @@ const CATALOG = [
                         "id": "social_advocacy_exploit_record",
                         "text_m": "תיעוד אירועים עם הצוות: מה קרה, ומה היה אפשר להגיד.",
                         "text_f": "תיעוד אירועים עם הצוות: מה קרה, ומה היה אפשר להגיד."
-                    },
-                    {
-                        "id": "social_advocacy_exploit_adult",
-                        "text_m": "סימן מוסכם למבוגר כשמרגיש לחץ מחברים.",
-                        "text_f": "סימן מוסכם למבוגר כשמרגישה לחץ מחברות."
                     }
                 ]
             }
@@ -896,6 +846,21 @@ const CATALOG = [
                         "id": "social_roles_use_record",
                         "text_m": "תיעוד הצלחות בתפקיד ומשוב קצר בסוף השבוע.",
                         "text_f": "תיעוד הצלחות בתפקיד ומשוב קצר בסוף השבוע."
+                    }
+                ]
+            },
+            {
+                "id": "social_roles_new_risponsebillity",
+                "label": "למידה על אחריות",
+                "text_m": "יכיר את המונח אחריות ותרומתה לתחושת המסוגלות האישית ולעצמאות.",
+                "text_f": "תכיר את המונח אחריות ותרומתה לתחושת המסוגלות האישית ולעצמאות.",
+                "evaluation_m": "יביע רצון לקחת אחריות על תפקידים",
+                "evaluation_f": "תביע רצון לקחת אחריות על תפקידים ",
+                "methods": [
+                    {
+                        "id": "social_roles_new_risponsebillity_way_risponsebiliiti_one",
+                        "text_m": "יחידת לימוד אישית\\ כיתתית שמדברת על אחריות, איך היא באה לידי ביטוי בתחומים שונים מעולמו של התלמיד, איפה היא תורמת לו",
+                        "text_f": "יחידת לימוד אישית\\ כיתתית שמדברת על אחריות, איך היא באה לידי ביטוי בתחומים שונים מעולמה של התלמידה, איפה היא תורמת לה"
                     }
                 ]
             }
@@ -966,16 +931,6 @@ const CATALOG = [
                 "evaluation_m": "מסמן את הכללים שבהם מתקשה לעמוד, עם תיווך ואחר כך בלעדיו.",
                 "evaluation_f": "מסמנת את הכללים שבהם מתקשה לעמוד, עם תיווך ואחר כך בלעדיו.",
                 "methods": [
-                    {
-                        "id": "behavioral_authority_hard_sign",
-                        "text_m": "סימן מוסכם כשמתקשה לקבל סמכות במהלך היום.",
-                        "text_f": "סימן מוסכם כשמתקשה לקבל סמכות במהלך היום."
-                    },
-                    {
-                        "id": "behavioral_authority_hard_visual",
-                        "text_m": "אמצעים חזותיים / רמזור בתקנון לסימון כללים קשים.",
-                        "text_f": "אמצעים חזותיים / רמזור בתקנון לסימון כללים קשים."
-                    },
                     {
                         "id": "behavioral_authority_hard_talk",
                         "text_m": "שיח חינוכי קצר אחרי אירוע, בלי ויכוח ארוך ברגע עצמו.",
@@ -1091,8 +1046,8 @@ const CATALOG = [
                     },
                     {
                         "id": "behavioral_regulation_feel_unit",
-                        "text_m": "יחידת לימוד: מהי עצבנות, איך היא נראית, גורמים והשפעות.",
-                        "text_f": "יחידת לימוד: מהי עצבנות, איך היא נראית, גורמים והשפעות."
+                        "text_m": "יחידת לימוד\\ תוכן לשיחה אישית: מהם כעס, עצבנות, בושה איך הם מרגישים בגוף, גורמים והשפעות.",
+                        "text_f": "יחידת לימוד\\ תוכן לשיחה אישית: מהם כעס, עצבנות, בושה איך היא נראית, גורמים והשפעות."
                     },
                     {
                         "id": "behavioral_regulation_feel_visual",
@@ -1103,7 +1058,7 @@ const CATALOG = [
             },
             {
                 "id": "behavioral_regulation_trigger",
-                "label": "מזהה מה מדליק תגובה חדה",
+                "label": "מזהה מה מעורר תגובה חדה",
                 "text_m": "יזהה ויתאר מצבים שגורמים לו להגיב באגרסיביות או בהתפרצות.",
                 "text_f": "תזהה ותתאר מצבים שגורמים לה להגיב באגרסיביות או בהתפרצות.",
                 "evaluation_m": "מזהה ומבטא את הגורמים גם בלי תיווך מבוגר.",
@@ -1111,24 +1066,14 @@ const CATALOG = [
                 "methods": [
                     {
                         "id": "behavioral_regulation_trigger_cases",
-                        "text_m": "עיבוד מקרים ואיתור מכנה משותף בין מצבים שהביאו לתגובה חדה.",
+                        "text_m": "עיבוד מקרים ואיתור מכנה משותף בין מצבים שהביאו לתגובה חדה, שימוש במודל אפר\"ת ובמודלים חזותיים.",
                         "text_f": "עיבוד מקרים ואיתור מכנה משותף בין מצבים שהביאו לתגובה חדה."
-                    },
-                    {
-                        "id": "behavioral_regulation_trigger_talk",
-                        "text_m": "שיחות אישיות ושאלונים קצרים אחרי אירוע.",
-                        "text_f": "שיחות אישיות ושאלונים קצרים אחרי אירוע."
-                    },
-                    {
-                        "id": "behavioral_regulation_trigger_aide",
-                        "text_m": "תיעוד רצף האירועים מנקודת מבט של סייע, לאיתור טריגר.",
-                        "text_f": "תיעוד רצף האירועים מנקודת מבט של סייעת, לאיתור טריגר."
                     }
                 ]
             },
             {
                 "id": "behavioral_regulation_calm",
-                "label": "מרגיע לפני התפרצות",
+                "label": "ויסות לפני התפרצות",
                 "text_m": "ינקוט באמצעי הרגעה מוסכמים לפני התפרצות, ויכיר דרכים מתונות להביע אי-שביעות רצון.",
                 "text_f": "תנקוט באמצעי הרגעה מוסכמים לפני התפרצות, ותכיר דרכים מתונות להביע אי-שביעות רצון.",
                 "evaluation_m": "ירידה בעוצמה ובתדירות ההתפרצויות; מחאה באופן מתון יותר.",
@@ -1224,11 +1169,6 @@ const CATALOG = [
                         "text_f": "פידבק חיובי מיד אחרי פנייה למבוגר."
                     },
                     {
-                        "id": "behavioral_ask_go_after",
-                        "text_m": "ניתוח תוצאת הקונפליקט אחרי תיווך הצוות.",
-                        "text_f": "ניתוח תוצאת הקונפליקט אחרי תיווך הצוות."
-                    },
-                    {
                         "id": "behavioral_ask_go_sign",
                         "text_m": "סימן מוסכם לפנייה, בלי לצאת מהשיעור בבהלה.",
                         "text_f": "סימן מוסכם לפנייה, בלי לצאת מהשיעור בבהלה."
@@ -1279,13 +1219,13 @@ const CATALOG = [
                 "methods": [
                     {
                         "id": "emotional_self_strength_terms",
-                        "text_m": "ביאור מושגים, סרטונים ותמונות: מהי חוזקה.",
-                        "text_f": "ביאור מושגים, סרטונים ותמונות: מהי חוזקה."
+                        "text_m": "ביאור מושגים דרך קלפי שיח, סיפורים, סרטונים ותמונות: מהי חוזקה.",
+                        "text_f": "ביאור מושגים דרך קלפי שיח, סיפורים, סרטונים ותמונות: מהי חוזקה."
                     },
                     {
                         "id": "emotional_self_strength_week",
-                        "text_m": "שיחה שבועית: חוזקה אחת שראינו השבוע.",
-                        "text_f": "שיחה שבועית: חוזקה אחת שראינו השבוע."
+                        "text_m": "שיחה יומית: חוזקה אחת שראינו היום.",
+                        "text_f": "שיחה יומית: חוזקה אחת שראינו היום."
                     },
                     {
                         "id": "emotional_self_strength_job",
@@ -1370,11 +1310,6 @@ const CATALOG = [
                         "id": "emotional_frustration_name_body",
                         "text_m": "מערך על מנעד רגשות ואופן הביטוי בגוף.",
                         "text_f": "מערך על מנעד רגשות ואופן הביטוי בגוף."
-                    },
-                    {
-                        "id": "emotional_frustration_name_art",
-                        "text_m": "עיבוד ביצירה ובחומרים מרגיעים, כשהרגש עולה.",
-                        "text_f": "עיבוד ביצירה ובחומרים מרגיעים, כשהרגש עולה."
                     }
                 ]
             },
@@ -1420,70 +1355,6 @@ const CATALOG = [
                         "id": "emotional_frustration_cope_share",
                         "text_m": "עידוד לשתף מבוגר במה שעובר, במקום לפרוש או להתפרץ.",
                         "text_f": "עידוד לשתף מבוגר במה שעובר, במקום לפרוש או להתפרץ."
-                    },
-                    {
-                        "id": "emotional_frustration_cope_group",
-                        "text_m": "עבודה בקבוצה קטנה על תסכול וקונפליקט, עם שיקוף הדדי.",
-                        "text_f": "עבודה בקבוצה קטנה על תסכול וקונפליקט, עם שיקוף הדדי."
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "id": "emotional_awareness",
-        "domain": "emotional",
-        "label": "מודעות לרגשות",
-        "text_m": "פיתוח מודעות לרגשות ולתחושות, ולהבחנה מתי תגובה חדה מתאימה ומתי לא.",
-        "text_f": "פיתוח מודעות לרגשות ולתחושות, ולהבחנה מתי תגובה חדה מתאימה ומתי לא.",
-        "objectives": [
-            {
-                "id": "emotional_awareness_show",
-                "label": "מכיר רגשות וביטויים",
-                "text_m": "יכיר רגשות שונים ואת אופן הביטוי שלהם בהתנהגות.",
-                "text_f": "תכיר רגשות שונים ואת אופן הביטוי שלהם בהתנהגות.",
-                "evaluation_m": "משיים מגוון רגשות ומתאר ביטוי התנהגותי של הרגש.",
-                "evaluation_f": "משיימת מגוון רגשות ומתארת ביטוי התנהגותי של הרגש.",
-                "methods": [
-                    {
-                        "id": "emotional_awareness_show_unit",
-                        "text_m": "יחידת לימוד על רגשות: סיפורים, סרטונים ומושגי מפתח.",
-                        "text_f": "יחידת לימוד על רגשות: סיפורים, סרטונים ומושגי מפתח."
-                    },
-                    {
-                        "id": "emotional_awareness_show_q",
-                        "text_m": "שאלונים אישיים וניתוח אירועים.",
-                        "text_f": "שאלונים אישיים וניתוח אירועים."
-                    },
-                    {
-                        "id": "emotional_awareness_show_talk",
-                        "text_m": "שיחות אישיות עם שימוש חוזר באותם מושגי מפתח.",
-                        "text_f": "שיחות אישיות עם שימוש חוזר באותם מושגי מפתח."
-                    }
-                ]
-            },
-            {
-                "id": "emotional_awareness_when",
-                "label": "מבחין מתי התגובה מתאימה",
-                "text_m": "יכיר סיבות שמעוררות אצלו כעס, ויבחין בין מצבים שבהם התגובה מתאימה לבין כאלה שלא.",
-                "text_f": "תכיר סיבות שמעוררות אצלה כעס, ותבחין בין מצבים שבהם התגובה מתאימה לבין כאלה שלא.",
-                "evaluation_m": "בעיבוד אירוע יודע לומר מה עיצבן אותו, ומתי אפשר היה להגיב אחרת.",
-                "evaluation_f": "בעיבוד אירוע יודעת לומר מה עיצבן אותה, ומתי אפשר היה להגיב אחרת.",
-                "methods": [
-                    {
-                        "id": "emotional_awareness_when_body",
-                        "text_m": "קישור לתחושה בגוף ולמקרים דומים, עם תרשים בתיווך ואחר כך בלעדיו.",
-                        "text_f": "קישור לתחושה בגוף ולמקרים דומים, עם תרשים בתיווך ואחר כך בלעדיו."
-                    },
-                    {
-                        "id": "emotional_awareness_when_invite",
-                        "text_m": "זימון מצבים מעוררי רגש במינון, ואז עיבוד.",
-                        "text_f": "זימון מצבים מעוררי רגש במינון, ואז עיבוד."
-                    },
-                    {
-                        "id": "emotional_awareness_when_talk",
-                        "text_m": "שיחה אישית: מתי נעלב, מתי רצה להשתתף, מתי הכעס עזר ומתי הזיק.",
-                        "text_f": "שיחה אישית: מתי נעלבה, מתי רצתה להשתתף, מתי הכעס עזר ומתי הזיק."
                     }
                 ]
             }
@@ -1661,14 +1532,14 @@ const CATALOG = [
         "id": "academic_independence",
         "domain": "academic",
         "label": "למידה עצמאית",
-        "text_m": "הרחבת יכולת וקצב הלמידה העצמאית, עם פחות תלות במבוגר ליד השולחן.",
-        "text_f": "הרחבת יכולת וקצב הלמידה העצמאית, עם פחות תלות במבוגר ליד השולחן.",
+        "text_m": "הרחבת יכולת וקצב הלמידה העצמאית",
+        "text_f": "הרחבת יכולת וקצב הלמידה העצמאית",
         "objectives": [
             {
                 "id": "academic_independence_try",
                 "label": "מתנסה באסטרטגיות עצמאיות",
-                "text_m": "יתנסה באסטרטגיות לעבודה עצמאית לפי שלבים (ציוד, רצף, המתנה לתור בדיקה).",
-                "text_f": "תתנסה באסטרטגיות לעבודה עצמאית לפי שלבים (ציוד, רצף, המתנה לתור בדיקה).",
+                "text_m": "יכיר אסטרטגיות לעבודה עצמאית לפי שלבים ",
+                "text_f": "תכיר אסטרטגיות לעבודה עצמאית לפי שלבים ",
                 "evaluation_m": "שומר על רצף בלי לצעוק תשובות, מחכה לסבב בדיקה, ניגש לאיש צוות קרוב ולא רק למחנכת.",
                 "evaluation_f": "שומרת על רצף בלי לצעוק תשובות, ממתינה לסבב בדיקה, ניגשת לאיש צוות קרוב ולא רק למחנכת.",
                 "methods": [
@@ -1698,19 +1569,14 @@ const CATALOG = [
                 "evaluation_f": "מתגייסת גם לתחום פחות אהוב, ועובדת באופן עצמאי ורציף.",
                 "methods": [
                     {
-                        "id": "academic_independence_alone_hint",
-                        "text_m": "רמזים מינימליים במקום פתרון מלא; תומכי זיכרון על השולחן.",
-                        "text_f": "רמזים מינימליים במקום פתרון מלא; תומכי זיכרון על השולחן."
-                    },
-                    {
                         "id": "academic_independence_alone_prize",
                         "text_m": "חיזוק קונקרטי / בנק פרסים על למידה עצמאית.",
                         "text_f": "חיזוק קונקרטי / בנק פרסים על למידה עצמאית."
                     },
                     {
-                        "id": "academic_independence_alone_fix",
-                        "text_m": "אי-סירוב לתקן טעות; בדיקה אחרי עשייה.",
-                        "text_f": "אי-סירוב לתקן טעות; בדיקה אחרי עשייה."
+                        "id": "academic_independence_alone_way_alone_way",
+                        "text_m": "יונחה לשאול אם הוראה אינה מובנת ולחכות איתה לאחר כך אם הצוות לא פנוי, להמשיך לדברים הברורים והידועים",
+                        "text_f": "תונחה לשאול אם הוראה אינה מובנת ולחכות איתה לאחר כך אם הצוות לא פנוי, להמשיך לדברים הברורים והידועים"
                     }
                 ]
             },
@@ -1724,18 +1590,13 @@ const CATALOG = [
                 "methods": [
                     {
                         "id": "academic_independence_done_rule",
-                        "text_m": "כלל כיתתי ברור: סיימת — מביאים לבדיקה.",
-                        "text_f": "כלל כיתתי ברור: סיימת — מביאים לבדיקה."
+                        "text_m": "תיאום ציפיות לפני המשימה ותזכורת- כשתסיים תביא לבדיקה.",
+                        "text_f": "תיאום ציפיות לפני המשימה ותזכורת- כשתסיימי תביאי לבדיקה."
                     },
                     {
                         "id": "academic_independence_done_cue",
                         "text_m": "כרטיס / סימן «סיימתי» על השולחן.",
                         "text_f": "כרטיס / סימן «סיימתי» על השולחן."
-                    },
-                    {
-                        "id": "academic_independence_done_praise",
-                        "text_m": "חיזוק מיידי על הודעה עצמאית, גם אם התוצר חלקי.",
-                        "text_f": "חיזוק מיידי על הודעה עצמאית, גם אם התוצר חלקי."
                     }
                 ]
             }
@@ -1751,35 +1612,30 @@ const CATALOG = [
             {
                 "id": "academic_motivation_strength",
                 "label": "מכיר חוזקות לימודיות",
-                "text_m": "יכיר את יכולותיו וחוזקותיו בתחום הלימודי, וימליל אותן.",
+                "text_m": "יכיר את יכולותיו וחוזקותיו בתחום הלימודי, ויתמלל אותן.",
                 "text_f": "תכיר את יכולותיה וחוזקותיה בתחום הלימודי, ותמליל אותן.",
                 "evaluation_m": "מבטא נושאים שהוא שולט בהם; מפחית «אני לא יודע» / «זה קשה» לטובת בקשת דוגמה או הסבר.",
                 "evaluation_f": "מבטאת נושאים שהיא שולטת בהם; מפחיתה «אני לא יודעת» / «זה קשה» לטובת בקשת דוגמה או הסבר.",
                 "methods": [
                     {
                         "id": "academic_motivation_strength_talk",
-                        "text_m": "שיח אישי וסימון הצלחות בצורה חזותית.",
-                        "text_f": "שיח אישי וסימון הצלחות בצורה חזותית."
+                        "text_m": "שיח אישי ופידבקים סביב חוזקות שזיהה הצוות",
+                        "text_f": "שיח אישי ופידבקים סביב חוזקות שזיהה הצוות"
                     },
                     {
-                        "id": "academic_motivation_strength_setup",
-                        "text_m": "זימון למידה שמזמינה הצלחה, ועדכון קצר להורים.",
-                        "text_f": "זימון למידה שמזמינה הצלחה, ועדכון קצר להורים."
-                    },
-                    {
-                        "id": "academic_motivation_strength_why",
-                        "text_m": "חידוד סיבת ההימנעות, בלי בושה.",
-                        "text_f": "חידוד סיבת ההימנעות, בלי בושה."
+                        "id": "academic_motivation_strength_way_motivashion",
+                        "text_m": "שימוש בקלפי שיח\\ שאלון הערכה אישי\\ שיח אישי אחרי תוצרים מיחידות לימוד כיתתיות בנושא חוזקות (לדוגמא \"האור שבי\" בחנוכה וכו') ",
+                        "text_f": ""
                     }
                 ]
             },
             {
                 "id": "academic_motivation_why",
                 "label": "מבין בשביל מה ללמוד",
-                "text_m": "יכיר את המשמעות והצורך בלמידה, כולל תרומת הלמידה בקבוצה לא-תחרותית.",
-                "text_f": "תכיר את המשמעות והצורך בלמידה, כולל תרומת הלמידה בקבוצה לא-תחרותית.",
-                "evaluation_m": "מתגייס למשימה; ירידה בהימנעות כשאחרים מקבלים חיזוק.",
-                "evaluation_f": "מתגייסת למשימה; ירידה בהימנעות כשאחרות מקבלות חיזוק.",
+                "text_m": "יכיר את המשמעות והצורך בלמידה",
+                "text_f": "תכיר את המשמעות והצורך בלמידה",
+                "evaluation_m": "ישתף במטרות שהיה רוצה להשיג",
+                "evaluation_f": "תשתף במטרות שהיה רוצה להשיג",
                 "methods": [
                     {
                         "id": "academic_motivation_why_talk",
@@ -1787,24 +1643,19 @@ const CATALOG = [
                         "text_f": "שיחה: מה המשימה תורמת בטווח הקרוב והרחוק, ואיך היא מפתחת עצמאות."
                     },
                     {
-                        "id": "academic_motivation_why_peers",
-                        "text_m": "עידוד לימוד עמיתים כדרבון, לא כתחרות.",
-                        "text_f": "עידוד לימוד עמיתים כדרבון, לא כתחרות."
-                    },
-                    {
                         "id": "academic_motivation_why_future",
-                        "text_m": "שיח קצר על ראיית עתיד והצורך בלמידה.",
+                        "text_m": "שיח אישי וקבוצתי על ראיית עתיד והצורך בלמידה.",
                         "text_f": "שיח קצר על ראיית עתיד והצורך בלמידה."
                     }
                 ]
             },
             {
                 "id": "academic_motivation_do",
-                "label": "מתגייס גם כשקשה",
-                "text_m": "יתגייס למשימה גם בתחום שהוא פחות אוהב, ויישאר בה ברצף.",
-                "text_f": "תתגייס למשימה גם בתחום שהיא פחות אוהבת, ותישאר בה ברצף.",
-                "evaluation_m": "לא נמנע מעבודה בלי איש צוות לידו; מבצע משימה רציפה גם בתחום פחות אהוב.",
-                "evaluation_f": "לא נמנעת מעבודה בלי איש צוות לידה; מבצעת משימה רציפה גם בתחום פחות אהוב.",
+                "label": "מתגייס למשימה בתחומי עניין",
+                "text_m": "יתגייס למשימה ויראה מעורבות בתחומי עניין",
+                "text_f": "תתגייס למשימה ותראה מעורבות בתחומי עניין",
+                "evaluation_m": "עלייה במעורבות, בנוכחות ובשיתוף הפעולה לאורך יום הלימודים",
+                "evaluation_f": "עלייה במעורבות, בנוכחות ובשיתוף הפעולה לאורך יום הלימודים",
                 "methods": [
                     {
                         "id": "academic_motivation_do_vary",
@@ -1813,13 +1664,28 @@ const CATALOG = [
                     },
                     {
                         "id": "academic_motivation_do_points",
-                        "text_m": "פידבק קונקרטי בתוכנית חיזוקים כיתתית (נקודות / בנק פרסים).",
+                        "text_m": "פידבק קונקרטי בתוכנית חיזוקים אישית (נקודות / בנק פרסים).",
                         "text_f": "פידבק קונקרטי בתוכנית חיזוקים כיתתית (נקודות / בנק פרסים)."
                     },
                     {
                         "id": "academic_motivation_do_voice",
-                        "text_m": "עידוד מילולי ממוקד על הגיוס, לא רק על הציון.",
+                        "text_m": "עידוד מילולי ממוקד על ההתגייסות, לא רק על התוצר.",
                         "text_f": "עידוד מילולי ממוקד על הגיוס, לא רק על הציון."
+                    },
+                    {
+                        "id": "academic_motivation_do_way_academic_motivation_why_way_motivasion_sheelon",
+                        "text_m": "מילוי שאלוני מוטיבציה לזיהוי גורמים מניעים.",
+                        "text_f": "מילוי שאלוני מוטיבציה לזיהוי גורמים מניעים."
+                    },
+                    {
+                        "id": "academic_motivation_why_way_motivashion_maarechet",
+                        "text_m": "בניית מערכת אישית לפי גורמים מניעים שעלו בשאלוני המוטיבציה",
+                        "text_f": "בניית מערכת אישית לפי גורמים מניעים שעלו בשאלוני המוטיבציה"
+                    },
+                    {
+                        "id": "academic_motivation_do_way_motivashion__hatslacha",
+                        "text_m": "התאמת משימות\\ אתגרים שבועיים לפי גורמים מניעים ומקצועות אהובים.",
+                        "text_f": "התאמת משימות\\ אתגרים שבועיים לפי גורמים מניעים ומקצועות אהובים."
                     }
                 ]
             }
@@ -2163,8 +2029,7 @@ const SEE = [
                 "label_m": "לא פותח שיחה ולא משתף מה מעניין אותו",
                 "label_f": "לא פותחת שיחה ולא משתפת מה מעניין אותה",
                 "objectiveIds": [
-                    "social_circles_interest",
-                    "social_circles_class"
+                    "social_circles_interest"
                 ]
             },
             {
@@ -2180,8 +2045,7 @@ const SEE = [
                 "label_m": "לא מוצא עם מי לשחק — «אין לי חברים»",
                 "label_f": "לא מוצאת עם מי לשחק — «אין לי חברות»",
                 "objectiveIds": [
-                    "social_circles_common",
-                    "social_friendship_try"
+                    "social_circles_common"
                 ]
             },
             {
@@ -2264,8 +2128,7 @@ const SEE = [
                 "label_m": "לא מצליח להגיד מה הוא מרגיש",
                 "label_f": "לא מצליחה להגיד מה היא מרגישה",
                 "objectiveIds": [
-                    "emotional_frustration_name",
-                    "emotional_awareness_show"
+                    "emotional_frustration_name"
                 ]
             },
             {
@@ -2334,7 +2197,7 @@ function emptySlot() {
 function findGoal(id) { return CATALOG.find(function (g) { return g.id === id; }); }
 function findObjective(id) {
     for (let i = 0; i < CATALOG.length; i++) {
-        const found = CATALOG[i].objectives.find(function (o) { return o.id === id; });
+        const found = (CATALOG[i].objectives || []).find(function (o) { return o.id === id; });
         if (found) return found;
     }
     return null;
@@ -2376,7 +2239,7 @@ function selectedObjectiveIds() {
     SEE.forEach(function (group) {
         group.items.forEach(function (item) {
             if (!seen[item.id]) return;
-            item.objectiveIds.forEach(function (oid) {
+            (item.objectiveIds || []).forEach(function (oid) {
                 if (findObjective(oid) && ids.indexOf(oid) === -1) ids.push(oid);
             });
         });
@@ -2388,9 +2251,9 @@ function slotsFromObjectiveIds(objIds) {
     const next = [];
     CATALOG.forEach(function (g) {
         const picked = {};
-        g.objectives.forEach(function (obj) {
+        (g.objectives || []).forEach(function (obj) {
             if (objIds.indexOf(obj.id) === -1) return;
-            picked[obj.id] = obj.methods.map(function (m) { return m.id; });
+            picked[obj.id] = (obj.methods || []).map(function (m) { return m.id; });
         });
         if (Object.keys(picked).length) {
             next.push({ id: "s" + (++slotSeq), domain: g.domain, goalId: g.id, picked: picked, timeframe: "שנתי" });
@@ -2402,7 +2265,7 @@ function slotsFromObjectiveIds(objIds) {
 function fillFromSee() {
     const objIds = selectedObjectiveIds();
     if (!objIds.length) {
-        alert("סמנו לפחות דבר אחד שאתם רואים בכיתה.");
+        alert("סמנו תצפית שמחוברת ליעד, או עדכנו את המאגר. תצפית בלי יעד לא ממלאת תוכנית.");
         return;
     }
     if (slots.length && !confirm("כבר יש תל\"א בטופס. לעדכן לפי הסימונים? העריכות בכרטיסים יוחלפו.")) return;
@@ -2422,8 +2285,10 @@ function renderSee() {
         box.innerHTML = "<h3>" + group.label + "</h3><div class=\"choice-list\"></div>";
         const list = box.querySelector(".choice-list");
         group.items.forEach(function (item) {
+            const validIds = (item.objectiveIds || []).filter(function (oid) { return findObjective(oid); });
+            if (!validIds.length) return;
             const on = !!seen[item.id];
-            const labels = item.objectiveIds.map(function (oid) {
+            const labels = validIds.map(function (oid) {
                 const o = findObjective(oid);
                 return o ? o.label : "";
             }).filter(Boolean);
@@ -2587,7 +2452,7 @@ function renderObjStep(slot, goal, slotIndex) {
 
     const inPlan = [];
     const extra = [];
-    goal.objectives.forEach(function (obj) {
+    (goal.objectives || []).forEach(function (obj) {
         if (slot.picked[obj.id]) inPlan.push(obj);
         else extra.push(obj);
     });
@@ -2637,7 +2502,7 @@ function renderObjCard(slot, obj, on, numLabel) {
         "</span>";
     row.querySelector("input").addEventListener("change", function (e) {
         if (e.target.checked) {
-            slot.picked[obj.id] = obj.methods.map(function (m) { return m.id; });
+            slot.picked[obj.id] = (obj.methods || []).map(function (m) { return m.id; });
         } else {
             delete slot.picked[obj.id];
         }
@@ -2650,7 +2515,7 @@ function renderObjCard(slot, obj, on, numLabel) {
         methods.className = "methods";
         methods.innerHTML = '<div class="step-title">אופן הביצוע ליעד הזה</div><div class="choice-list"></div>';
         const list = methods.querySelector(".choice-list");
-        obj.methods.forEach(function (m) {
+        (obj.methods || []).forEach(function (m) {
             const checked = slot.picked[obj.id].indexOf(m.id) !== -1;
             const mrow = document.createElement("label");
             mrow.className = "choice choice-method" + (checked ? " is-on" : "");
@@ -2679,10 +2544,10 @@ function generateReport() {
         const goal = findGoal(slot.goalId);
         if (!goal) return;
         const objs = [];
-        goal.objectives.forEach(function (obj) {
+        (goal.objectives || []).forEach(function (obj) {
             if (!slot.picked[obj.id]) return;
             const methodIds = slot.picked[obj.id];
-            const methods = obj.methods.filter(function (m) { return methodIds.indexOf(m.id) !== -1; });
+            const methods = (obj.methods || []).filter(function (m) { return methodIds.indexOf(m.id) !== -1; });
             objs.push({ obj: obj, methods: methods });
         });
         if (!objs.length) return;
