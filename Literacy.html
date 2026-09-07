@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מחולל ניתוח קריאה וכתיבה</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --bg: #f4f6f9;
+            --card: #ffffff;
+            --border: #dcdfe6;
+            --green: #27ae60;
+            --text: #333;
+            --muted: #667;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+        }
+        .container { max-width: 950px; margin: 0 auto; }
+        header {
+            text-align: center;
+            background: var(--primary);
+            color: #fff;
+            padding: 22px 20px;
+            border-radius: 12px;
+            margin-bottom: 18px;
+        }
+        header h1 { margin: 0 0 8px; font-size: 1.7rem; }
+        header p { margin: 0; opacity: 0.92; }
+
+        .section-card {
+            background: var(--card);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-right: 5px solid var(--secondary);
+        }
+        .section-card h2 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1.3rem;
+            border-bottom: 2px solid var(--bg);
+            padding-bottom: 10px;
+        }
+        .sub-title {
+            font-weight: 700;
+            color: var(--secondary);
+            margin: 16px 0 8px;
+            font-size: 1.05rem;
+        }
+        .lead {
+            margin: 0 0 14px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+        .form-group { margin-bottom: 12px; }
+        label.block {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #444;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+        .grid-2, .grid-3 { display: grid; gap: 12px; }
+        .grid-2 { grid-template-columns: 1fr 1fr; }
+        .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+        .choice-list { display: grid; gap: 8px; }
+        .choice {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            cursor: pointer;
+            text-align: right;
+        }
+        .choice:hover { border-color: #aed6f1; }
+        .choice.is-on {
+            background: #eaf6fd;
+            border-color: var(--secondary);
+        }
+        .choice input { margin-top: 4px; flex-shrink: 0; width: 18px; height: 18px; }
+        .choice .name { font-weight: 700; }
+        .choice .preview {
+            display: none;
+            font-size: 0.82rem;
+            color: #1a5276;
+            margin-top: 3px;
+            line-height: 1.35;
+            font-weight: 400;
+        }
+        .choice.is-on .preview { display: block; }
+
+        .actions { text-align: center; margin: 22px 0; }
+        .btn {
+            background: var(--secondary);
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.05rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 4px;
+            font-weight: 700;
+            font-family: inherit;
+        }
+        .btn:hover { background: #2980b9; }
+        .btn-success { background: var(--green); }
+        .btn-success:hover { background: #1e8449; }
+
+        #reportOutputContainer {
+            display: none;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-top: 10px;
+        }
+        #reportOutputContainer h2 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+        #reportPreview {
+            line-height: 1.7;
+            white-space: pre-wrap;
+            background: #fafafa;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>מחולל ניתוח קריאה וכתיבה</h1>
+        <p>מסמנים מה שרואים בקריאה / בהכתבה — והניתוח מתמלא (אנונימי)</p>
+    </header>
+
+    <form id="litForm">
+        <div class="section-card">
+            <h2>פרטים</h2>
+            <div class="grid-3">
+                <div class="form-group">
+                    <label class="block" for="studentName">שם התלמיד/ה</label>
+                    <input type="text" id="studentName" required placeholder="שם פרטי ומשפחה">
+                </div>
+                <div class="form-group">
+                    <label class="block" for="studentGender">מין</label>
+                    <select id="studentGender">
+                        <option value="male" selected>זכר (בן)</option>
+                        <option value="female">נקבה (בת)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="block" for="studentClass">כיתה</label>
+                    <input type="text" id="studentClass" placeholder="לדוגמה: ב'2">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="block" for="taskType">סוג הבדיקה</label>
+                <select id="taskType">
+                    <option value="word_reading" selected>קריאת מילים</option>
+                    <option value="text_reading">קריאת טקסט</option>
+                    <option value="dictation">הכתבה</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h2>מאפיינים</h2>
+            <p class="lead" id="traitsLead"></p>
+            <div id="traitsRoot"></div>
+        </div>
+
+        <div class="actions">
+            <button type="button" class="btn" id="generateBtn">צור ניתוח</button>
+        </div>
+    </form>
+
+    <div id="reportOutputContainer">
+        <h2>הניתוח המוכן (מוסתר פרטים מזהים)</h2>
+        <div id="reportPreview"></div>
+        <div class="actions">
+            <button type="button" class="btn btn-success" id="copyBtn">העתק</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const TASK_LABELS = {
+    word_reading: "קריאת מילים",
+    text_reading: "קריאת טקסט",
+    dictation: "הכתבה"
+};
+
+const TASK_LEADS = {
+    word_reading: "קריאת מילים בודדות, בלי הקשר של משפט. סמנו מה שראיתם.",
+    text_reading: "קריאה בקול של משפטים או קטע. סמנו מה שראיתם.",
+    dictation: "ניתוח כתיב מתוך הכתבה, ואם רלוונטי גם הכתב. סמנו מה שראיתם."
+};
+
+const CATALOG = {
+    word_reading: {
+        stage: {
+            fieldId: "wordStage",
+            title: "שלב פענוח",
+            options: [
+                { value: "partial", label: "קורא רק חלק מהמילה", text_m: "מפענח רק חלק מהצלילים במילה", text_f: "מפענחת רק חלק מהצלילים במילה" },
+                { value: "full", label: "קורא את המילה במאמץ", text_m: "מפענח את המילה במלואה, במאמץ ובקצב איטי", text_f: "מפענחת את המילה במלואה, במאמץ ובקצב איטי" },
+                { value: "auto", label: "קורא אוטומטית", text_m: "מזהה מילים במהירות, בלי פענוח הברה-הברה", text_f: "מזהה מילים במהירות, בלי פענוח הברה-הברה" }
+            ]
+        },
+        groups: [
+            {
+                line: "manner",
+                title: "אופן הקריאה",
+                items: [
+                    { id: "word_manner_blend", label: "קורא בהברות", text_m: "קורא בהברות, הברה אחר הברה", text_f: "קוראת בהברות, הברה אחר הברה" },
+                    { id: "word_manner_inacc_slow", label: "לא מדויק ואיטי", text_m: "קורא לאט ובאי-דיוק", text_f: "קוראת לאט ובאי-דיוק" },
+                    { id: "word_manner_acc_slow", label: "מדויק ואיטי", text_m: "קורא במדויק אך לאט", text_f: "קוראת במדויק אך לאט" },
+                    { id: "word_manner_inacc_fast", label: "לא מדויק ומהיר", text_m: "קורא במהירות אך באי-דיוק", text_f: "קוראת במהירות אך באי-דיוק" },
+                    { id: "word_manner_self_correct", label: "מתקן שגיאות בעצמו", text_m: "מבחין בשגיאות ומתקן אותן בעצמו", text_f: "מבחינה בשגיאות ומתקנת אותן בעצמה" }
+                ]
+            },
+            {
+                line: "errors",
+                title: "שיבושי פענוח",
+                items: [
+                    { id: "word_err_sub", label: "מחליף עיצורים או תנועות", text_m: "מחליף עיצורים או תנועות (בדמיון צורה או צליל)", text_f: "מחליפה עיצורים או תנועות (בדמיון צורה או צליל)" },
+                    { id: "word_err_omit", label: "משמיט אותיות או הברות", text_m: "משמיט אותיות או הברות מתוך המילה", text_f: "משמיטה אותיות או הברות מתוך המילה" },
+                    { id: "word_err_add", label: "מוסיף אותיות או הברות", text_m: "מוסיף אותיות או הברות שאינן במילה", text_f: "מוסיפה אותיות או הברות שאינן במילה" },
+                    { id: "word_err_transpose", label: "משנה סדר אותיות", text_m: "משנה את סדר האותיות במילה", text_f: "משנה את סדר האותיות במילה" },
+                    { id: "word_err_affix", label: "שורש נכון, מוספית משובשת", text_m: "מזהה את שורש המילה אך משבש תחיליות או סופיות", text_f: "מזהה את שורש המילה אך משבשת תחיליות או סופיות" }
+                ]
+            }
+        ]
+    },
+    text_reading: {
+        stage: null,
+        groups: [
+            {
+                line: "manner",
+                title: "אופן הקריאה",
+                exclusive: [["text_manner_punct", "text_manner_punct_miss"]],
+                items: [
+                    { id: "text_manner_blend", label: "קורא בהברות", text_m: "קורא בהברות, הברה אחר הברה", text_f: "קוראת בהברות, הברה אחר הברה" },
+                    { id: "text_manner_inacc_slow", label: "לא מדויק ואיטי", text_m: "קורא לאט ובאי-דיוק", text_f: "קוראת לאט ובאי-דיוק" },
+                    { id: "text_manner_acc_slow", label: "מדויק ואיטי", text_m: "קורא במדויק אך לאט", text_f: "קוראת במדויק אך לאט" },
+                    { id: "text_manner_inacc_fast", label: "לא מדויק ומהיר", text_m: "קורא במהירות אך באי-דיוק", text_f: "קוראת במהירות אך באי-דיוק" },
+                    { id: "text_manner_punct", label: "מתייחס לפיסוק", text_m: "חותך משפטים לפי סימני הפיסוק", text_f: "חותכת משפטים לפי סימני הפיסוק" },
+                    { id: "text_manner_punct_miss", label: "מתעלם מפיסוק", text_m: "אינו חותך משפטים לפי סימני הפיסוק", text_f: "אינה חותכת משפטים לפי סימני הפיסוק" },
+                    { id: "text_manner_prosody", label: "הנגנה מותאמת", text_m: "מנגן את הקריאה בהתאם לתוכן ולפיסוק", text_f: "מנגנת את הקריאה בהתאם לתוכן ולפיסוק" },
+                    { id: "text_manner_self_correct", label: "מתקן שגיאות בעצמו", text_m: "מבחין בשגיאות ומתקן אותן בעצמו", text_f: "מבחינה בשגיאות ומתקנת אותן בעצמה" }
+                ]
+            },
+            {
+                line: "errors",
+                title: "שיבושים בטקסט",
+                items: [
+                    { id: "text_err_sub_ok", label: "מחליף מילה בלי לשנות תוכן", text_m: "מחליף מילים במילים משמעותיות שאינן משנות את תוכן הטקסט", text_f: "מחליפה מילים במילים משמעותיות שאינן משנות את תוכן הטקסט" },
+                    { id: "text_err_sub_bad", label: "מחליף מילה ומשנה תוכן", text_m: "מחליף מילים במילים משמעותיות שמשנות את תוכן הטקסט", text_f: "מחליפה מילים במילים משמעותיות שמשנות את תוכן הטקסט" },
+                    { id: "text_err_nonword", label: "קורא מילה שאינה בעברית", text_m: "מחליף מילים ברצף צלילים שאינו מילה בעברית", text_f: "מחליפה מילים ברצף צלילים שאינו מילה בעברית" },
+                    { id: "text_err_letters", label: "מחליף / משמיט / מוסיף אותיות", text_m: "מחליף, משמיט, מוסיף או משנה סדר של עיצורים ותנועות", text_f: "מחליפה, משמיטה, מוסיפה או משנה סדר של עיצורים ותנועות" },
+                    { id: "text_err_affix", label: "שורש נכון, מוספית משובשת", text_m: "מזהה את שורש המילה אך משבש תחיליות, סופיות או אותיות שימוש", text_f: "מזהה את שורש המילה אך משבשת תחיליות, סופיות או אותיות שימוש" },
+                    { id: "text_err_function", label: "משבש מילות תפקוד", text_m: "מחליף או משמיט מילות קישור, יחס או כינויים", text_f: "מחליפה או משמיטה מילות קישור, יחס או כינויים" }
+                ]
+            }
+        ]
+    },
+    dictation: {
+        stage: {
+            fieldId: "dictStage",
+            title: "שלב כתיב",
+            options: [
+                { value: "pre", label: "אותיות אקראיות", text_m: "כותב באותיות אקראיות, בלי התאמה לצלילי המילה", text_f: "כותבת באותיות אקראיות, בלי התאמה לצלילי המילה" },
+                { value: "partial", label: "מייצג חלק מהצלילים", text_m: "מייצג בכתב רק חלק מצלילי המילה", text_f: "מייצגת בכתב רק חלק מצלילי המילה" },
+                { value: "full", label: "מייצג את כל הצלילים", text_m: "מייצג את כל צלילי המילה, לא תמיד באות המוסכמת", text_f: "מייצגת את כל צלילי המילה, לא תמיד באות המוסכמת" },
+                { value: "conventional", label: "כתיב מוסכם", text_m: "כותב לפי כתיב מוסכם, כולל ידע אורתוגרפי ומורפולוגי", text_f: "כותבת לפי כתיב מוסכם, כולל ידע אורתוגרפי ומורפולוגי" }
+            ]
+        },
+        groups: [
+            {
+                line: "errors",
+                title: "שגיאות פונטיות",
+                items: [
+                    { id: "dict_ph_similar", label: "מחליף אותיות בצליל דומה", text_m: "מחליף אותיות שמייצגות צלילים דומים", text_f: "מחליפה אותיות שמייצגות צלילים דומים" },
+                    { id: "dict_ph_omit", label: "משמיט עיצורים", text_m: "משמיט עיצורים, כך שהמילה לא מיוצגת במלואה", text_f: "משמיטה עיצורים, כך שהמילה לא מיוצגת במלואה" },
+                    { id: "dict_ph_random", label: "כתיב בלי קשר למילה", text_m: "מחליף אותיות בלי קשר למילת המקור", text_f: "מחליפה אותיות בלי קשר למילת המקור" }
+                ]
+            },
+            {
+                line: "errors",
+                title: "שגיאות מורפולוגיות",
+                items: [
+                    { id: "dict_mo_root", label: "שגיאה בשורש", text_m: "טועה באותיות שוות-צליל בשורש המילה", text_f: "טועה באותיות שוות-צליל בשורש המילה" },
+                    { id: "dict_mo_affix", label: "שגיאה במוספית או בתבנית", text_m: "טועה באותיות שוות-צליל בתבנית או במוספיות", text_f: "טועה באותיות שוות-צליל בתבנית או במוספיות" },
+                    { id: "dict_mo_function", label: "שגיאה במילת תפקוד", text_m: "טועה באותיות שוות-צליל במילות תפקוד", text_f: "טועה באותיות שוות-צליל במילות תפקוד" }
+                ]
+            },
+            {
+                line: "errors",
+                title: "שגיאות אחרות",
+                items: [
+                    { id: "dict_ot_omit_mater", label: "משמיט אימות קריאה", text_m: "משמיט אימות קריאה (אהו״י)", text_f: "משמיטה אימות קריאה (אהו״י)" },
+                    { id: "dict_ot_add_mater", label: "מוסיף אימות קריאה", text_m: "מוסיף אימות קריאה שאינה נדרשת", text_f: "מוסיפה אימות קריאה שאינה נדרשת" },
+                    { id: "dict_ot_transpose", label: "משנה סדר אותיות", text_m: "משנה את סדר האותיות במילה", text_f: "משנה את סדר האותיות במילה" }
+                ]
+            },
+            {
+                line: "graphic",
+                title: "כתב גרפי",
+                items: [
+                    { id: "dict_gr_shape", label: "אותיות לא ברורות", text_m: "האותיות אינן ברורות או אינן קריאות", text_f: "האותיות אינן ברורות או אינן קריאות" },
+                    { id: "dict_gr_size", label: "גודל אות לא אחיד", text_m: "גודל האותיות אינו אחיד", text_f: "גודל האותיות אינו אחיד" },
+                    { id: "dict_gr_direction", label: "כיוון כתיבת אות לא מקובל", text_m: "כותב אותיות שלא מכיוון הכתיבה המקובל", text_f: "כותבת אותיות שלא מכיוון הכתיבה המקובל" },
+                    { id: "dict_gr_letter_space", label: "רווח לא תקין בין אותיות", text_m: "הרווח בין האותיות אינו תקין", text_f: "הרווח בין האותיות אינו תקין" },
+                    { id: "dict_gr_word_space", label: "רווח לא תקין בין מילים", text_m: "הרווח בין המילים אינו מאפשר להבחין בין מילה למילה", text_f: "הרווח בין המילים אינו מאפשר להבחין בין מילה למילה" }
+                ]
+            }
+        ]
+    }
+};
+
+function isFemale() {
+    return document.getElementById("studentGender").value === "female";
+}
+
+function gendered(item) {
+    return isFemale() ? item.text_f : item.text_m;
+}
+
+function currentCatalog() {
+    return CATALOG[document.getElementById("taskType").value];
+}
+
+function findItem(id) {
+    const catalog = currentCatalog();
+    for (const group of catalog.groups) {
+        const item = group.items.find((row) => row.id === id);
+        if (item) return { item, group };
+    }
+    return null;
+}
+
+function renderTraits() {
+    const type = document.getElementById("taskType").value;
+    const catalog = CATALOG[type];
+    document.getElementById("traitsLead").textContent = TASK_LEADS[type];
+    const root = document.getElementById("traitsRoot");
+    root.innerHTML = "";
+
+    if (catalog.stage) {
+        const wrap = document.createElement("div");
+        wrap.className = "form-group";
+        const label = document.createElement("label");
+        label.className = "block";
+        label.setAttribute("for", catalog.stage.fieldId);
+        label.textContent = catalog.stage.title;
+        const select = document.createElement("select");
+        select.id = catalog.stage.fieldId;
+        const empty = document.createElement("option");
+        empty.value = "";
+        empty.textContent = "לא נבחר";
+        select.appendChild(empty);
+        catalog.stage.options.forEach((opt) => {
+            const option = document.createElement("option");
+            option.value = opt.value;
+            option.textContent = opt.label;
+            select.appendChild(option);
+        });
+        wrap.appendChild(label);
+        wrap.appendChild(select);
+        root.appendChild(wrap);
+    }
+
+    catalog.groups.forEach((group) => {
+        const title = document.createElement("div");
+        title.className = "sub-title";
+        title.textContent = group.title;
+        root.appendChild(title);
+        const list = document.createElement("div");
+        list.className = "choice-list";
+        group.items.forEach((item) => {
+            const row = document.createElement("label");
+            row.className = "choice";
+            row.dataset.id = item.id;
+            const input = document.createElement("input");
+            input.type = "checkbox";
+            input.dataset.id = item.id;
+            input.addEventListener("change", () => onCheck(item.id, group, input.checked));
+            const body = document.createElement("span");
+            const name = document.createElement("span");
+            name.className = "name";
+            name.textContent = item.label;
+            const preview = document.createElement("span");
+            preview.className = "preview";
+            body.appendChild(name);
+            body.appendChild(preview);
+            row.appendChild(input);
+            row.appendChild(body);
+            list.appendChild(row);
+        });
+        root.appendChild(list);
+    });
+
+    updatePreviews();
+}
+
+function onCheck(id, group, checked) {
+    if (checked && group.exclusive) {
+        group.exclusive.forEach((pair) => {
+            if (!pair.includes(id)) return;
+            pair.filter((other) => other !== id).forEach((other) => {
+                const otherInput = document.querySelector(`input[data-id="${other}"]`);
+                if (otherInput) otherInput.checked = false;
+            });
+        });
+    }
+    updatePreviews();
+}
+
+function updatePreviews() {
+    document.querySelectorAll(".choice").forEach((row) => {
+        const found = findItem(row.dataset.id);
+        const input = row.querySelector("input");
+        const preview = row.querySelector(".preview");
+        if (!found || !input || !preview) return;
+        row.classList.toggle("is-on", input.checked);
+        preview.textContent = input.checked ? gendered(found.item) : "";
+    });
+}
+
+function generateReport() {
+    const type = document.getElementById("taskType").value;
+    const catalog = CATALOG[type];
+    const klass = document.getElementById("studentClass").value.trim() || "---";
+    const titleStudent = isFemale() ? "שם התלמידה" : "שם התלמיד";
+    const lines = [
+        `ניתוח קריאה וכתיבה — ${TASK_LABELS[type]}`,
+        `${titleStudent}: *** | כיתה: ${klass}`,
+        ""
+    ];
+
+    if (catalog.stage) {
+        const chosen = document.getElementById(catalog.stage.fieldId).value;
+        if (chosen) {
+            const opt = catalog.stage.options.find((row) => row.value === chosen);
+            if (opt) lines.push(gendered(opt) + ".");
+        }
+    }
+
+    const buckets = { manner: [], errors: [], graphic: [] };
+    catalog.groups.forEach((group) => {
+        group.items.forEach((item) => {
+            const input = document.querySelector(`input[data-id="${item.id}"]`);
+            if (input && input.checked) buckets[group.line].push(gendered(item));
+        });
+    });
+
+    if (buckets.manner.length) lines.push(`אופן הקריאה: ${buckets.manner.join("; ")}.`);
+    if (buckets.errors.length) lines.push(`שיבושים שנצפו: ${buckets.errors.join("; ")}.`);
+    if (buckets.graphic.length) lines.push(`בכתב: ${buckets.graphic.join("; ")}.`);
+
+    document.getElementById("reportPreview").textContent = lines.join("\n");
+    const box = document.getElementById("reportOutputContainer");
+    box.style.display = "block";
+    box.scrollIntoView({ behavior: "smooth" });
+}
+
+function copyReport() {
+    const text = document.getElementById("reportPreview").innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        alert("הניתוח הועתק בהצלחה! תוכלי להדביק אותו (Ctrl+V) בקובץ Word.");
+    });
+}
+
+document.getElementById("taskType").addEventListener("change", () => {
+    document.getElementById("reportOutputContainer").style.display = "none";
+    renderTraits();
+});
+document.getElementById("studentGender").addEventListener("change", updatePreviews);
+document.getElementById("generateBtn").addEventListener("click", generateReport);
+document.getElementById("copyBtn").addEventListener("click", copyReport);
+
+renderTraits();
+</script>
+</body>
+</html>
