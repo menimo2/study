@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תיעוד אירוע</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --bg: #f4f6f9;
+            --card: #ffffff;
+            --border: #dcdfe6;
+            --green: #27ae60;
+            --text: #333;
+            --muted: #667;
+            --tint: #eaf2f8;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+        }
+        .container { max-width: 950px; margin: 0 auto; }
+        header {
+            text-align: center;
+            background: var(--primary);
+            color: #fff;
+            padding: 26px 20px 22px;
+            border-radius: 12px;
+            margin-bottom: 18px;
+        }
+        header h1 { margin: 0 0 8px; font-size: 1.8rem; letter-spacing: 0.02em; }
+        header p { margin: 0; opacity: 0.92; }
+
+        .section-card {
+            background: var(--card);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-right: 5px solid var(--secondary);
+        }
+        .section-card h2 {
+            margin: 0 0 14px;
+            color: var(--primary);
+            font-size: 1.25rem;
+            border-bottom: 2px solid var(--bg);
+            padding-bottom: 10px;
+        }
+        .sub-title {
+            font-weight: 700;
+            color: var(--secondary);
+            margin: 14px 0 8px;
+            font-size: 0.95rem;
+        }
+        .hint {
+            margin: 8px 0 0;
+            color: var(--muted);
+            font-size: 0.85rem;
+            line-height: 1.45;
+        }
+        .form-group { margin-bottom: 12px; }
+        label.block {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #444;
+        }
+        input[type="text"], input[type="date"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+        textarea { resize: vertical; min-height: 110px; line-height: 1.5; }
+        .grid-2, .grid-3 { display: grid; gap: 12px; }
+        .grid-2 { grid-template-columns: 1fr 1fr; }
+        .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+        .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        .chip:hover { border-color: #aed6f1; }
+        .chip input { margin: 0; width: 16px; height: 16px; }
+        .chip.is-on {
+            background: var(--tint);
+            border-color: var(--secondary);
+            color: var(--primary);
+        }
+
+        .decision {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 11px 12px;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+        .decision:hover { border-color: #aed6f1; }
+        .decision.is-on {
+            background: var(--tint);
+            border-color: var(--secondary);
+        }
+        .decision input { margin-top: 3px; width: 18px; height: 18px; flex-shrink: 0; }
+        .decision .name { font-weight: 700; }
+        .decision .preview {
+            display: none;
+            margin-top: 3px;
+            color: #1a5276;
+            font-size: 0.82rem;
+            font-weight: 400;
+        }
+        .decision.is-on .preview { display: block; }
+
+        .reveal {
+            display: none;
+            margin: -2px 0 12px;
+            padding: 12px;
+            background: #f8fafc;
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+        }
+        .reveal.is-open { display: block; }
+
+        .actions { text-align: center; margin: 22px 0; }
+        .btn {
+            background: var(--secondary);
+            color: #fff;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1.05rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: inherit;
+        }
+        .btn:hover { background: #2980b9; }
+        .btn-success { background: var(--green); }
+        .btn-success:hover { background: #1e8449; }
+
+        #reportOutputContainer {
+            display: none;
+            background: #fff;
+            padding: 28px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-top: 8px;
+        }
+        #reportOutputContainer h2 { margin: 0 0 14px; color: var(--primary); font-size: 1.2rem; }
+        #reportPreview {
+            white-space: pre-wrap;
+            background: #fafafa;
+            border: 1px solid #eee;
+            border-top: 4px solid var(--primary);
+            border-radius: 8px;
+            padding: 22px;
+            line-height: 1.75;
+            font-size: 1.02rem;
+        }
+
+        @media (max-width: 600px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>תיעוד אירוע</h1>
+        <p>מסמנים את סוג האירוע ואת ההחלטות — והתיעוד מתמלא (אנונימי)</p>
+    </header>
+
+    <form id="incidentForm">
+        <div class="section-card">
+            <h2>פרטי האירוע</h2>
+            <div class="grid-3">
+                <div class="form-group">
+                    <label class="block" for="studentName">שם התלמיד/ה</label>
+                    <input type="text" id="studentName" required placeholder="שם פרטי ומשפחה">
+                </div>
+                <div class="form-group">
+                    <label class="block" for="studentGender">מין</label>
+                    <select id="studentGender">
+                        <option value="male" selected>זכר (בן)</option>
+                        <option value="female">נקבה (בת)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="block" for="studentClass">כיתה</label>
+                    <input type="text" id="studentClass" placeholder="לדוגמה: ד'2">
+                </div>
+            </div>
+            <div class="grid-3">
+                <div class="form-group">
+                    <label class="block" for="place">מקום</label>
+                    <input type="text" id="place" placeholder="חצר / כיתה / מסדרון">
+                </div>
+                <div class="form-group">
+                    <label class="block" for="incidentDate">תאריך</label>
+                    <input type="date" id="incidentDate">
+                </div>
+                <div class="form-group">
+                    <label class="block" for="incidentTime">שעה</label>
+                    <input type="text" id="incidentTime" placeholder="10:15">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="block" for="present">נוכחים</label>
+                <input type="text" id="present" placeholder="מחנכת, סייעת, יועצת">
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h2>סוג האירוע</h2>
+            <div id="typesRoot"></div>
+            <div class="reveal" id="otherTypeBox">
+                <label class="block" for="incidentOther">פירוט האירוע האחר</label>
+                <textarea id="incidentOther" placeholder="מה היה האירוע"></textarea>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h2>תיאור האירוע</h2>
+            <textarea id="description" placeholder="מה קרה, בקצרה"></textarea>
+            <p class="hint">השם מהשדה למעלה לא נכנס לתיעוד. אם כותבים אותו כאן — הוא כן יודפס.</p>
+        </div>
+
+        <div class="section-card">
+            <h2>החלטות שהתקבלו</h2>
+            <div id="decisionsRoot"></div>
+        </div>
+
+        <div class="actions">
+            <button type="button" class="btn" id="generateBtn">צור תיעוד</button>
+        </div>
+    </form>
+
+    <div id="reportOutputContainer">
+        <h2>התיעוד המוכן (מוסתר פרטים מזהים)</h2>
+        <div id="reportPreview"></div>
+        <div class="actions">
+            <button type="button" class="btn btn-success" id="copyBtn">העתק</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const TYPE_GROUPS = [
+    {
+        title: "אלימות ופגיעה",
+        items: [
+            { id: "type_physical", label: "אלימות פיזית", text_m: "אלימות פיזית", text_f: "אלימות פיזית" },
+            { id: "type_verbal", label: "אלימות מילולית", text_m: "אלימות מילולית", text_f: "אלימות מילולית" },
+            { id: "type_physical_response", label: "תגובה פיזית", text_m: "תגובה פיזית", text_f: "תגובה פיזית" },
+            { id: "type_threats", label: "איומים והפחדות", text_m: "איומים והפחדות", text_f: "איומים והפחדות" },
+            { id: "type_aggressive", label: "התנהגות תוקפנית", text_m: "התנהגות תוקפנית", text_f: "התנהגות תוקפנית" },
+            { id: "type_property", label: "השחתת רכוש", text_m: "השחתת רכוש", text_f: "השחתת רכוש" }
+        ]
+    },
+    {
+        title: "גבולות",
+        items: [
+            { id: "type_sexual_behavior", label: "התנהגות מינית לא הולמת", text_m: "התנהגות מינית לא הולמת", text_f: "התנהגות מינית לא הולמת" },
+            { id: "type_sexual_speech", label: "דיבור מיני לא מותאם", text_m: "דיבור מיני לא מותאם", text_f: "דיבור מיני לא מותאם" },
+            { id: "type_sexual_touch", label: "מגע פיזי לא מותאם", text_m: "מגע פיזי לא מותאם", text_f: "מגע פיזי לא מותאם" },
+            { id: "type_boundaries", label: "פגיעה בגבולות אישיים", text_m: "פגיעה בגבולות אישיים", text_f: "פגיעה בגבולות אישיים" },
+            { id: "type_harassment", label: "הטרדה מינית", text_m: "הטרדה מינית", text_f: "הטרדה מינית" }
+        ]
+    },
+    {
+        title: "במסגרת",
+        items: [
+            { id: "type_not_listening", label: "חוסר הקשבה לצוות חינוכי", text_m: "חוסר הקשבה לצוות חינוכי", text_f: "חוסר הקשבה לצוות חינוכי" },
+            { id: "type_unsafe", label: "התנהגות מסכנת", text_m: "התנהגות מסכנת", text_f: "התנהגות מסכנת" },
+            { id: "type_disruption", label: "הפרעה למהלך השיעור", text_m: "הפרעה למהלך השיעור", text_f: "הפרעה למהלך השיעור" },
+            { id: "type_wandering", label: "שוטטות", text_m: "שוטטות", text_f: "שוטטות" },
+            { id: "type_phone", label: "שימוש לא הולם בטלפון או ברשת", text_m: "שימוש לא הולם בטלפון או ברשת", text_f: "שימוש לא הולם בטלפון או ברשת" },
+            { id: "type_other", label: "אירוע אחר", text_m: "אירוע אחר", text_f: "אירוע אחר" }
+        ]
+    }
+];
+
+const TYPES = TYPE_GROUPS.flatMap((group) => group.items);
+const TYPE_PRINT_ORDER = [
+    "type_physical",
+    "type_verbal",
+    "type_physical_response",
+    "type_threats",
+    "type_aggressive",
+    "type_sexual_behavior",
+    "type_sexual_speech",
+    "type_sexual_touch",
+    "type_boundaries",
+    "type_harassment",
+    "type_property",
+    "type_not_listening",
+    "type_unsafe",
+    "type_disruption",
+    "type_wandering",
+    "type_phone",
+    "type_other"
+];
+
+const DECISIONS = [
+    { id: "dec_clarify", label: "בירור האירוע, תיעוד ויידוע הורים", text_m: "בירור האירוע, תיעוד ויידוע הורים", text_f: "בירור האירוע, תיעוד ויידוע הורים" },
+    { id: "dec_talk_counselor", label: "שיח חינוכי עם מחנך ויועצת", text_m: "שיח חינוכי עם מחנך ויועצת", text_f: "שיח חינוכי עם מחנך ויועצת" },
+    { id: "dec_talk_teacher", label: "שיח חינוכי עם מחנך", text_m: "שיח חינוכי עם מחנך", text_f: "שיח חינוכי עם מחנך" },
+    { id: "dec_admin", label: "יידוע גורמי ההנהלה", text_m: "יידוע גורמי ההנהלה", text_f: "יידוע גורמי ההנהלה" },
+    { id: "dec_parents", label: "זימון הורים לשיחה", text_m: "זימון הורים לשיחה", text_f: "זימון הורים לשיחה" },
+    { id: "dec_discipline", label: "שיח משמעתי", text_m: "שיח משמעתי", text_f: "שיח משמעתי" },
+    { id: "dec_send_admin", label: "שליחה לבירור עם גורמי ההנהלה", text_m: "שליחת התלמיד לבירור עם גורמי ההנהלה", text_f: "שליחת התלמידה לבירור עם גורמי ההנהלה", preview: true },
+    { id: "dec_suspend", label: "השעייה", text_m: "השעייה", text_f: "השעייה", reveal: "suspend" },
+    { id: "dec_welfare", label: "יידוע גורמי הפיקוח, הרווחה והחינוך הרשותי", text_m: "יידוע גורמי הפיקוח, הרווחה והחינוך הרשותי", text_f: "יידוע גורמי הפיקוח, הרווחה והחינוך הרשותי" },
+    { id: "dec_in_school", label: "השעיה תוך בית ספרית", text_m: "השעיה תוך בית ספרית", text_f: "השעיה תוך בית ספרית" },
+    { id: "dec_other", label: "אחר", text_m: "אחר", text_f: "אחר", reveal: "other" }
+];
+
+function isFemale() {
+    return document.getElementById("studentGender").value === "female";
+}
+
+function gendered(item) {
+    return isFemale() ? item.text_f : item.text_m;
+}
+
+function formatDate(iso) {
+    if (!iso) return "";
+    const parts = iso.split("-");
+    if (parts.length !== 3) return iso;
+    return parts[2] + "." + parts[1] + "." + parts[0];
+}
+
+function timeText() {
+    const date = formatDate(document.getElementById("incidentDate").value);
+    const time = document.getElementById("incidentTime").value.trim();
+    if (date && time) return date + ", " + time;
+    return date || time || "---";
+}
+
+function checked(id) {
+    const input = document.querySelector('input[data-id="' + id + '"]');
+    return !!(input && input.checked);
+}
+
+function renderTypes() {
+    const root = document.getElementById("typesRoot");
+    TYPE_GROUPS.forEach((group) => {
+        const title = document.createElement("div");
+        title.className = "sub-title";
+        title.textContent = group.title;
+        root.appendChild(title);
+        const wrap = document.createElement("div");
+        wrap.className = "chips";
+        group.items.forEach((item) => {
+            const chip = document.createElement("label");
+            chip.className = "chip";
+            const input = document.createElement("input");
+            input.type = "checkbox";
+            input.dataset.id = item.id;
+            input.addEventListener("change", () => {
+                chip.classList.toggle("is-on", input.checked);
+                if (item.id === "type_other") {
+                    document.getElementById("otherTypeBox").classList.toggle("is-open", input.checked);
+                }
+            });
+            const name = document.createElement("span");
+            name.textContent = item.label;
+            chip.appendChild(input);
+            chip.appendChild(name);
+            wrap.appendChild(chip);
+        });
+        root.appendChild(wrap);
+    });
+}
+
+function renderDecisions() {
+    const root = document.getElementById("decisionsRoot");
+    DECISIONS.forEach((item) => {
+        const row = document.createElement("label");
+        row.className = "decision";
+        row.dataset.id = item.id;
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.dataset.id = item.id;
+        const body = document.createElement("span");
+        const name = document.createElement("span");
+        name.className = "name";
+        name.textContent = item.label;
+        body.appendChild(name);
+        if (item.preview) {
+            const preview = document.createElement("span");
+            preview.className = "preview";
+            body.appendChild(preview);
+        }
+        input.addEventListener("change", () => {
+            row.classList.toggle("is-on", input.checked);
+            updateDecisionPreview(row, item);
+            if (item.reveal) {
+                document.getElementById("reveal-" + item.id).classList.toggle("is-open", input.checked);
+            }
+        });
+        row.appendChild(input);
+        row.appendChild(body);
+        root.appendChild(row);
+
+        if (item.reveal === "suspend") {
+            const box = document.createElement("div");
+            box.className = "reveal";
+            box.id = "reveal-" + item.id;
+            box.innerHTML =
+                '<div class="grid-2">' +
+                '<div class="form-group"><label class="block" for="suspendFrom">מתאריך</label><input type="date" id="suspendFrom"></div>' +
+                '<div class="form-group"><label class="block" for="suspendTo">עד תאריך</label><input type="date" id="suspendTo"></div>' +
+                "</div>";
+            root.appendChild(box);
+        }
+        if (item.reveal === "other") {
+            const box = document.createElement("div");
+            box.className = "reveal";
+            box.id = "reveal-" + item.id;
+            box.innerHTML =
+                '<label class="block" for="decisionOther">פירוט החלטה אחרת</label>' +
+                '<textarea id="decisionOther" placeholder="מה הוחלט"></textarea>';
+            root.appendChild(box);
+        }
+    });
+}
+
+function updateDecisionPreview(row, item) {
+    const preview = row.querySelector(".preview");
+    const input = row.querySelector("input");
+    if (!preview || !input) return;
+    preview.textContent = input.checked ? gendered(item) : "";
+}
+
+function updateGenderPreviews() {
+    DECISIONS.filter((item) => item.preview).forEach((item) => {
+        const row = document.querySelector('.decision[data-id="' + item.id + '"]');
+        if (row) updateDecisionPreview(row, item);
+    });
+}
+
+function typePhrase(item) {
+    if (item.id !== "type_other") return gendered(item);
+    const extra = document.getElementById("incidentOther").value.trim();
+    return extra ? "אירוע אחר: " + extra : "אירוע אחר";
+}
+
+function decisionPhrase(item) {
+    if (item.id === "dec_suspend") {
+        const from = formatDate(document.getElementById("suspendFrom").value);
+        const to = formatDate(document.getElementById("suspendTo").value);
+        if (from && to) return "השעייה מ-" + from + " עד " + to;
+        if (from) return "השעייה מ-" + from;
+        if (to) return "השעייה עד " + to;
+        return "השעייה";
+    }
+    if (item.id === "dec_other") {
+        const extra = document.getElementById("decisionOther").value.trim();
+        return extra ? "אחר: " + extra : "אחר";
+    }
+    return gendered(item);
+}
+
+function generateReport() {
+    const klass = document.getElementById("studentClass").value.trim() || "---";
+    const place = document.getElementById("place").value.trim() || "---";
+    const present = document.getElementById("present").value.trim();
+    const description = document.getElementById("description").value.trim();
+    const titleStudent = isFemale() ? "שם התלמידה" : "שם התלמיד";
+    const lines = [
+        "תיעוד אירוע",
+        titleStudent + ": *** | כיתה: " + klass,
+        "מקום: " + place + " | זמן: " + timeText()
+    ];
+    if (present) lines.push("נוכחים: " + present);
+
+    const types = TYPE_PRINT_ORDER
+        .map((id) => TYPES.find((item) => item.id === id))
+        .filter((item) => item && checked(item.id))
+        .map(typePhrase);
+    if (types.length) {
+        lines.push("");
+        lines.push("סוג האירוע: " + types.join("; ") + ".");
+    }
+    if (description) {
+        lines.push("");
+        lines.push("תיאור האירוע:");
+        lines.push(description);
+    }
+    const decisions = DECISIONS.filter((item) => checked(item.id)).map(decisionPhrase);
+    if (decisions.length) {
+        lines.push("");
+        lines.push("החלטות שהתקבלו:");
+        decisions.forEach((line) => lines.push("• " + line));
+    }
+
+    document.getElementById("reportPreview").textContent = lines.join("\n");
+    const box = document.getElementById("reportOutputContainer");
+    box.style.display = "block";
+    box.scrollIntoView({ behavior: "smooth" });
+}
+
+function copyReport() {
+    const text = document.getElementById("reportPreview").innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        alert("התיעוד הועתק בהצלחה! תוכלי להדביק אותו (Ctrl+V) בקובץ Word.");
+    });
+}
+
+const today = new Date();
+document.getElementById("incidentDate").valueAsDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000);
+document.getElementById("studentGender").addEventListener("change", updateGenderPreviews);
+document.getElementById("generateBtn").addEventListener("click", generateReport);
+document.getElementById("copyBtn").addEventListener("click", copyReport);
+renderTypes();
+renderDecisions();
+</script>
+</body>
+</html>
