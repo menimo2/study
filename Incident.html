@@ -221,8 +221,12 @@
                 </div>
                 <div class="form-group">
                     <label class="block" for="incidentTime">שעה</label>
-                    <input type="text" id="incidentTime" placeholder="10:15">
+                    <input type="time" id="incidentTime" step="60">
                 </div>
+            </div>
+            <div class="form-group">
+                <label class="block" for="incidentWhen">זמן</label>
+                <input type="text" id="incidentWhen" placeholder="בזמן השיעור, בזמן ההפסקה">
             </div>
             <div class="form-group">
                 <label class="block" for="present">נוכחים</label>
@@ -237,6 +241,12 @@
                 <label class="block" for="incidentOther">פירוט האירוע האחר</label>
                 <textarea id="incidentOther" placeholder="מה היה האירוע"></textarea>
             </div>
+        </div>
+
+        <div class="section-card">
+            <h2>כלפי מי הופנה האירוע</h2>
+            <div id="targetsRoot"></div>
+            <p class="hint">אפשר לסמן כמה.</p>
         </div>
 
         <div class="section-card">
@@ -321,6 +331,12 @@ const TYPE_PRINT_ORDER = [
     "type_other"
 ];
 
+const TARGETS = [
+    { id: "target_student", text: "כלפי תלמיד/ה" },
+    { id: "target_staff", text: "כלפי צוות בית ספר" },
+    { id: "target_both", text: "כלפי תלמידים וצוות בית הספר" }
+];
+
 const DECISIONS = [
     { id: "dec_clarify", label: "בירור האירוע, תיעוד ויידוע הורים", text_m: "בירור האירוע, תיעוד ויידוע הורים", text_f: "בירור האירוע, תיעוד ויידוע הורים" },
     { id: "dec_talk_counselor", label: "שיח חינוכי עם מחנך ויועצת", text_m: "שיח חינוכי עם מחנך ויועצת", text_f: "שיח חינוכי עם מחנך ויועצת" },
@@ -350,11 +366,13 @@ function formatDate(iso) {
     return parts[2] + "." + parts[1] + "." + parts[0];
 }
 
-function timeText() {
+function whenPhrase() {
     const date = formatDate(document.getElementById("incidentDate").value);
     const time = document.getElementById("incidentTime").value.trim();
-    if (date && time) return date + ", " + time;
-    return date || time || "---";
+    if (date && time) return "בתאריך " + date + " בשעה " + time;
+    if (date) return "בתאריך " + date;
+    if (time) return "בשעה " + time;
+    return "";
 }
 
 function checked(id) {
@@ -391,6 +409,28 @@ function renderTypes() {
         });
         root.appendChild(wrap);
     });
+}
+
+function renderTargets() {
+    const root = document.getElementById("targetsRoot");
+    const wrap = document.createElement("div");
+    wrap.className = "chips";
+    TARGETS.forEach((item) => {
+        const chip = document.createElement("label");
+        chip.className = "chip";
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.dataset.id = item.id;
+        input.addEventListener("change", () => {
+            chip.classList.toggle("is-on", input.checked);
+        });
+        const name = document.createElement("span");
+        name.textContent = item.text;
+        chip.appendChild(input);
+        chip.appendChild(name);
+        wrap.appendChild(chip);
+    });
+    root.appendChild(wrap);
 }
 
 function renderDecisions() {
@@ -486,12 +526,13 @@ function generateReport() {
     const klass = document.getElementById("studentClass").value.trim() || "---";
     const place = document.getElementById("place").value.trim() || "---";
     const present = document.getElementById("present").value.trim();
+    const occasion = document.getElementById("incidentWhen").value.trim();
     const description = document.getElementById("description").value.trim();
     const titleStudent = isFemale() ? "שם התלמידה" : "שם התלמיד";
     const lines = [
         "תיעוד אירוע",
         titleStudent + ": *** | כיתה: " + klass,
-        "מקום: " + place + " | זמן: " + timeText()
+        ["מקום: " + place, whenPhrase(), occasion].filter(Boolean).join(" | ")
     ];
     if (present) lines.push("נוכחים: " + present);
 
@@ -502,6 +543,11 @@ function generateReport() {
     if (types.length) {
         lines.push("");
         lines.push("סוג האירוע: " + types.join("; ") + ".");
+    }
+    const targets = TARGETS.filter((item) => checked(item.id)).map((item) => item.text);
+    if (targets.length) {
+        lines.push("");
+        lines.push("הופנה: " + targets.join("; "));
     }
     if (description) {
         lines.push("");
@@ -530,10 +576,13 @@ function copyReport() {
 
 const today = new Date();
 document.getElementById("incidentDate").valueAsDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000);
+document.getElementById("incidentTime").value =
+    String(today.getHours()).padStart(2, "0") + ":" + String(today.getMinutes()).padStart(2, "0");
 document.getElementById("studentGender").addEventListener("change", updateGenderPreviews);
 document.getElementById("generateBtn").addEventListener("click", generateReport);
 document.getElementById("copyBtn").addEventListener("click", copyReport);
 renderTypes();
+renderTargets();
 renderDecisions();
 </script>
 </body>
