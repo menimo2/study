@@ -67,10 +67,20 @@ tags:
 | `see_no_feel` | לא מצליח להגיד מה הוא מרגיש | לא מצליחה להגיד מה היא מרגישה | `emotional_frustration_name` |
 | `see_no_success` | לא רואה הצלחות, מדבר על עצמו רק לרעה | לא רואה הצלחות, מדברת על עצמה רק לרעה | `emotional_self_success`, `emotional_self_strength` |
 
-## קריאה, כתיבה וחשבון
+## קריאה, כתיבה, דיבור וחשבון
 
 | id | label_m | label_f | יעדים |
 |---|---|---|---|
+| `see_decode_short` | מתקשה לחבר עיצור ותנועה במילה מנוקדת קצרה | מתקשה לחבר עיצור ותנועה במילה מנוקדת קצרה | `academic_decode_1` |
+| `see_new_word` | קורא מילה מוכרת, נתקע על מילה מנוקדת חדשה | קוראת מילה מוכרת, נתקעת על מילה מנוקדת חדשה | `academic_words_new` |
+| `see_needs_nikud` | קורא כשיש ניקוד, לא מזהה את אותה מילה בלי ניקוד | קוראת כשיש ניקוד, לא מזהה את אותה מילה בלי ניקוד | `academic_words_plain` |
+| `see_new_text` | קורא קטע מוכר, נתקע על קטע חדש | קוראת קטע מוכר, נתקעת על קטע חדש | `academic_passage_new` |
+| `see_no_why` | עונה מי ומה, לא עונה למה | עונה מי ומה, לא עונה למה | `academic_understand_why` |
+| `see_mixed_order` | מספר סיפור לא לפי הסדר שקרה | מספרת סיפור לא לפי הסדר שקרה | `academic_understand_order` |
+| `see_no_sentence` | כותב מילים בודדות, לא משפט | כותבת מילים בודדות, לא משפט | `academic_sentence_simple` |
+| `see_one_word` | עונה במילה גם כשצריך משפט | עונה במילה גם כשצריך משפט | `academic_answer_one` |
+| `see_off_question` | עונה לא לעניין כששואלים אותו | עונה לא לעניין כששואלים אותה | `academic_talk_answer` |
+| `see_loud_soft` | מדבר חזק מדי או חלש מדי למצב | מדברת חזק מדי או חלש מדי למצב | `academic_talk_voice` |
 | `see_slow_read` | קורא מילה-מילה, לא בשטף | קוראת מילה-מילה, לא בשטף | `academic_reading_fluency` |
 | `see_no_understand` | לא מבין מה כתוב בטקסט, גם כשהתשובה שם | לא מבינה מה כתוב בטקסט, גם כשהתשובה שם | `academic_reading_literal` |
 | `see_math_ops` | מתקשה בפעולות חשבון בדף | מתקשה בפעולות חשבון בדף | `academic_math_ops` |
