@@ -1902,19 +1902,12 @@ const SEE = [
         "items": [
             {
                 "id": "see_recess_alone",
-                "label_m": "נשאר לבד בהפסקה",
-                "label_f": "נשארת לבד בהפסקה",
+                "label_m": "נשאר לבד בהפסקה / מעגל חברים מצומצם",
+                "label_f": "נשארת לבד בהפסקה / מעגל חברות מצומצם",
                 "objectiveIds": [
                     "social_circles_recess",
-                    "social_circles_interest"
-                ]
-            },
-            {
-                "id": "see_recess_no_join",
-                "label_m": "לא מצטרף למשחק שכבר רץ בחצר",
-                "label_f": "לא מצטרפת למשחק שכבר רץ בחצר",
-                "objectiveIds": [
-                    "social_circles_recess"
+                    "social_circles_interest",
+                    "social_circles_common"
                 ]
             },
             {
@@ -1922,8 +1915,10 @@ const SEE = [
                 "label_m": "מתפוצץ או פורש כשמפסיד במשחק",
                 "label_f": "מתפוצצת או פורשת כשמפסידה במשחק",
                 "objectiveIds": [
-                    "behavioral_regulation_calm",
-                    "emotional_frustration_cope"
+                    "emotional_frustration_cope",
+                    "behavioral_regulation_chain",
+                    "behavioral_ask_ways",
+                    "behavioral_ask_go"
                 ]
             },
             {
@@ -1932,7 +1927,13 @@ const SEE = [
                 "label_f": "מקניטה, מקללת או פוגעת כשמשהו לא הולך",
                 "objectiveIds": [
                     "social_friendship_talk",
-                    "behavioral_regulation_calm"
+                    "behavioral_regulation_calm",
+                    "behavioral_group_what",
+                    "behavioral_group_follow",
+                    "behavioral_regulation_feel",
+                    "emotional_frustration_cope",
+                    "emotional_frustration_why",
+                    "emotional_frustration_name"
                 ]
             }
         ]
@@ -1942,9 +1943,9 @@ const SEE = [
         "label": "בשיעור ובמשימה",
         "items": [
             {
-                "id": "see_no_start",
-                "label_m": "לא מתחיל את הדף אחרי שהסברתי",
-                "label_f": "לא מתחילה את הדף אחרי שהסברתי",
+                "id": "see_task_ready",
+                "label_m": "התארגנות למשימה",
+                "label_f": "התארגנות למשימה",
                 "objectiveIds": [
                     "academic_attention_org",
                     "academic_attention_steps"
@@ -2017,6 +2018,16 @@ const SEE = [
                 "objectiveIds": [
                     "academic_independence_done"
                 ]
+            },
+            {
+                "id": "see_no_motivation",
+                "label_m": "חסר מוטיבציה ללמידה",
+                "label_f": "חסר מוטיבציה ללמידה",
+                "objectiveIds": [
+                    "academic_motivation_do",
+                    "academic_motivation_why",
+                    "academic_motivation_strength"
+                ]
             }
         ]
     },
@@ -2029,7 +2040,9 @@ const SEE = [
                 "label_m": "לא פותח שיחה ולא משתף מה מעניין אותו",
                 "label_f": "לא פותחת שיחה ולא משתפת מה מעניין אותה",
                 "objectiveIds": [
-                    "social_circles_interest"
+                    "social_circles_interest",
+                    "social_circles_common",
+                    "social_circles_recess"
                 ]
             },
             {
@@ -2045,7 +2058,8 @@ const SEE = [
                 "label_m": "לא מוצא עם מי לשחק — «אין לי חברים»",
                 "label_f": "לא מוצאת עם מי לשחק — «אין לי חברות»",
                 "objectiveIds": [
-                    "social_circles_common"
+                    "social_circles_common",
+                    "social_circles_interest"
                 ]
             },
             {
@@ -2087,16 +2101,34 @@ const SEE = [
                 "label_f": "לא עומדת בכללי הכיתה / יוצאת בלי רשות",
                 "objectiveIds": [
                     "behavioral_authority_hard",
-                    "behavioral_group_follow"
+                    "behavioral_group_follow",
+                    "behavioral_authority_rights",
+                    "behavioral_authority_rules",
+                    "behavioral_authority_link",
+                    "behavioral_group_what"
                 ]
             },
             {
                 "id": "see_outburst",
-                "label_m": "התפרצות או כעס קיצוני כמה פעמים ביום",
-                "label_f": "התפרצות או כעס קיצוני כמה פעמים ביום",
+                "label_m": "התפרצות או כעס קיצוני",
+                "label_f": "התפרצות או כעס קיצוני",
                 "objectiveIds": [
                     "behavioral_regulation_feel",
-                    "behavioral_regulation_calm"
+                    "behavioral_regulation_calm",
+                    "behavioral_regulation_trigger"
+                ]
+            },
+            {
+                "id": "see_learner_hard",
+                "label_m": "מתקשה לתפקד כלומד התנהגותית ולימודית",
+                "label_f": "מתקשה לתפקד כלומדת התנהגותית ולימודית",
+                "objectiveIds": [
+                    "behavioral_authority_link",
+                    "behavioral_authority_hard",
+                    "behavioral_authority_rules",
+                    "behavioral_group_what",
+                    "academic_motivation_strength",
+                    "academic_motivation_why"
                 ]
             }
         ]
