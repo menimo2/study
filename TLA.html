@@ -3414,6 +3414,27 @@ function generateReport() {
     });
     html += '<div class="tchi-sign"><span>חתימת המחנך/ת: __________</span><span>חתימת ההורים: __________</span><span>תאריך: __________</span></div>';
 
+    if (window.tlaSavePlan) {
+        window.tlaSavePlan({
+            schoolYear: schoolYear,
+            period: document.getElementById("period").value.trim(),
+            gender: document.getElementById("studentGender").value,
+            studentClass: studentClass,
+            goals: kept.map(function (g) {
+                return {
+                    goalId: g.goal.id,
+                    timeframe: g.timeframe,
+                    objectives: g.objs.map(function (item) {
+                        return {
+                            id: item.obj.id,
+                            methodIds: item.methods.map(function (m) { return m.id; })
+                        };
+                    })
+                };
+            })
+        });
+    }
+
     document.getElementById("reportPreview").innerHTML = html;
     const out = document.getElementById("reportOutputContainer");
     out.style.display = "block";

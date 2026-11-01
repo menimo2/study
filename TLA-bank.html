@@ -196,7 +196,7 @@
             <strong>תווית</strong> = מה שרואים ברשימה.
             <strong>בן / בת</strong> = המשפט שנכנס לדוח.
             <strong>הערכה</strong> נשמרת במאגר (לא תמיד מודפסת בטבלה).
-            אחרי ייצוא שולחים את הקובץ <code>TLA-bank-export.json</code>.
+            השינויים נשמרים במאגר המשותף. ייצוא הקובץ נשאר זמין. «חזור למקור» מחזיר את המאגר המקורי.
         </div>
         <div id="issues"></div>
         <div id="editor"></div>
@@ -237,6 +237,15 @@ function slug(s) {
 }
 
 function load() {
+    if (window.TLA_CATALOG && window.TLA_CATALOG.catalog && window.TLA_CATALOG.see) {
+        data = {
+            domains: window.TLA_CATALOG.domains,
+            catalog: window.TLA_CATALOG.catalog,
+            see: window.TLA_CATALOG.see
+        };
+        document.getElementById("saveState").textContent = "מאגר מהשרת";
+        return;
+    }
     try {
         const raw = localStorage.getItem(STORE);
         if (raw) {
@@ -255,6 +264,7 @@ function persist() {
     const pack = packData();
     localStorage.setItem(STORE, JSON.stringify(pack));
     document.getElementById("saveState").textContent = "נשמר בדפדפן · " + new Date().toLocaleTimeString("he-IL");
+    if (window.tlaSaveCatalog) window.tlaSaveCatalog(pack);
 }
 function packData() {
     return {
@@ -717,7 +727,7 @@ document.getElementById("importFile").addEventListener("change", function (e) {
     e.target.value = "";
 });
 document.getElementById("resetBtn").addEventListener("click", function () {
-    if (!confirm("למחוק את הטיוטה המקומית ולחזור למאגר המקורי?")) return;
+    if (!confirm("לחזור למאגר המקורי? זה מחליף גם את המאגר המשותף בשרת.")) return;
     localStorage.removeItem(STORE);
     data = clone(SNAPSHOT);
     selected = null;
